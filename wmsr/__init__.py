@@ -7,11 +7,13 @@ def create_app():
     app.config.from_object('config.Config')
 
     #Registrar vistas (blueprints)
-    from wmsr import home, auth, productos, ubicaciones
+    from wmsr import home, auth, productos, ubicaciones, categorias, document_recibo
     app.register_blueprint(home.bp) #vista de home
     app.register_blueprint(auth.bp) #vista de auth
     app.register_blueprint(productos.bp) #vista de productos
     app.register_blueprint(ubicaciones.bp) #vista de ubicaciones
+    app.register_blueprint(categorias.bp) #vista de categorias
+    app.register_blueprint(document_recibo.bp) #vista de document_recibo
 
 
     
