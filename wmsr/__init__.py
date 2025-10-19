@@ -7,8 +7,9 @@ def create_app():
     app.config.from_object('config.Config')
 
     #Registrar vistas (blueprints)
-    from wmsr import home
+    from wmsr import home, auth
     app.register_blueprint(home.bp) #vista de home
+    app.register_blueprint(auth.bp) #vista de auth
 
     
 
