@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}WMS Pro - Panel Principal{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-slate-50">
+    <!-- Barra de Navegación Superior -->
+    <nav class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <a href="/" class="flex items-center gap-2 hover:opacity-80 transition-opacity">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-600">
+                        <path d="m7.5 4.27 9 5.15"></path>
+                        <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"></path>
+                        <path d="m3.3 7 8.7 5 8.7-5"></path>
+                        <path d="M12 22V12"></path>
+                    </svg>
+                    <span class="text-xl font-bold text-slate-800">WMS Pro</span>
+                </a>
+                <div class="flex items-center gap-4">
+                    <a href="/perfil" class="flex items-center gap-2 px-4 py-2 text-slate-700 hover:bg-slate-100 rounded-lg transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        <span class="font-medium">Perfil</span>
+                    </a>
+                    <a href="/logout" class="flex items-center gap-2 px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                            <polyline points="16 17 21 12 16 7"></polyline>
+                            <line x1="21" x2="9" y1="12" y2="12"></line>
+                        </svg>
+                        <span class="font-medium">Salir</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Layout con barra lateral -->
+    <div class="flex max-w-7xl mx-auto px-6 py-8 gap-8">
+        <!-- Sidebar -->
+        <aside class="w-64 min-w-[200px] bg-white rounded-xl shadow-md border border-slate-200 py-6 h-fit sticky top-28 self-start">
+            <nav class="flex flex-col gap-2">
+                <a href="/productos" class="block px-5 py-3 rounded-lg font-medium text-slate-700 hover:bg-blue-100 transition-colors">Productos</a>
+                <a href="/documento-recibo" class="block px-5 py-3 rounded-lg font-medium text-slate-700 hover:bg-green-100 transition-colors">Documento de Recibo</a>
+                <a href="/entradas" class="block px-5 py-3 rounded-lg font-medium text-slate-700 hover:bg-emerald-100 transition-colors">Entradas</a>
+                <a href="/salida" class="block px-5 py-3 rounded-lg font-medium text-slate-700 hover:bg-orange-100 transition-colors">Salida</a>
+                <a href="/inventario" class="block px-5 py-3 rounded-lg font-medium text-slate-700 hover:bg-violet-100 transition-colors">Inventario</a>
+                <a href="/historial" class="block px-5 py-3 rounded-lg font-medium text-slate-700 hover:bg-cyan-100 transition-colors">Historial de Movimientos</a>
+                <a href="/reportes" class="block px-5 py-3 rounded-lg font-medium text-slate-700 hover:bg-rose-100 transition-colors">Reportes</a>
+                <a href="/ayuda" class="block px-5 py-3 rounded-lg font-medium text-slate-700 hover:bg-amber-100 transition-colors">Ayuda</a>
+            </nav>
+        </aside>
+        <!-- Contenido dinámico -->
+        <main class="flex-1">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+</body>
+</html>
