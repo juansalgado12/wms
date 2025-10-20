@@ -20,5 +20,18 @@
         </form>
         <p class="mt-6 text-center text-slate-600">¿No tienes cuenta todavía? <a href="{{url_for('auth.registro')}}" class="text-green-600 hover:underline">Regístrate</a></p>
     </div>
+
+    <div class="flex gap-4 justify-center pt-12">
+        <a href="{{url_for('home.index')}}"
+            class="px-8 py-4 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-800 transition-all shadow-lg hover:shadow-xl flex items-center gap-2 group">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="transform scale-x-[-1] group-hover:-translate-x-1 transition-transform">
+                <path d="M5 12h14"></path>
+                <path d="m12 5 7 7-7 7"></path>
+            </svg>
+            Volver a pagina Principal
+        </a>
+    </div>
 </div>
 {% endblock %}
