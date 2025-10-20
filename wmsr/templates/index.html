@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Warehouse Management System - Sistema de Gestión de Almacenes</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100">
+    <!-- Navegación -->
+    <nav class="px-6 py-4 bg-white/80 backdrop-blur-sm border-b border-slate-200">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <img src="{{ url_for('static', filename='img/logo_uceva.png') }}" alt="logo" width="75" height="75">
+                    <path d="m7.5 4.27 9 5.15"></path>
+                    <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"></path>
+                    <path d="m3.3 7 8.7 5 8.7-5"></path>
+                    <path d="M12 22V12"></path>
+                <span class="text-2xl font-bold text-slate-800">Warehouse Management System</span>
+            </div>
+            <div class="flex gap-3">
+                <a href="/login" class="px-5 py-2 text-slate-700 font-medium hover:text-green-600 transition-colors">
+                    Iniciar Sesión
+                </a>
+                <a href="/register" class="px-5 py-2 bg-green-600 text-white font-medium rounded-lg hover:bg-green-800 transition-all shadow-md hover:shadow-lg">
+                    Registrarse
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenido Principal -->
+    <main class="max-w-7xl mx-auto px-6 py-16">
+        <!-- Sección Hero -->
+        <div class="text-center mb-16">
+            <h1 class="text-5xl md:text-6xl font-bold text-slate-800 mb-6 leading-tight">
+                Gestiona tu almacén con
+                <span class="text-green-600">eficiencia total</span>
+            </h1>
+            <p class="text-xl text-slate-600 mb-8 max-w-2xl mx-auto">
+                Sistema de gestión de almacenes que optimiza tus operaciones,
+                reduce costos y aumenta la productividad de tu equipo.
+            </p>
+            <div class="flex gap-4 justify-center flex-wrap">
+                <a href="/register" class="px-8 py-4 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-800 transition-all shadow-lg hover:shadow-xl flex items-center gap-2 group">
+                    Comenzar Ahora
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="group-hover:translate-x-1 transition-transform">
+                        <path d="M5 12h14"></path>
+                        <path d="m12 5 7 7-7 7"></path>
+                    </svg>
+                </a>
+            </div>
+        </div>
+        
+        <hr class="my-5 border-gray-300">
+
+        <!-- Características -->
+        <div class="grid md:grid-cols-3 gap-8 mt-20">
+            <!-- Control de Inventario -->
+            <div class="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-all border border-slate-100">
+                <div class="w-14 h-14 bg-green-200 rounded-lg flex items-center justify-center mb-5">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fill-black-600">
+                        <path d="M2.97 12.92A2 2 0 0 0 2 14.63v3.24a2 2 0 0 0 .97 1.71l3 1.8a2 2 0 0 0 2.06 0L12 19v-5.5l-5-3-4.03 2.42Z"></path>
+                        <path d="m7 16.5-4.74-2.85"></path>
+                        <path d="m7 16.5 5-3"></path>
+                        <path d="M7 16.5v5.17"></path>
+                        <path d="M12 13.5V19l3.97 2.38a2 2 0 0 0 2.06 0l3-1.8a2 2 0 0 0 .97-1.71v-3.24a2 2 0 0 0-.97-1.71L17 10.5l-5 3Z"></path>
+                        <path d="m17 16.5-5-3"></path>
+                        <path d="m17 16.5 4.74-2.85"></path>
+                        <path d="M17 16.5v5.17"></path>
+                        <path d="M7.97 4.42A2 2 0 0 0 7 6.13v4.37l5 3 5-3V6.13a2 2 0 0 0-.97-1.71l-3-1.8a2 2 0 0 0-2.06 0l-3 1.8Z"></path>
+                        <path d="M12 8 7.26 5.15"></path>
+                        <path d="m12 8 4.74-2.85"></path>
+                        <path d="M12 13.5V8"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-slate-800 mb-3">
+                    Control de Inventario
+                </h3>
+                <p class="text-slate-600 leading-relaxed">
+                    Monitorea en tiempo real tu stock, recibe alertas automáticas de reabastecimiento
+                    y gestiona múltiples ubicaciones desde una sola plataforma.
+                </p>
+            </div>
+
+            <!-- Análisis y Reportes -->
+            <div class="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-all border border-slate-100">
+                <div class="w-14 h-14 bg-green-200 rounded-lg flex items-center justify-center mb-5">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fill-black-600">
+                        <path d="M3 3v18h18"></path>
+                        <path d="m19 9-5 5-4-4-3 3"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-slate-800 mb-3">
+                    Análisis y Reportes
+                </h3>
+                <p class="text-slate-600 leading-relaxed">
+                    Toma decisiones informadas con dashboards intuitivos, reportes detallados
+                    y métricas clave de rendimiento de tu operación logística.
+                </p>
+            </div>
+
+            <!-- Gestión de Equipos -->
+            <div class="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-all border border-slate-100">
+                <div class="w-14 h-14 bg-green-200 rounded-lg flex items-center justify-center mb-5">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fill-black-600">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-slate-800 mb-3">
+                    Gestión de Equipos
+                </h3>
+                <p class="text-slate-600 leading-relaxed">
+                    Coordina a tu equipo de trabajo y manten un control efectivo en las operaciones, con roles para los usuarios.
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <section>
+        <p class="text-slate-600 leading-relaxed text-center mb-20 text-xl">Accede a tu cuenta para gestionar tu almacén de manera eficiente. En caso que no tengas cuenta, puedes crear una nueva accediendo desde el botón de registro.</p>
+        <div class="flex items-center justify-center gap-7">
+                <a href="/login" class="px-10 py-5 text-slate-700 font-medium hover:text-green-600 transition-colors">
+                    Iniciar Sesión
+                </a>
+                <a href="/register" class="px-10 py-5 bg-green-600 text-white font-medium rounded-lg hover:bg-green-800 transition-all shadow-md hover:shadow-lg">
+                    Registrarse
+                </a>
+            </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="mt-24 py-8 border-t border-slate-200">
+        <div class="max-w-7xl mx-auto px-6 text-center text-slate-600">
+            <p>© 2025 Warehouse Management System. Optimiza tu almacén hoy, no esperes más.</p>
+        </div>
+    </footer>
+</body>
+</html>
