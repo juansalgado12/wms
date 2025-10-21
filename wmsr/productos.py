@@ -1,15 +1,15 @@
-from flask import blueprints
+from flask import blueprints, render_template
 
 bp = blueprints.Blueprint('productos', __name__, url_prefix='/productos')
 
 @bp.route('/')
 def catalogo():
-    return ('Pagina de catalogo de productos')
+    return render_template('productos/catalogo.html')
 
 @bp.route('/crear')
 def crear():
-    return ('Pagina de crear producto')
+    return render_template('productos/crear.html')
 
 @bp.route('/editar')
 def editar():
-    return ('Pagina de editar producto')
+    return render_template('productos/editar.html')
