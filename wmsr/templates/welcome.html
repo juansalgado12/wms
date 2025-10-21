@@ -1,34 +1,8 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Warehouse Management System - Sistema de Gestión de Almacenes</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100">
-    <!-- Navegación -->
-    <nav class="px-6 py-4 bg-white/80 backdrop-blur-sm border-b border-slate-200">
-        <div class="max-w-7xl mx-auto flex items-center justify-between">
-            <div class="flex items-center gap-2">
-                <img src="{{ url_for('static', filename='img/logo_uceva.png') }}" alt="logo" width="75" height="75">
-                    <path d="m7.5 4.27 9 5.15"></path>
-                    <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"></path>
-                    <path d="m3.3 7 8.7 5 8.7-5"></path>
-                    <path d="M12 22V12"></path>
-                <span class="text-2xl font-bold text-slate-800">Warehouse Management System</span>
-            </div>
-            <div class="flex gap-3">
-                <a href="/login" class="px-5 py-2 text-slate-700 font-medium hover:text-green-600 transition-colors">
-                    Iniciar Sesión
-                </a>
-                <a href="/register" class="px-5 py-2 bg-green-600 text-white font-medium rounded-lg hover:bg-green-800 transition-all shadow-md hover:shadow-lg">
-                    Registrarse
-                </a>
-            </div>
-        </div>
-    </nav>
+{% extends 'layouts/base_public.html' %}
 
+{% block title %}Warehouse Management System - Sistema de Gestión de Almacenes{% endblock %}
+
+{% block content %}
     <!-- Contenido Principal -->
     <main class="max-w-7xl mx-auto px-6 py-16">
         <!-- Sección Hero -->
@@ -42,7 +16,7 @@
                 reduce costos y aumenta la productividad de tu equipo.
             </p>
             <div class="flex gap-4 justify-center flex-wrap">
-                <a href="/register" class="px-8 py-4 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-800 transition-all shadow-lg hover:shadow-xl flex items-center gap-2 group">
+                <a href="{{url_for('auth.registro')}}" class="px-8 py-4 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-800 transition-all shadow-lg hover:shadow-xl flex items-center gap-2 group">
                     Comenzar Ahora
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="group-hover:translate-x-1 transition-transform">
                         <path d="M5 12h14"></path>
@@ -131,12 +105,4 @@
                 </a>
             </div>
     </section>
-
-    <!-- Footer -->
-    <footer class="mt-24 py-8 border-t border-slate-200">
-        <div class="max-w-7xl mx-auto px-6 text-center text-slate-600">
-            <p>© 2025 Warehouse Management System. Optimiza tu almacén hoy, no esperes más.</p>
-        </div>
-    </footer>
-</body>
-</html>
+{% endblock %}

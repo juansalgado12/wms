@@ -1,15 +1,18 @@
-from flask import blueprints
+from flask import blueprints, render_template
 
 bp = blueprints.Blueprint('productos', __name__, url_prefix='/productos')
 
+# Ruta para el catálogo de productos
 @bp.route('/')
 def catalogo():
-    return ('Pagina de catalogo de productos')
+    return render_template('productos/catalogo.html')
 
+# Ruta para crear un nuevo producto
 @bp.route('/crear')
 def crear():
-    return ('Pagina de crear producto')
+    return render_template('productos/crear.html')
 
+# Ruta para editar un producto existente
 @bp.route('/editar')
 def editar():
-    return ('Pagina de editar producto')
+    return render_template('productos/editar.html')

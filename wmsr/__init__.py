@@ -15,7 +15,4 @@ def create_app():
     app.register_blueprint(categorias.bp) #vista de categorias
     app.register_blueprint(document_recibo.bp) #vista de document_recibo
 
-
-    
-
     return app
