@@ -41,8 +41,26 @@ def registro():
     #     flash(error)
     return render_template('auth/registro.html')
 
-@bp.route('/login')
+@bp.route('/login', methods = ('GET', 'POST'))
 def login():
+    # if request.method == 'POST': #si el metodo es POST
+    #     email = request.form.get('email')#obtener el email del formulario
+    #     password = request.form.get('password')#obtener la contraseña del formulario
+
+    #     #validar los datos 
+    #     error = None
+    #     user = User.query.filter_by(email = email).first() #buscar el usuario por email
+    #     if user == None or not check_password_hash(user.password, password):
+    #         #si no existe el usuario o la contraseña es incorrecta
+    #         error = 'Datos incorrectos. Por favor, intente de nuevo.'
+        
+    #     #iniciar sesion si no hay errores
+    #     if error is None:
+    #         session.clear() #limpiar la sesion
+    #         session['user_id'] = user.id #guardar el id del usuario en la sesion
+    #         return redirect(url_for('home.almacen')) #redireccionar a la pagina de almacen
+    #     flash(error)
+        
     return render_template('auth/login.html')
 
 @bp.route('/perfil')
