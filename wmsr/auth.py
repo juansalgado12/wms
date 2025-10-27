@@ -1,4 +1,4 @@
-from flask import blueprints, render_template, request, session, url_for, redirect, redirect, flash, g
+from flask import blueprints, render_template, request, session, url_for, redirect, flash, g
 #blueprint para las rutas
 #render_template para renderizar las plantillas HTML
 #request para manejar las solicitudes HTTP
@@ -62,6 +62,33 @@ def login():
     #     flash(error)
         
     return render_template('auth/login.html')
+
+# Mantener la sesión del usuario
+# @bp.before_app_request
+# def mantener_sesion():
+#     user_id = session.get('user_id')#obtener el id del usuario de la sesion
+
+#     if user_id is None:
+#         g.user = None #si no hay usuario, g.user es None
+#     else:
+#         g.user = User.query.get_or_404(user_id)#obtener el usuario de la base de datos
+#         #g.user almacena el usuario durante la solicitud
+
+#Cerrar sesión
+# @bp.route('/logout')
+# def logout():
+#     session.clear() #limpiar la sesion
+#     return redirect(url_for('home.welcome')) #redireccionar a la pagina de bienvenida
+
+#decorador para proteger rutas que requieren autenticación
+# import functools
+# def login_required(view): 
+#     @functools.wraps(view) #preservar la información de la vista original
+#     def wrapped_views(**kwargs): #funcion envuelta
+#         if g.user is None: #si no hay usuario en g
+#             return redirect(url_for('auth.login')) #redireccionar a la pagina de login
+#         return view(**kwargs) #si hay usuario, llamar a la vista original
+#     return wrapped_views
 
 @bp.route('/perfil')
 def perfil():
