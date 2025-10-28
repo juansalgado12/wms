@@ -9,7 +9,32 @@
 
 <div class="flex flex-wrap gap-4 mb-8">
 	<a href="#" class="px-6 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-800 transition-all shadow-md hover:shadow-lg">Crear producto</a>
-	<a href="{{url_for('categorias.lista_categorias')}}" class="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-800 transition-all shadow-md hover:shadow-lg">Gestionar categorías</a>
+	<div class="relative inline-block text-left">
+		<button type="button" class="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-800 transition-all shadow-md hover:shadow-lg flex items-center" id="dropdownButton">
+			Gestionar <svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+		</button>
+		<div id="dropdownMenu" class="hidden absolute left-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
+			<div class="py-1">
+				<a href="{{url_for('categorias.lista_categorias')}}" class="block px-4 py-2 text-slate-700 hover:bg-blue-100">Gestionar categorías</a>
+				<a href="{{url_for('marca.lista_marcas')}}" class="block px-4 py-2 text-slate-700 hover:bg-blue-100">Gestionar marcas</a>
+				<a href="{{url_for('presentacion.lista_presentaciones')}}" class="block px-4 py-2 text-slate-700 hover:bg-blue-100">Gestionar presentaciones</a>
+				<a href="{{url_for('unidad.lista_unidades')}}" class="block px-4 py-2 text-slate-700 hover:bg-blue-100">Gestionar unidades</a>
+			</div>
+		</div>
+	</div>
+	<script>
+		const btn = document.getElementById('dropdownButton');
+		const menu = document.getElementById('dropdownMenu');
+		btn.addEventListener('click', () => {
+			menu.classList.toggle('hidden');
+		});
+		document.addEventListener('click', (e) => {
+			if (!btn.contains(e.target) && !menu.contains(e.target)) {
+				menu.classList.add('hidden');
+			}
+		});
+	</script>
+	
 </div>
 
 <div class="overflow-x-auto">

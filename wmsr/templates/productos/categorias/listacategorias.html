@@ -8,7 +8,7 @@
 </div>
 
 <div class="flex flex-wrap gap-4 mb-8">
-    <a href="{{url_for('productos.catalogo')}}" class="px-6 py-3 bg-gray-200 font-semibold rounded-lg hover:bg-gray-400 transition-all shadow-md hover:shadow-lg">Volver</a>
+    <a href="{{url_for('productos.catalogo')}}" class="px-6 py-3 bg-gray-300 font-semibold rounded-lg hover:bg-gray-400 transition-all shadow-md hover:shadow-lg">Volver</a>
 	<a href="{{url_for('categorias.crear_categoria')}}" class="px-6 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-800 transition-all shadow-md hover:shadow-lg">Crear categoria</a>
 </div>
 
@@ -23,14 +23,16 @@
 		</thead>
 		<tbody>
 			<!-- Aquí se mostrarán los productos creados -->
+			<!-- {% for categoria in categorias | reverse %} -->
 			<tr>
-				<td class="px-6 py-4 text-slate-600">No hay categorias registradas</td>
-				<td class="px-6 py-4 text-slate-600">-</td>
+				<td class="px-6 py-4 text-slate-600">{{categoria.nombre}}</td>
+				<td class="px-6 py-4 text-slate-600">{{categoria.descripcion}}</td>
 				<td class="px-6 py-4">
 					<button class="px-4 py-2 bg-yellow-400 text-white rounded-lg font-medium hover:bg-yellow-500 transition-all mr-2" disabled>Editar</button>
 					<button class="px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-800 transition-all" disabled>Borrar</button>
 				</td>
 			</tr>
+			<!-- {% endfor %} -->
 		</tbody>
 	</table>
 </div>

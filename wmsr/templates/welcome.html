@@ -97,10 +97,10 @@
     <section>
         <p class="text-slate-600 leading-relaxed text-center mb-20 text-xl">Accede a tu cuenta para gestionar tu almacén de manera eficiente. En caso que no tengas cuenta, puedes crear una nueva accediendo desde el botón de registro.</p>
         <div class="flex items-center justify-center gap-7">
-                <a href="/login" class="px-10 py-5 text-slate-700 font-medium hover:text-green-600 transition-colors">
+                <a href="{{url_for('auth.login')}}" class="px-10 py-5 text-slate-700 font-medium hover:text-green-600 transition-colors">
                     Iniciar Sesión
                 </a>
-                <a href="/register" class="px-10 py-5 bg-green-600 text-white font-medium rounded-lg hover:bg-green-800 transition-all shadow-md hover:shadow-lg">
+                <a href="{{url_for('auth.registro')}}" class="px-10 py-5 bg-green-600 text-white font-medium rounded-lg hover:bg-green-800 transition-all shadow-md hover:shadow-lg">
                     Registrarse
                 </a>
             </div>
