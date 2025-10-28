@@ -29,14 +29,16 @@
 		</thead>
 		<tbody>
 			<!-- Aquí se mostrarán las marcas creadas -->
+			{% for marca in marcas %}
 			<tr>
-				<td class="px-6 py-4 text-slate-600">No hay marcas registradas</td>
-				<td class="px-6 py-4 text-slate-600">-</td>
+				<td class="px-6 py-4 text-slate-600">{{ marca.nombre }}</td>
+				<td class="px-6 py-4 text-slate-600">{{ marca.descripcion }}</td>
 				<td class="px-6 py-4">
 					<button class="px-4 py-2 bg-yellow-400 text-white rounded-lg font-medium hover:bg-yellow-500 transition-all mr-2" disabled>Editar</button>
 					<button class="px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-800 transition-all" disabled>Borrar</button>
 				</td>
 			</tr>
+			{% endfor %}
 		</tbody>
 	</table>
 </div>
