@@ -24,4 +24,9 @@ def create_app():
     app.register_blueprint(marca.bp) #vista de marca
     app.register_blueprint(presentacion.bp) #vista de presentacion
 
+    #Crear las tablas en la base de datos
+    from .models import Categorias, Presentacion, Unidad, Marca, Usuarios, Proveedor, Productos, ProductoImagenes, Ubicaciones, DocumentoRecibo, Inventario, Movimientos
+    with app.app_context():
+        db.create_all()
+
     return app
