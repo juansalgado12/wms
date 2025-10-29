@@ -27,6 +27,19 @@
         </div>
     </nav>
 
+    <!-- Mensajes Flash -->
+    <div class="max-w-2xl mx-auto mt-6">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash-message flex items-center justify-between px-5 py-3 mb-3 rounded-lg shadow-md text-white {{ 'bg-green-600' if category == 'success' else 'bg-red-600' }}">
+                        <span>{{ message }}</span>
+                        <button type="button" onclick="this.parentElement.style.display='none'" class="ml-4 text-xl font-bold">&times;</button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
     {% block content %}{% endblock %}
 
     <!-- Footer -->

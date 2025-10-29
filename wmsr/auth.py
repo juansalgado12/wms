@@ -34,11 +34,12 @@ def registro():
             #si no existe el email, agregar el usuario a la base de datos
             db.session.add(user)
             db.session.commit()
+            flash('Cuenta creada exitosamente. Ahora puedes iniciar sesión.', 'success')
             return redirect(url_for('auth.login'))
         else:
             #de lo contrario, mostrar un mensaje de error
-            error = f'El correo {email}' 'ya está registrado.'
-        flash(error)
+            error = f'El correo {email} ya está registrado.'
+            flash(error, 'error')
     return render_template('auth/registro.html')
 
 @bp.route('/login', methods = ('GET', 'POST'))
