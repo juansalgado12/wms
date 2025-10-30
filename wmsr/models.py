@@ -82,7 +82,7 @@ class Usuarios(db.Model):
     usu_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     usu_nombre = db.Column(db.String(100), nullable=False)
     usu_email = db.Column(db.String(100), nullable=False, unique=True)
-    usu_password = db.Column(db.String(100), nullable=False)
+    usu_password = db.Column(db.String(255), nullable=False)
     usu_rol = db.Column(Enum('ADMIN', 'OPERADOR', name='rol_enum'), nullable=False, default='OPERADOR')
 
     # Constructor

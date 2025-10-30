@@ -24,20 +24,30 @@ def registro():
         email = request.form.get('email')#obtener el email del formulario
         password = request.form.get('password')#obtener la contraseña del formulario
 
-        user = Usuarios(usu_nombre=username, usu_email=email, usu_password=generate_password_hash(password)) #crear una instancia del usuario con la contraseña hasheada
-
-        # validar los datos del formulario
+        # Validación de contraseña
         error = None
+        # Requisitos de la contraseña
+        requisitos = []
+        if not (8 <= len(password) <= 40): # longitud entre 8 y 40 caracteres
+            requisitos.append('tener entre 8 y 40 caracteres')
+        if not any(c.isdigit() for c in password): # al menos un número
+            requisitos.append('contener al menos un número')
+        if not any(c.isupper() for c in password): # al menos una letra mayúscula
+            requisitos.append('contener al menos una letra mayúscula')
+        if requisitos: #si hay requisitos no cumplidos
+            error = 'La contraseña debe ' + ', '.join(requisitos) + '.'
+
         user_email = Usuarios.query.filter_by(usu_email=email).first() #verificar si el email ya existe en la base de datos
 
-        if user_email == None:
-            #si no existe el email, agregar el usuario a la base de datos
+        if error:
+            flash(error, 'error')
+        elif user_email is None:
+            user = Usuarios(usu_nombre=username, usu_email=email, usu_password=generate_password_hash(password))
             db.session.add(user)
             db.session.commit()
             flash('Cuenta creada exitosamente. Ahora puedes iniciar sesión.', 'success')
             return redirect(url_for('auth.login'))
         else:
-            #de lo contrario, mostrar un mensaje de error
             error = f'El correo {email} ya está registrado.'
             flash(error, 'error')
     return render_template('auth/registro.html')
