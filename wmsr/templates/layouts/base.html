@@ -28,7 +28,7 @@
                     </a>
                 </div>
                 <div class="flex items-center gap-4">
-                    <a href="/perfil" class="flex items-center gap-2 px-4 py-2 text-slate-700 hover:bg-slate-100 rounded-lg transition-colors">
+                    <a href="{{url_for('auth.perfil', user_id=g.user.usu_id)}}" class="flex items-center gap-2 px-4 py-2 text-slate-700 hover:bg-slate-100 rounded-lg transition-colors">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
                             <circle cx="12" cy="7" r="4"></circle>
@@ -63,19 +63,7 @@
                 <a href="/ayuda" class="block px-5 py-3 rounded-lg font-medium text-slate-700 hover:bg-amber-100 transition-colors">Ayuda</a>
             </nav>
         </aside>
-        <!-- Mensajes Flash -->
-        <div class="max-w-2xl mx-auto mt-6">
-            {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                    {% for category, message in messages %}
-                        <div class="flash-message flex items-center justify-between px-5 py-3 mb-3 rounded-lg shadow-md text-white {{ 'bg-green-600' if category == 'success' else 'bg-red-600' }}">
-                            <span>{{ message }}</span>
-                            <button type="button" onclick="this.parentElement.style.display='none'" class="ml-4 text-xl font-bold">&times;</button>
-                        </div>
-                    {% endfor %}
-                {% endif %}
-            {% endwith %}
-        </div>
+        
         <!-- Contenido dinámico -->
         <main class="flex-1">
             {% block content %}{% endblock %}

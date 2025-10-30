@@ -103,6 +103,37 @@ def login_required(view):
         return view(**kwargs) #si hay usuario, llamar a la vista original
     return wrapped_views
 
-@bp.route('/perfil')
-def perfil():
-    return render_template('auth/profile.html')
+@bp.route('/perfil/<int:user_id>', methods=('GET', 'POST'))
+def perfil(user_id):
+    user = Usuarios.query.get_or_404(user_id) #obtener el usuario por id o 404 si no existe
+
+    # Manejar la actualización del perfil, solo usuario y contraseña por ahora
+    if request.method == 'POST':
+        user.usu_nombre = request.form.get('nombre')
+        password = request.form.get('password')
+
+        error = None
+        # Validación de contraseña (igual que en registro)
+        requisitos = []
+
+        if not password:#si la contraseña esta vacia
+            error = 'La contraseña no puede estar vacía.'
+
+        if password: #si se proporciona una nueva contraseña
+            if not (8 <= len(password) <= 40):
+                requisitos.append('tener entre 8 y 40 caracteres')
+            if not any(c.isdigit() for c in password):
+                requisitos.append('contener al menos un número')
+            if not any(c.isupper() for c in password):
+                requisitos.append('contener al menos una letra mayúscula')
+            if requisitos:
+                error = 'La contraseña debe ' + ', '.join(requisitos) + '.'
+            else:
+                user.usu_password = generate_password_hash(password)
+        if error:
+            flash(error, 'error')
+        else:
+            db.session.commit()
+            flash('Perfil actualizado exitosamente.', 'success')
+            return redirect(url_for('auth.perfil', user_id=user.usu_id))
+    return render_template('auth/perfil.html', user=user)#renderizar la plantilla de perfil con el usuario
