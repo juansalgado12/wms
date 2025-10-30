@@ -93,15 +93,15 @@ def logout():
     session.clear() #limpiar la sesion
     return redirect(url_for('home.welcome')) #redireccionar a la pagina de bienvenida
 
-#decorador para proteger rutas que requieren autenticación
-# import functools
-# def login_required(view): 
-#     @functools.wraps(view) #preservar la información de la vista original
-#     def wrapped_views(**kwargs): #funcion envuelta
-#         if g.user is None: #si no hay usuario en g
-#             return redirect(url_for('auth.login')) #redireccionar a la pagina de login
-#         return view(**kwargs) #si hay usuario, llamar a la vista original
-#     return wrapped_views
+# decorador para proteger rutas que requieren autenticación
+import functools
+def login_required(view): 
+    @functools.wraps(view) #preservar la información de la vista original
+    def wrapped_views(**kwargs): #funcion envuelta
+        if g.user is None: #si no hay usuario en g
+            return redirect(url_for('auth.login')) #redireccionar a la pagina de login
+        return view(**kwargs) #si hay usuario, llamar a la vista original
+    return wrapped_views
 
 @bp.route('/perfil')
 def perfil():
