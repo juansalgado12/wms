@@ -54,42 +54,44 @@ def registro():
 
 @bp.route('/login', methods = ('GET', 'POST'))
 def login():
-    # if request.method == 'POST': #si el metodo es POST
-    #     email = request.form.get('email')#obtener el email del formulario
-    #     password = request.form.get('password')#obtener la contraseña del formulario
+    if request.method == 'POST': #si el metodo es POST
+        email = request.form.get('email')#obtener el email del formulario
+        password = request.form.get('password')#obtener la contraseña del formulario
 
-    #     #validar los datos 
-    #     error = None
-    #     user = User.query.filter_by(email = email).first() #buscar el usuario por email
-    #     if user == None or not check_password_hash(user.password, password):
-    #         #si no existe el usuario o la contraseña es incorrecta
-    #         error = 'Datos incorrectos. Por favor, intente de nuevo.'
+        #validar los datos 
+        error = None
+        user = Usuarios.query.filter_by(usu_email=email).first() #buscar el usuario por email
+        if user is None:
+            error = 'Datos incorrectos. Por favor, intente de nuevo.'
+        elif not check_password_hash(user.usu_password, password):
+            error = 'Datos incorrectos. Por favor, intente de nuevo.'
         
-    #     #iniciar sesion si no hay errores
-    #     if error is None:
-    #         session.clear() #limpiar la sesion
-    #         session['user_id'] = user.id #guardar el id del usuario en la sesion
-    #         return redirect(url_for('home.almacen')) #redireccionar a la pagina de almacen
-    #     flash(error)
+        #iniciar sesion si no hay errores
+        if error is None:
+            session.clear() #limpiar la sesion
+            session['usu_id'] = user.usu_id #guardar el id del usuario en la sesion
+            return redirect(url_for('home.almacen')) #redireccionar a la pagina de almacen
+        flash(error, 'error')
         
     return render_template('auth/login.html')
 
-# Mantener la sesión del usuario
-# @bp.before_app_request
-# def mantener_sesion():
-#     user_id = session.get('user_id')#obtener el id del usuario de la sesion
+#Mantener la sesión del usuario
+@bp.before_app_request
+def mantener_sesion():
+    user_id = session.get('usu_id')#obtener el id del usuario de la sesion
 
-#     if user_id is None:
-#         g.user = None #si no hay usuario, g.user es None
-#     else:
-#         g.user = User.query.get_or_404(user_id)#obtener el usuario de la base de datos
-#         #g.user almacena el usuario durante la solicitud
+    if user_id is None:
+        g.user = None #si no hay usuario, g.user es None
+    else:
+        g.user = Usuarios.query.get_or_404(user_id)
+        #obtener el usuario de la base de datos
+        #g.user almacena el usuario durante la solicitud
 
 #Cerrar sesión
-# @bp.route('/logout')
-# def logout():
-#     session.clear() #limpiar la sesion
-#     return redirect(url_for('home.welcome')) #redireccionar a la pagina de bienvenida
+@bp.route('/logout')
+def logout():
+    session.clear() #limpiar la sesion
+    return redirect(url_for('home.welcome')) #redireccionar a la pagina de bienvenida
 
 #decorador para proteger rutas que requieren autenticación
 # import functools
