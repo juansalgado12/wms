@@ -3,19 +3,6 @@
 {% block title %}Perfil de Usuario{% endblock %}
 
 {% block content %}
-<!-- Mensajes Flash -->
-<div class="max-w-md mx-auto mt-4 mb-4">
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category, message in messages %}
-                <div class="flash-message flex items-center justify-between px-3 py-2 mb-2 rounded-md shadow text-white {{ 'bg-green-600' if category == 'success' else 'bg-red-600' }}" style="font-size:0.95rem;">
-                    <span>{{ message }}</span>
-                    <button type="button" onclick="this.parentElement.style.display='none'" class="ml-2 text-lg font-bold">&times;</button>
-                </div>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
-</div>
 <form method="POST" action="" class="max-w-md mx-auto bg-white p-8 rounded-lg shadow-lg space-y-6">
     <h1 class="text-center text-lg font-medium">Editar Perfil</h1>
     <div>
