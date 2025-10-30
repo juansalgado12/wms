@@ -24,7 +24,7 @@
                             <path d="M5 12h14"></path>
                             <path d="m12 5 7 7-7 7"></path>
                         </svg>
-                        Volver a pagina Principal
+                        Volver a pagina de inicio
                     </a>
                 </div>
                 <div class="flex items-center gap-4">
@@ -33,9 +33,9 @@
                             <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
                             <circle cx="12" cy="7" r="4"></circle>
                         </svg>
-                        <span class="font-medium">Perfil</span>
+                        <p class="font-medium">{{g.user.usu_nombre}}</p>
                     </a>
-                    <a href="/logout" class="flex items-center gap-2 px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                    <a href="{{url_for('auth.logout')}}" class="flex items-center gap-2 px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
                             <polyline points="16 17 21 12 16 7"></polyline>
