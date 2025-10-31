@@ -1,0 +1,29 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}Lista de categorías - Warehouse Management System{% endblock %}
+{% block content %}
+<form method="POST" action="" class="max-w-md mx-auto bg-white p-8 rounded-lg shadow-lg space-y-6">
+    <h1 class="text-center text-lg font-medium">Editar Categoría</h1>
+    <div>
+        <label for="nombre" class="block text-gray-700 font-semibold mb-2">Nombre:</label>
+        <input type="text" id="nombre" name="nombre" value="{{ categoria.cat_nombre }}" required
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+    </div>
+    <div>
+        <label for="descripcion" class="block text-gray-700 font-semibold mb-2">Descripción:</label>
+        <textarea id="descripcion" name="descripcion" rows="4"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">{{ categoria.cat_descripcion }}</textarea>
+    </div>
+
+    <div class="flex justify-between items-center pt-4">
+        <a href="{{url_for('categorias.lista_categorias')}}"
+            class="px-6 py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-800 transition-all shadow-md hover:shadow-lg">
+            Cancelar
+        </a>
+        <button type="submit"
+            class="px-6 py-2 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-800 transition-all shadow-md hover:shadow-lg">
+            Guardar cambios
+        </button>
+    </div>
+</form>
+{% endblock %}
