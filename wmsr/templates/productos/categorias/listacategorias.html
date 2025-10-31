@@ -23,16 +23,18 @@
 		</thead>
 		<tbody>
 			<!-- Aquí se mostrarán los productos creados -->
-			<!-- {% for categoria in categorias | reverse %} -->
+			{% for categoria in categorias | reverse %}
 			<tr>
-				<td class="px-6 py-4 text-slate-600">{{categoria.nombre}}</td>
-				<td class="px-6 py-4 text-slate-600">{{categoria.descripcion}}</td>
+				<td class="px-6 py-4 text-slate-600">{{categoria.cat_nombre}}</td>
+				<td class="px-6 py-4 text-slate-600">{{categoria.cat_descripcion}}</td>
 				<td class="px-6 py-4">
-					<button class="px-4 py-2 bg-yellow-400 text-white rounded-lg font-medium hover:bg-yellow-500 transition-all mr-2" disabled>Editar</button>
-					<button class="px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-800 transition-all" disabled>Borrar</button>
+					<div class="flex flex-col gap-2"></div>
+						<button class="px-4 py-2 bg-yellow-400 text-white rounded-lg font-medium hover:bg-yellow-500 transition-all" disabled>Editar</button>
+						<button class="px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-800 transition-all" disabled>Borrar</button>
+					</div>
 				</td>
 			</tr>
-			<!-- {% endfor %} -->
+			{% endfor %}
 		</tbody>
 	</table>
 </div>
