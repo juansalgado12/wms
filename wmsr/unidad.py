@@ -68,3 +68,23 @@ def editar_unidad(id):
             return redirect(url_for('unidad.lista_unidades', mensaje_exito=mensaje_exito))
 
     return render_template('productos/unidad/editarunidad.html', unidad=unidad)
+
+
+@bp.route('/borrar/<int:id>', methods=('GET', 'POST'))
+@login_required
+def borrar_unidad(id):
+    unidad = Unidad.query.get_or_404(id)
+
+    # Verificar si la unidad está asignada a algún producto
+    # productos_asociados = getattr(unidad, 'productos', [])
+
+    # if productos_asociados:
+    #     flash('No se puede eliminar la unidad porque está asignada a productos existentes.', 'error')
+    #     return redirect(url_for('unidad.lista_unidades'))
+
+    db.session.delete(unidad)
+    db.session.commit()
+
+    mensaje_exito = 'Unidad eliminada exitosamente.'
+    flash(mensaje_exito, 'success')
+    return redirect(url_for('unidad.lista_unidades', mensaje_exito=mensaje_exito))
