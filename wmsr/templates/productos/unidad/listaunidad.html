@@ -29,7 +29,7 @@
 				<td class="px-6 py-4 text-slate-600">{{unidad.uni_descripcion}}</td>
 				<td class="px-6 py-4">
 					<div class="flex flex-col gap-1">
-						<a href="#" class="px-4 py-2 bg-yellow-400 text-white rounded-lg font-medium hover:bg-yellow-500 transition-all">Editar</a>
+						<a href="{{ url_for('unidad.editar_unidad', id=unidad.uni_id) }}" class="px-4 py-2 bg-yellow-400 text-white rounded-lg font-medium hover:bg-yellow-500 transition-all">Editar</a>
 						<a href="#" 
 							class="px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-800 transition-all"
 							onclick="return confirm('¿Está seguro de que desea eliminar esta unidad?');">
