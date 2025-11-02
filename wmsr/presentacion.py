@@ -40,7 +40,29 @@ def crear_presentacion():
             flash(error)
     return render_template('productos/presentacion/crearpresentacion.html', mensaje_exito=mensaje_exito)
 
-@bp.route('/editar')
+@bp.route('/editar/<int:id>', methods=('GET', 'POST'))
 @login_required
-def editar_presentacion():
-    return render_template('productos/presentacion/editarpresentacion.html')
+def editar_presentacion(id):
+    presentacion = Presentacion.query.get_or_404(id)
+
+    if request.method == 'POST':
+        nombre = request.form.get('nombre')
+        descripcion = request.form.get('descripcion')
+        nombre_normalizado = nombre.strip().lower() if nombre else '' # Normalizar el nombre
+
+        # Verificar si el nuevo nombre ya existe en otra presentación
+        presentacion_existente = Presentacion.query.filter(db.func.lower(db.func.trim(Presentacion.pres_nombre)) == nombre_normalizado, Presentacion.pres_id != id).first()
+
+        if presentacion_existente:
+            flash(f'La presentación "{nombre}" ya existe.')
+        elif not nombre_normalizado:
+            flash('El nombre de la presentación no puede estar vacío.')
+        else:
+            presentacion.pres_nombre = nombre.strip()
+            presentacion.pres_descripcion = descripcion
+            db.session.commit()
+
+            mensaje_exito = 'Presentación actualizada exitosamente.'
+            flash(mensaje_exito, 'success')
+            return redirect(url_for('presentacion.lista_presentaciones', mensaje_exito=mensaje_exito))
+    return render_template('productos/presentacion/editarpresentacion.html', presentacion=presentacion)
