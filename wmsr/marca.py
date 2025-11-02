@@ -6,6 +6,7 @@ from wmsr import db # Importar la base de datos
 
 bp = Blueprint('marca', __name__, url_prefix='/marcas')
 
+
 @bp.route('/')
 @login_required
 def lista_marcas():
@@ -14,6 +15,7 @@ def lista_marcas():
     marcas = Marca.query.all()
     #mensaje_exito = request.args.get('mensaje_exito') # Obtener mensaje de éxito si existe
     return render_template('productos/marca/listamarcas.html', marcas=marcas)
+
 
 @bp.route('/crear', methods=('GET', 'POST'))
 @login_required
@@ -41,6 +43,7 @@ def crear_marca():
             flash(error)
     return render_template('productos/marca/crearmarca.html', mensaje_exito=mensaje_exito)
 
+
 @bp.route('/editar/<int:id>', methods=('GET', 'POST'))
 def editar_marca(id):
     marca = Marca.query.get_or_404(id)
@@ -67,6 +70,22 @@ def editar_marca(id):
             return redirect(url_for('marca.lista_marcas', mensaje_exito=mensaje_exito))
     return render_template('productos/marca/editarmarca.html', marca=marca)
 
-@bp.route('/borrar')
-def borrar_marca():
-    return redirect(url_for('marca.lista_marcas'))
+
+@bp.route('/borrar/<int:id>', methods=('GET', 'POST'))
+@login_required
+def borrar_marca(id):
+    marca = Marca.query.get_or_404(id)
+
+    # Verificar si la marca está asignada a algún producto
+    # productos_asociados = getattr(marca, 'productos', []) 
+
+    # if productos_asociados:
+    #     flash('No se puede eliminar la marca porque está asignada a productos existentes.', 'error')
+    #     return redirect(url_for('marca.lista_marcas'))
+
+    db.session.delete(marca)
+    db.session.commit()
+
+    mensaje_exito = 'Marca eliminada exitosamente.'
+    flash(mensaje_exito, 'success')
+    return redirect(url_for('marca.lista_marcas', mensaje_exito=mensaje_exito))
