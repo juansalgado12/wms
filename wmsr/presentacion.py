@@ -6,6 +6,7 @@ from wmsr import db # Importar la base de datos
 
 bp = Blueprint('presentacion', __name__, url_prefix='/presentacion')
 
+
 @bp.route('/')
 @login_required
 def lista_presentaciones():
@@ -13,6 +14,7 @@ def lista_presentaciones():
     # AquÍ iría la lógica para obtener la lista de presentaciones
     presentaciones = Presentacion.query.all() # Obtener todas las presentaciones
     return render_template('productos/presentacion/listapresentacion.html', presentaciones=presentaciones)
+
 
 @bp.route('/crear', methods=('GET', 'POST'))
 @login_required
@@ -40,6 +42,7 @@ def crear_presentacion():
             flash(error)
     return render_template('productos/presentacion/crearpresentacion.html', mensaje_exito=mensaje_exito)
 
+
 @bp.route('/editar/<int:id>', methods=('GET', 'POST'))
 @login_required
 def editar_presentacion(id):
@@ -66,3 +69,23 @@ def editar_presentacion(id):
             flash(mensaje_exito, 'success')
             return redirect(url_for('presentacion.lista_presentaciones', mensaje_exito=mensaje_exito))
     return render_template('productos/presentacion/editarpresentacion.html', presentacion=presentacion)
+
+
+@bp.route('/borrar/<int:id>', methods=('GET', 'POST'))
+@login_required
+def borrar_presentacion(id):
+    presentacion = Presentacion.query.get_or_404(id)
+
+    # Verificar si la presentación está asignada a algún producto
+    # productos_asociados = getattr(presentacion, 'productos', [])
+
+    # if productos_asociados:
+    #     flash('No se puede eliminar la presentación porque está asignada a productos existentes.', 'error')
+    #     return redirect(url_for('presentacion.lista_presentaciones'))
+
+    db.session.delete(presentacion)
+    db.session.commit()
+
+    mensaje_exito = 'Presentación eliminada exitosamente.'
+    flash(mensaje_exito, 'success')
+    return redirect(url_for('presentacion.lista_presentaciones', mensaje_exito=mensaje_exito))
