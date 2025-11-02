@@ -1,21 +1,15 @@
 {% extends 'layouts/base.html' %}
 
-{% block title %}Lista de Marcas - Warehouse Management System{% endblock %}
+{% block title %}Lista de marcas - Warehouse Management System{% endblock %}
 {% block content %}
-
 <div class="mb-8">
-	<h1 class="text-3xl font-bold text-slate-800 mb-2">Lista de marcas para productos</h1>
-	<p class="text-slate-600">Administra las marcas para los productos desde aquí.</p>
+	<h1 class="text-3xl font-bold text-slate-800 mb-2">Lista de marcas</h1>
+	<p class="text-slate-600">Administra las marcas que serán asignadas a los productos.</p>
 </div>
 
-<div class="flex space-x-4 mb-6">
-    <a href="{{ url_for('productos.catalogo') }}" class="px-6 py-3 bg-gray-300 font-semibold rounded-lg hover:bg-gray-400 transition-all shadow-md hover:shadow-lg">
-        Volver
-    </a>
-    
-    <a href="{{ url_for('marca.crear_marca') }}" class="px-6 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-800 transition-all shadow-md hover:shadow-lg">
-        Crear Marca
-    </a>
+<div class="flex flex-wrap gap-4 mb-8">
+    <a href="{{url_for('productos.catalogo')}}" class="px-6 py-3 bg-gray-300 font-semibold rounded-lg hover:bg-gray-400 transition-all shadow-md hover:shadow-lg">Volver</a>
+	<a href="{{url_for('marca.crear_marca')}}" class="px-6 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-800 transition-all shadow-md hover:shadow-lg">Crear marca</a>
 </div>
 
 <div class="overflow-x-auto">
@@ -28,14 +22,20 @@
 			</tr>
 		</thead>
 		<tbody>
-			<!-- Aquí se mostrarán las marcas creadas -->
-			{% for marca in marcas %}
+			<!-- Aquí se mostrarán las marcas -->
+			{% for marca in marcas | reverse %}
 			<tr>
-				<td class="px-6 py-4 text-slate-600">{{ marca.nombre }}</td>
-				<td class="px-6 py-4 text-slate-600">{{ marca.descripcion }}</td>
+				<td class="px-6 py-4 text-slate-600">{{marca.mar_nombre}}</td>
+				<td class="px-6 py-4 text-slate-600">{{marca.mar_descripcion}}</td>
 				<td class="px-6 py-4">
-					<button class="px-4 py-2 bg-yellow-400 text-white rounded-lg font-medium hover:bg-yellow-500 transition-all mr-2" disabled>Editar</button>
-					<button class="px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-800 transition-all" disabled>Borrar</button>
+					<div class="flex flex-col gap-1">
+						<a href="#" class="px-4 py-2 bg-yellow-400 text-white rounded-lg font-medium hover:bg-yellow-500 transition-all">Editar</a>
+						<a href="#" 
+							class="px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-800 transition-all"
+							onclick="return confirm('¿Está seguro de que desea eliminar esta marca?');">
+							Borrar
+						</a>
+					</div>
 				</td>
 			</tr>
 			{% endfor %}

@@ -12,8 +12,8 @@ def lista_marcas():
 
     # AquÍ iría la lógica para obtener la lista de marcas
     marcas = Marca.query.all()
-    mensaje_exito = request.args.get('mensaje_exito') # Obtener mensaje de éxito si existe
-    return render_template('productos/marca/listamarcas.html', marcas=marcas, mensaje_exito=mensaje_exito)
+    #mensaje_exito = request.args.get('mensaje_exito') # Obtener mensaje de éxito si existe
+    return render_template('productos/marca/listamarcas.html', marcas=marcas)
 
 @bp.route('/crear', methods=('GET', 'POST'))
 def crear_marca():
@@ -26,7 +26,7 @@ def crear_marca():
         nombre_normalizado = nombre.strip().lower() if nombre else ''
 
         error = None
-        nombre_marca = Marca.query.filter(db.func.lower(db.func.trim(Marca.marca_nombre)) == nombre_normalizado).first()
+        nombre_marca = Marca.query.filter(db.func.lower(db.func.trim(Marca.mar_nombre)) == nombre_normalizado).first()
 
         if nombre_marca is None and nombre_normalizado:
             nueva_marca = Marca(nombre.strip(), descripcion)
@@ -43,3 +43,7 @@ def crear_marca():
 @bp.route('/editar')
 def editar_marca():
     return render_template('productos/marca/editarmarca.html')
+
+@bp.route('/borrar')
+def borrar_marca():
+    return redirect(url_for('marca.lista_marcas'))
