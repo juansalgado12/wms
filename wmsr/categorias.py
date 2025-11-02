@@ -14,7 +14,7 @@ def lista_categorias():
 
     # Aquí iría la lógica para obtener la lista de categorías
     categorias = Categorias.query.all()  # Ejemplo de consulta a la base de datos
-    mensaje_exito = request.args.get('mensaje_exito')
+    mensaje_exito = request.args.get('mensaje_exito') # Obtener mensaje de éxito si existe
     return render_template('productos/categorias/listacategorias.html', categorias=categorias, mensaje_exito=mensaje_exito)
 
 
