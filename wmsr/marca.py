@@ -16,6 +16,7 @@ def lista_marcas():
     return render_template('productos/marca/listamarcas.html', marcas=marcas)
 
 @bp.route('/crear', methods=('GET', 'POST'))
+@login_required
 def crear_marca():
     mensaje_exito = None
 
@@ -40,9 +41,31 @@ def crear_marca():
             flash(error)
     return render_template('productos/marca/crearmarca.html', mensaje_exito=mensaje_exito)
 
-@bp.route('/editar')
-def editar_marca():
-    return render_template('productos/marca/editarmarca.html')
+@bp.route('/editar/<int:id>', methods=('GET', 'POST'))
+def editar_marca(id):
+    marca = Marca.query.get_or_404(id)
+
+    if request.method == 'POST':
+        nombre = request.form.get('nombre')
+        descripcion = request.form.get('descripcion')
+        nombre_normalizado = nombre.strip().lower() if nombre else '' # Normalizar el nombre
+
+        # Verificar si el nuevo nombre ya existe en otra marca
+        marca_existente = Marca.query.filter(db.func.lower(db.func.trim(Marca.mar_nombre)) == nombre_normalizado, Marca.mar_id != id).first()
+
+        if marca_existente:
+            flash(f'La marca "{nombre}" ya existe.')
+        elif not nombre_normalizado:
+            flash('El nombre de la marca no puede estar vacío.')
+        else:
+            marca.mar_nombre = nombre.strip()
+            marca.mar_descripcion = descripcion
+            db.session.commit()
+
+            mensaje_exito = 'Marca actualizada exitosamente.'
+            flash(mensaje_exito, 'success')
+            return redirect(url_for('marca.lista_marcas', mensaje_exito=mensaje_exito))
+    return render_template('productos/marca/editarmarca.html', marca=marca)
 
 @bp.route('/borrar')
 def borrar_marca():
