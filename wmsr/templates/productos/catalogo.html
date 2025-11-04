@@ -34,61 +34,65 @@
 			}
 		});
 	</script>
-	
 </div>
 
-<div class="overflow-x-auto">
-	<table class="min-w-full bg-white rounded-xl shadow-md border border-slate-200">
-		<thead class="bg-slate-100">
-			<tr>
-				<th class="px-6 py-3 text-left text-slate-700 font-semibold">Código</th>
-				<th class="px-6 py-3 text-left text-slate-700 font-semibold">Nombre</th>
-				<th class="px-6 py-3 text-left text-slate-700 font-semibold">Descripción</th>
-				<th class="px-6 py-3 text-left text-slate-700 font-semibold">Categoría</th>
-				<th class="px-6 py-3 text-left text-slate-700 font-semibold">Presentación</th>
-				<th class="px-6 py-3 text-left text-slate-700 font-semibold">Unidad</th>
-				<th class="px-6 py-3 text-left text-slate-700 font-semibold">Marca</th>
-				<th class="px-6 py-3 text-left text-slate-700 font-semibold">Imagen</th>
-			</tr>
-		</thead>
-		<tbody>
-			{% if productos and productos|length > 0 %}
-				{% for p in productos %}
-				<tr class="border-t border-slate-100">
-					<td class="px-6 py-4 text-slate-700 align-top">{{ p.pro_codigo or '-'}}</td>
-					<td class="px-6 py-4 text-slate-700 align-top">{{ p.pro_nombre or '-' }}</td>
-					<td class="px-6 py-4 text-slate-600 align-top max-w-xs">
-						<div class="truncate" title="{{ p.pro_descripcion }}">{{ p.pro_descripcion or '-' }}</div>
-					</td>
-					<td class="px-6 py-4 text-slate-700 align-top">{{ categorias_map.get(p.pro_cat_id, '-') }}</td>
-					<td class="px-6 py-4 text-slate-700 align-top">{{ presentaciones_map.get(p.pro_pres_id, '-') }}</td>
-					<td class="px-6 py-4 text-slate-700 align-top">{{ unidades_map.get(p.pro_uni_id, '-') }}</td>
-					<td class="px-6 py-4 text-slate-700 align-top">{{ marcas_map.get(p.pro_mar_id, '-') }}</td>
-					<td class="px-6 py-4 align-top">
-						{% set img = image_map.get(p.pro_codigo) %}
-						{% if img %}
-							<img src="{{ img }}" alt="{{ p.pro_nombre }}" class="w-16 h-16 object-cover rounded-md border">
-						{% else %}
-							<div class="w-16 h-16 bg-slate-100 rounded-md flex items-center justify-center text-slate-400 text-xs">No imagen</div>
-						{% endif %}
-					</td>
-				</tr>
-				{% endfor %}
-			{% else %}
-				<tr>
-					<td class="px-6 py-4 text-slate-600">-</td>
-					<td class="px-6 py-4 text-slate-600">No hay productos registrados</td>
-					<td class="px-6 py-4 text-slate-600">-</td>
-					<td class="px-6 py-4 text-slate-600">-</td>
-					<td class="px-6 py-4 text-slate-600">-</td>
-					<td class="px-6 py-4 text-slate-600">-</td>
-					<td class="px-6 py-4 text-slate-600">-</td>
-					<td class="px-6 py-4">
-						<div class="w-16 h-16 bg-slate-100 rounded-md flex items-center justify-center text-slate-400 text-xs">No imagen</div>
-					</td>
-				</tr>
-			{% endif %}
-		</tbody>
-	</table>
+<div class="relative overflow-x-auto max-w-full shadow-md sm:rounded-lg">
+  <table class="table-auto w-full text-sm text-left rtl:text-right text-gray-700 dark:text-gray-400">
+    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+      <tr>
+        <th scope="col" class="px-6 py-3">Código</th>
+        <th scope="col" class="px-6 py-3">Nombre</th>
+        <th scope="col" class="px-6 py-3">Descripción</th>
+        <th scope="col" class="px-6 py-3">Categoría</th>
+        <th scope="col" class="px-6 py-3">Presentación</th>
+        <th scope="col" class="px-6 py-3">Unidad</th>
+        <th scope="col" class="px-6 py-3">Marca</th>
+        <th scope="col" class="px-6 py-3">Imagen</th>
+        <th scope="col" class="px-6 py-3 text-center">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% if productos and productos|length > 0 %}
+        {% for p in productos %}
+        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition">
+          <td class="px-6 py-4 whitespace-nowrap">{{ p.pro_codigo or '-' }}</td>
+          <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{{ p.pro_nombre or '-' }}</td>
+          <td class="px-6 py-4 text-gray-600">
+            <div class="whitespace-normal break-words" title="{{ p.pro_descripcion }}">
+              {{ p.pro_descripcion or '-' }}
+            </div>
+          </td>
+          <td class="px-6 py-4">{{ categorias_map.get(p.pro_cat_id, '-') }}</td>
+          <td class="px-6 py-4">{{ presentaciones_map.get(p.pro_pres_id, '-') }}</td>
+          <td class="px-6 py-4">{{ unidades_map.get(p.pro_uni_id, '-') }}</td>
+          <td class="px-6 py-4">{{ marcas_map.get(p.pro_mar_id, '-') }}</td>
+          <td class="px-6 py-4">
+            {% set img = image_map.get(p.pro_codigo) %}
+            {% if img %}
+              <img src="{{ img }}" alt="{{ p.pro_nombre }}" class="w-16 h-16 object-cover rounded-md border border-gray-300">
+            {% else %}
+              <div class="w-16 h-16 bg-gray-100 rounded-md flex items-center justify-center text-gray-400 text-xs">
+                No imagen
+              </div>
+            {% endif %}
+          </td>
+          <td class="px-6 py-4 text-center">
+            <a href="#" 
+               class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Editar</a>
+            <a href="#" 
+               class="font-medium text-red-600 dark:text-red-500 hover:underline ms-3">Borrar</a>
+          </td>
+        </tr>
+        {% endfor %}
+      {% else %}
+        <tr class="bg-white dark:bg-gray-800 border-t">
+          <td colspan="9" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
+            No hay productos registrados
+          </td>
+        </tr>
+      {% endif %}
+    </tbody>
+  </table>
 </div>
+
 {% endblock %}
