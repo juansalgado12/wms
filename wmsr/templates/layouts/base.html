@@ -7,17 +7,18 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="min-h-screen bg-slate-50">
-    <!-- Barra de Navegación Superior -->
-    <nav class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
-        <div class="w-full px-6 py-4">
-            <div class="flex items-center justify-between">
-                <a href="{{ url_for('home.almacen') }}" class="flex items-center gap-2 hover:opacity-80 transition-opacity">
-                    <img src="{{ url_for('static', filename='img/logo_uceva.png') }}" alt="logo" width="75" height="75">
-                    <span class="text-xl font-bold text-slate-800">Warehouse Management System</span>
-                </a>
-                <div class="flex ml-auto items-center gap-4 ">
+  <!-- Barra de Navegación Superior (altura fija, aumentada ligeramente) -->
+  <nav class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm h-20 mb-4">
+        <div class="w-full px-6 h-full flex items-center">
+            <div class="flex items-center justify-between w-full">
+        <a href="{{ url_for('home.almacen') }}" class="flex items-center gap-2 hover:opacity-80 transition-opacity">
+          <!-- Ajustado: logo un poco más grande y mantiene proporción dentro de h-20 -->
+          <img src="{{ url_for('static', filename='img/logo_uceva.png') }}" alt="logo" class="h-14 w-auto object-contain">
+          <span class="text-xl font-bold text-slate-800">Warehouse Management System</span>
+        </a>
+                <div class="flex items-center gap-4">
                     <a href="{{url_for('home.welcome')}}"
-                        class="flex items-center gap-2 px-4 py-2 text-slate-700 rounded-lg hover:bg-yellow-100 transition-all group">
+                        class="hidden sm:flex items-center gap-2 px-4 py-2 text-slate-700 rounded-lg hover:bg-yellow-100 transition-all group">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                             class="transform scale-x-[-1] group-hover:-translate-x-1 transition-transform">
@@ -26,8 +27,7 @@
                         </svg>
                         Volver a pagina de inicio
                     </a>
-                </div>
-                <div class="flex items-center gap-4">
+
                     <a href="{{url_for('auth.perfil', user_id=g.user.usu_id)}}" class="flex items-center gap-2 px-4 py-2 text-slate-700 hover:bg-slate-100 rounded-lg transition-colors">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
@@ -48,41 +48,81 @@
         </div>
     </nav>
 
-    <!-- Layout con barra lateral -->
-    <div class="flex max-w-7xl mx-auto px-6 py-8 gap-8">
-        <!-- Sidebar -->
-        <aside class="w-64 min-w-[200px] bg-white rounded-xl shadow-md border border-slate-200 py-6 h-fit sticky top-28 self-start">
-            <nav class="flex flex-col gap-2">
-                <a href="{{url_for('productos.catalogo')}}" class="block px-5 py-3 rounded-lg font-medium text-slate-700 hover:bg-blue-100 transition-colors">Productos</a>
-                <a href="/documento-recibo" class="block px-5 py-3 rounded-lg font-medium text-slate-700 hover:bg-green-100 transition-colors">Documento de Recibo</a>
-                <a href="/entradas" class="block px-5 py-3 rounded-lg font-medium text-slate-700 hover:bg-emerald-100 transition-colors">Entradas</a>
-                <a href="/salida" class="block px-5 py-3 rounded-lg font-medium text-slate-700 hover:bg-orange-100 transition-colors">Salida</a>
-                <a href="/inventario" class="block px-5 py-3 rounded-lg font-medium text-slate-700 hover:bg-violet-100 transition-colors">Inventario</a>
-                <a href="/historial" class="block px-5 py-3 rounded-lg font-medium text-slate-700 hover:bg-cyan-100 transition-colors">Historial de Movimientos</a>
-                <a href="/reportes" class="block px-5 py-3 rounded-lg font-medium text-slate-700 hover:bg-rose-100 transition-colors">Reportes</a>
-                <a href="/ayuda" class="block px-5 py-3 rounded-lg font-medium text-slate-700 hover:bg-amber-100 transition-colors">Ayuda</a>
-            </nav>
-        </aside>
-        
-        <!-- Contenido dinámico -->
-        <main class="flex-1">
-            <!-- Mensajes Flash -->
-<div class="max-w-md mx-auto mt-4 mb-4">
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category, message in messages %}
-                <div class="flash-message flex items-center justify-between px-3 py-2 mb-2 rounded-md shadow text-white {{ 'bg-green-600' if category == 'success' else 'bg-red-600' }}" style="font-size:0.95rem;">
-                    <span>{{ message }}</span>
-                    <button type="button" onclick="this.parentElement.style.display='none'" class="ml-2 text-lg font-bold">&times;</button>
-                </div>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
-</div>
-            {% block content %}{% endblock %}
-        </main>
-    </div>
+  <!-- Sidebar fija (debajo de la nav). Oculta en pantallas pequeñas -->
+  <aside id="logo-sidebar" class="fixed top-20 left-0 z-40 w-64 h-[calc(100vh-5rem)] bg-gray-50 border-r border-gray-200 overflow-y-auto hidden md:block">
+      <div class="h-full px-3 py-4">
+
+        {# Reemplaza los endpoints en url_for por los que uses en tu app Flask #}
+        <ul class="space-y-2 font-medium">
+            <li>
+                <a href="{{url_for('productos.catalogo')}}" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-barcode"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 7v-1a2 2 0 0 1 2 -2h2" /><path d="M4 17v1a2 2 0 0 0 2 2h2" /><path d="M16 4h2a2 2 0 0 1 2 2v1" /><path d="M16 20h2a2 2 0 0 0 2 -2v-1" /><path d="M5 11h1v2h-1z" /><path d="M10 11l0 2" /><path d="M14 11h1v2h-1z" /><path d="M19 11l0 2" /></svg>
+                    <span class="ms-3">Productos</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="#" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-clipboard-text"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2" /><path d="M9 3m0 2a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v0a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2z" /><path d="M9 12h6" /><path d="M9 16h6" /></svg>
+                    <span class="ms-3">Documento de recibo</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="#" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-circle-plus"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0" /><path d="M9 12h6" /><path d="M12 9v6" /></svg>
+                    <span class="ms-3">Realizar movimiento</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="#" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-history-toggle"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 20.777a8.942 8.942 0 0 1 -2.48 -.969" /><path d="M14 3.223a9.003 9.003 0 0 1 0 17.554" /><path d="M4.579 17.093a8.961 8.961 0 0 1 -1.227 -2.592" /><path d="M3.124 10.5c.16 -.95 .468 -1.85 .9 -2.675l.169 -.305" /><path d="M6.907 4.579a8.954 8.954 0 0 1 3.093 -1.356" /><path d="M12 8v4l3 3" /></svg>
+                    <span class="ms-3">Historial de movimientos</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="#" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-building-warehouse"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 21v-13l9 -4l9 4v13" /><path d="M13 13h4v8h-10v-6h6" /><path d="M13 21v-9a1 1 0 0 0 -1 -1h-2a1 1 0 0 0 -1 1v3" /></svg>
+                    <span class="ms-3">Inventario</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="#" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-report-analytics"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2" /><path d="M9 3m0 2a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v0a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2z" /><path d="M9 17v-5" /><path d="M12 17v-1" /><path d="M15 17v-3" /></svg>
+                    <span class="ms-3">Reportes</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="#" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-help"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" /><path d="M12 17l0 .01" /><path d="M12 13.5a1.5 1.5 0 0 1 1 -1.5a2.6 2.6 0 1 0 -3 -4" /></svg>
+                    <span class="ms-3">Ayuda</span>
+                </a>
+            </li>
+        </ul>
+      </div>
+    </aside>
+
+  <!-- Contenido principal: en pantallas md+ tiene margen izquierdo igual al ancho de la sidebar; siempre debajo de la nav -->
+  <main class="md:ml-64 mt-20 p-6">
+        <!-- Mensajes Flash -->
+        <div class="max-w-md mx-auto mt-4 mb-4">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="flash-message flex items-center justify-between px-3 py-2 mb-2 rounded-md shadow text-white {{ 'bg-green-600' if category == 'success' else 'bg-red-600' }}" style="font-size:0.95rem;">
+                            <span>{{ message }}</span>
+                            <button type="button" onclick="this.parentElement.style.display='none'" class="ml-2 text-lg font-bold">&times;</button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+
+        {% block content %}{% endblock %}
+    </main>
 </body>
 </html>
-
-
