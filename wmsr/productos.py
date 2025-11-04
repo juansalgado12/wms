@@ -10,7 +10,7 @@ def catalogo():
 # Ruta para crear un nuevo producto
 @bp.route('/crear')
 def crear():
-    return render_template('productos/crear.html')
+    return render_template('productos/crearproductos.html')
 
 # Ruta para editar un producto existente
 @bp.route('/editar')
