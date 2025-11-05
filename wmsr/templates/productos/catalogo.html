@@ -2,11 +2,11 @@
 
 {% block title %}Catálogo de productos - Warehouse Management System{% endblock %}
 {% block content %}
-<div class="mb-8">
-	<h1 class="text-3xl font-bold text-slate-800 mb-2">Catálogo de productos</h1>
-	<p class="text-slate-600">Administra tus productos, categorias, marcas, presentaciones y unidades desde aquí.</p>
+<div class="container w-full h-screen bg-cover size-full px-4 py-6">
+<div class="mb-4">
+	<h1 class="text-3xl font-bold text-slate-800 mb-4 dark:text-white">Catálogo de productos</h1>
+	<p class="text-slate-600 dark:text-gray-300">Administra tus productos, categorias, marcas, presentaciones y unidades desde aquí.</p>
 </div>
-
 <div class="flex flex-wrap gap-4 mb-8">
 	<a href="{{url_for('productos.crear')}}" class="px-6 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-800 transition-all shadow-md hover:shadow-lg">Crear producto</a>
 	<div class="relative inline-block text-left">
@@ -80,7 +80,7 @@
             <a href="#" 
                class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Editar</a>
             <a href="#" 
-               class="font-medium text-red-600 dark:text-red-500 hover:underline ms-3">Borrar</a>
+               class="font-medium text-red-600 dark:text-red-500 hover:underline">Borrar</a>
           </td>
         </tr>
         {% endfor %}
@@ -93,6 +93,7 @@
       {% endif %}
     </tbody>
   </table>
+</div>
 </div>
 
 {% endblock %}
