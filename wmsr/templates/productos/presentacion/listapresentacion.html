@@ -2,40 +2,35 @@
 
 {% block title %}Lista de presentaciones - Warehouse Management System{% endblock %}
 {% block content %}
-
 <div class="mb-8">
-	<h1 class="text-3xl font-bold text-slate-800 mb-2">Lista de presentaciones para productos</h1>
-	<p class="text-slate-600">Administra las presentaciones en las que vienen los productos.</p>
+	<h1 class="text-3xl font-bold text-slate-800 mb-2 dark:text-white">Lista de presentaciones</h1>
+	<p class="text-slate-600 dark:text-gray-300">Administra las presentaciones que serán asignadas a los productos.</p>
 </div>
 
-<div class="flex space-x-4 mb-6">
-    <a href="{{ url_for('productos.catalogo') }}" class="px-6 py-3 bg-gray-300 font-semibold rounded-lg hover:bg-gray-400 transition-all shadow-md hover:shadow-lg">
-        Volver
-    </a>
-
-    <a href="{{ url_for('presentacion.crear_presentacion') }}" class="px-6 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-800 transition-all shadow-md hover:shadow-lg">
-        Crear Presentación
-    </a>
+<div class="flex flex-wrap gap-4 mb-8">
+    <a href="{{url_for('productos.catalogo')}}" class="bg-transparent text-white font-semibold hover:text-gray-400 py-2 px-4 border border-white hover:border-gray-400 rounded">Volver</a>
+	<a href="{{url_for('presentacion.crear_presentacion')}}" class="bg-transparent text-green-500 font-semibold hover:text-white py-2 px-4 border border-green-500 hover:border-white rounded">Crear presentación</a>
 </div>
 
-<div class="overflow-x-auto">
-	<table class="min-w-full bg-white rounded-xl shadow-md border border-slate-200">
-		<thead class="bg-slate-100">
+<div class="relative overflow-x-auto max-w-full shadow-md sm:rounded-lg">
+	<table class="table-auto w-full text-sm text-left rtl:text-right text-gray-700 dark:text-gray-400">
+		<thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
 			<tr>
-				<th class="px-6 py-3 text-left text-slate-700 font-semibold">Nombre</th>
-				<th class="px-6 py-3 text-left text-slate-700 font-semibold">Descripción</th>
-				<th class="px-6 py-3 text-left text-slate-700 font-semibold">Acciones</th>
+				<th class="px-6 py-3">Nombre</th>
+				<th class="px-6 py-3">Descripción</th>
+				<th class="px-6 py-3 text-center">Acciones</th>
 			</tr>
 		</thead>
 		<tbody>
-			<!-- Aquí se mostrarán las presentaciones creadas -->
-			{% for presentacion in presentaciones %}
-			<tr>
-				<td class="px-6 py-4 text-slate-600">{{ presentacion.nombre }}</td>
-				<td class="px-6 py-4 text-slate-600">{{ presentacion.descripcion }}</td>
-				<td class="px-6 py-4">
-					<button class="px-4 py-2 bg-yellow-400 text-white rounded-lg font-medium hover:bg-yellow-500 transition-all mr-2" disabled>Editar</button>
-					<button class="px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-800 transition-all" disabled>Borrar</button>
+			{% for presentacion in presentaciones | reverse %}
+			<tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
+				<td class="px-6 py-4 text-slate-600 dark:text-gray-200">{{ presentacion.pres_nombre }}</td>
+				<td class="px-6 py-4 text-slate-600 dark:text-gray-200">{{ presentacion.pres_descripcion }}</td>
+				<td class="px-6 py-4 text-center">
+					<div class="flex justify-center gap-2">
+						<a href="{{url_for('presentacion.editar_presentacion', id=presentacion.pres_id)}}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Editar</a>
+						<a href="{{url_for('presentacion.borrar_presentacion', id=presentacion.pres_id)}}" class="font-medium text-red-600 dark:text-red-500 hover:underline" onclick="return confirm('¿Está seguro de que desea eliminar esta presentación?');">Borrar</a>
+					</div>
 				</td>
 			</tr>
 			{% endfor %}

@@ -1,0 +1,29 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}Editar Unidad - Warehouse Management System{% endblock %}
+{% block content %}
+<div class="flex flex-col items-center justify-center min-h-[60vh] py-12">
+    <div class="w-full max-w-md rounded-xl shadow-lg p-8 border border-slate-700 bg-slate-800">
+        <h2 class="text-2xl font-bold text-slate-100 mb-6 text-center">Editar Unidad</h2>
+        <form method="post" action="">
+            <div class="mb-4">
+                <label for="nombre" class="block text-slate-200 font-medium mb-2">Nombre</label>
+                <input type="text" id="nombre" name="nombre" value="{{ unidad.uni_nombre }}" required
+                    class="w-full px-4 py-2 bg-slate-800 text-slate-100 border border-slate-700 rounded-lg placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+            </div>
+            <div class="mb-4">
+                <label for="descripcion" class="block text-slate-200 font-medium mb-2">Descripción</label>
+                <textarea id="descripcion" name="descripcion" rows="4"
+                    class="w-full px-4 py-2 bg-slate-800 text-slate-100 border border-slate-700 rounded-lg placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">{{ unidad.uni_descripcion }}</textarea>
+            </div>
+
+            <div class="flex gap-3 justify-center mt-6">
+                <a href="{{url_for('unidad.lista_unidades')}}"
+                    class="px-8 py-4 bg-transparent text-white font-semibold text-green-500 dark:text-red-500 hover:text-white border border-red-500 hover:border-white rounded">Cancelar</a>
+                <button type="submit"
+                    class="w-full py-3 text-white font-semibold bg-transparent text-green-500 dark:text-green-500 hover:text-white border border-green-500 hover:border-white rounded">Guardar cambios</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

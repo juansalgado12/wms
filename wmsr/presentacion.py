@@ -1,39 +1,91 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 
-#from .auth import login_required
-#from .models import Presentacion cuando se implemente el modelo
-#from wmsr import db cuando se implemente la base de datos
+from .auth import login_required # Importar el decorador de login requerido
+from .models import Presentacion # Importar el modelo de Presentacion
+from wmsr import db # Importar la base de datos
 
 bp = Blueprint('presentacion', __name__, url_prefix='/presentacion')
 
+
 @bp.route('/')
+@login_required
 def lista_presentaciones():
-    # presentaciones = Presentacion.query.all() #cuando se implemente el modelo
-    return render_template('productos/presentacion/listapresentacion.html') #, presentaciones=presentaciones
 
-@bp.route('/crear')
+    # AquÍ iría la lógica para obtener la lista de presentaciones
+    presentaciones = Presentacion.query.all() # Obtener todas las presentaciones
+    return render_template('productos/presentacion/listapresentacion.html', presentaciones=presentaciones)
+
+
+@bp.route('/crear', methods=('GET', 'POST'))
+@login_required
 def crear_presentacion():
-    # if request.method == 'POST':
-    #     # Obtener datos del formulario
-    #     nombre = request.form.get('nombre')
-    #     descripcion = request.form.get('descripcion')
+    mensaje_exito = None
 
-    #     presentacion = Presentacion(nombre, descripcion)
+    if request.method == 'POST':
+        nombre = request.form.get('nombre')
+        descripcion = request.form.get('descripcion')
 
-    #     error = None
-    #     nombre_presentacion = Presentacion.query.filter_by(nombre=nombre).first()
+        nombre_normalizado = nombre.strip().lower() if nombre else ''
 
-    #     if nombre_presentacion == None:
-    #         #registrar en la base de datos
-    #         db.session.add(presentacion)
-    #         db.session.commit()
-    #         flash('Presentación creada exitosamente.')
-    #         return redirect(url_for('presentacion.lista_presentaciones'))
-    #     else:
-    #         error = 'La presentación ya existe.'
-    #     flash(error)
-    return render_template('productos/presentacion/crearpresentacion.html')
+        error = None
+        nombre_presentacion = Presentacion.query.filter(db.func.lower(db.func.trim(Presentacion.pres_nombre)) == nombre_normalizado).first()
 
-@bp.route('/editar')
-def editar_presentacion():
-    return render_template('productos/presentacion/editarpresentacion.html')
+        if nombre_presentacion is None and nombre_normalizado:
+            nueva_presentacion = Presentacion(nombre.strip(), descripcion)
+            db.session.add(nueva_presentacion)
+            db.session.commit()
+            mensaje_exito = 'Presentación creada exitosamente.'
+            flash(mensaje_exito, 'success')
+            return redirect(url_for('presentacion.lista_presentaciones', mensaje_exito=mensaje_exito))
+        else:
+            error = f'La presentación "{nombre}" ya existe o el nombre es inválido.'
+            flash(error)
+    return render_template('productos/presentacion/crearpresentacion.html', mensaje_exito=mensaje_exito)
+
+
+@bp.route('/editar/<int:id>', methods=('GET', 'POST'))
+@login_required
+def editar_presentacion(id):
+    presentacion = Presentacion.query.get_or_404(id)
+
+    if request.method == 'POST':
+        nombre = request.form.get('nombre')
+        descripcion = request.form.get('descripcion')
+        nombre_normalizado = nombre.strip().lower() if nombre else '' # Normalizar el nombre
+
+        # Verificar si el nuevo nombre ya existe en otra presentación
+        presentacion_existente = Presentacion.query.filter(db.func.lower(db.func.trim(Presentacion.pres_nombre)) == nombre_normalizado, Presentacion.pres_id != id).first()
+
+        if presentacion_existente:
+            flash(f'La presentación "{nombre}" ya existe.')
+        elif not nombre_normalizado:
+            flash('El nombre de la presentación no puede estar vacío.')
+        else:
+            presentacion.pres_nombre = nombre.strip()
+            presentacion.pres_descripcion = descripcion
+            db.session.commit()
+
+            mensaje_exito = 'Presentación actualizada exitosamente.'
+            flash(mensaje_exito, 'success')
+            return redirect(url_for('presentacion.lista_presentaciones', mensaje_exito=mensaje_exito))
+    return render_template('productos/presentacion/editarpresentacion.html', presentacion=presentacion)
+
+
+@bp.route('/borrar/<int:id>', methods=('GET', 'POST'))
+@login_required
+def borrar_presentacion(id):
+    presentacion = Presentacion.query.get_or_404(id)
+
+    # Verificar si la presentación está asignada a algún producto
+    # productos_asociados = getattr(presentacion, 'productos', [])
+
+    # if productos_asociados:
+    #     flash('No se puede eliminar la presentación porque está asignada a productos existentes.', 'error')
+    #     return redirect(url_for('presentacion.lista_presentaciones'))
+
+    db.session.delete(presentacion)
+    db.session.commit()
+
+    mensaje_exito = 'Presentación eliminada exitosamente.'
+    flash(mensaje_exito, 'success')
+    return redirect(url_for('presentacion.lista_presentaciones', mensaje_exito=mensaje_exito))
