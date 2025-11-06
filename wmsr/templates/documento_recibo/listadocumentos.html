@@ -1,0 +1,23 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}Documentos de recibo - Warehouse Management System{% endblock %}
+{% block content %}
+<div class="container w-full h-screen bg-cover size-full px-4 py-6">
+  <div class="mb-4">
+    <h1 class="text-3xl font-bold text-slate-800 mb-4 dark:text-white">Listado de documentos de recibo</h1>
+    <p class="text-slate-600 dark:text-gray-300">Administra tus documentos de recibo desde aquí. Al igual que los proveedores.</p>
+  </div>
+
+  <div class="flex flex-wrap gap-4 mb-8">
+    <a href="{{url_for('documento_recibo.crear_documento')}}"
+      class="bg-transparent text-green-500 font-semibold hover:text-white py-2 px-4 border border-green-500 hover:border-white rounded">Crear
+      documento de recibo</a>
+
+    <div class="relative inline-block text-left">
+      <a href="#" class="bg-transparent text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-white rounded flex items-center"
+        id="dropdownButton">Gestionar proveedores</a>
+    </div>
+    
+  </div>
+</div>
+{% endblock %}
