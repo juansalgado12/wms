@@ -1,0 +1,40 @@
+{% extends 'layouts/base.html' %}
+{% block title %}Lista de Proveedores{% endblock %}
+
+{% block content %}
+<div class="mb-8">
+	<h1 class="text-3xl font-bold text-slate-800 mb-2 dark:text-white">Lista de Proveedores</h1>
+	<p class="text-slate-600 dark:text-gray-300">Administra los proveedores que serán asignados a los documentos.</p>
+</div>
+
+<div class="flex flex-wrap gap-4 mb-8">
+    <a href="{{url_for('documento_recibo.lista_documentos')}}" class="bg-transparent text-white font-semibold hover:text-gray-400 py-2 px-4 border border-white hover:border-gray-400 rounded">Volver</a>
+	<a href="{{url_for('proveedores.crear_proveedor')}}" class="bg-transparent text-green-500 font-semibold hover:text-white py-2 px-4 border border-green-500 hover:border-white rounded">Crear proveedor</a>
+</div>
+
+<div class="relative overflow-x-auto max-w-full shadow-md sm:rounded-lg">
+	<table class="table-auto w-full text-sm text-left rtl:text-right text-gray-700 dark:text-gray-400">
+		<thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+			<tr>
+				<th class="px-6 py-3">Razón social</th>
+				<th class="px-6 py-3">Descripción</th>
+				<th class="px-6 py-3 text-center">Acciones</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for categoria in categorias | reverse %}
+			<tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition">
+				<td class="px-6 py-4 text-slate-600 dark:text-gray-200">{{ categoria.cat_nombre }}</td>
+				<td class="px-6 py-4 text-slate-600 dark:text-gray-200">{{ categoria.cat_descripcion }}</td>
+				<td class="px-6 py-4 text-center">
+					<div class="flex justify-center gap-2">
+						<a href="{{url_for('categorias.editar_categoria', id=categoria.cat_id)}}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Editar</a>
+						<a href="{{url_for('categorias.borrar_categoria', id=categoria.cat_id)}}" class="font-medium text-red-600 dark:text-red-500 hover:underline" onclick="return confirm('¿Está seguro de que desea eliminar esta categoría?');">Borrar</a>
+					</div>
+				</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+</div>
+{% endblock%}
