@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 
 from .auth import login_required # Importar el decorador de login requerido si es necesario
-from .models import Marca # Importar el modelo de Marca
+from .models import Marca, Productos # Importar el modelo de Marca
 from wmsr import db # Importar la base de datos
 
 bp = Blueprint('marca', __name__, url_prefix='/marcas')
@@ -77,15 +77,15 @@ def borrar_marca(id):
     marca = Marca.query.get_or_404(id)
 
     # Verificar si la marca está asignada a algún producto
-    # productos_asociados = getattr(marca, 'productos', []) 
-
-    # if productos_asociados:
-    #     flash('No se puede eliminar la marca porque está asignada a productos existentes.', 'error')
-    #     return redirect(url_for('marca.lista_marcas'))
+    productos_asociados = Productos.query.filter_by(pro_mar_id=id).count()
+    if productos_asociados > 0:
+        flash(f'No se puede eliminar la marca "{marca.mar_nombre}" porque está asociada a {productos_asociados} producto(s).', 'error')
+        return redirect(url_for('marca.lista_marcas'))
 
     db.session.delete(marca)
     db.session.commit()
 
     mensaje_exito = 'Marca eliminada exitosamente.'
     flash(mensaje_exito, 'success')
+    
     return redirect(url_for('marca.lista_marcas', mensaje_exito=mensaje_exito))
