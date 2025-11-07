@@ -52,6 +52,66 @@ def crear_proveedor():
 
     return render_template('documento_recibo/proveedores/crearproveedores.html')
 
-@bp.route('/editar')
-def editar_proveedor():
-    return render_template('documento_recibo/proveedores/editarproveedores.html')
+@bp.route('/editar/<int:id>', methods=('GET', 'POST'))
+def editar_proveedor(id):
+    proveedor = Proveedor.query.get_or_404(id)
+
+    if request.method == 'POST':
+        razonsocial = (request.form.get('razonsocial') or '').strip()
+        direccion = (request.form.get('direccion') or '').strip()
+        telefono = (request.form.get('telefono') or '').strip()
+        correo = (request.form.get('correo') or '').strip()
+        descripcion = request.form.get('descripcion')  # descripción puede ser opcional y con espacios
+
+        # Validar unicidad excluyendo el registro actual
+        conflictos = []
+        if razonsocial:
+            existe = Proveedor.query.filter(
+                Proveedor.prov_razon_social == razonsocial,
+                Proveedor.prov_id != id
+            ).first()
+            if existe:
+                conflictos.append('razón social')
+        if direccion:
+            existe = Proveedor.query.filter(
+                Proveedor.prov_direccion == direccion,
+                Proveedor.prov_id != id
+            ).first()
+            if existe:
+                conflictos.append('dirección')
+        if telefono:
+            existe = Proveedor.query.filter(
+                Proveedor.prov_telefono == telefono,
+                Proveedor.prov_id != id
+            ).first()
+            if existe:
+                conflictos.append('teléfono')
+        if correo:
+            existe = Proveedor.query.filter(
+                Proveedor.prov_email == correo,
+                Proveedor.prov_id != id
+            ).first()
+            if existe:
+                conflictos.append('correo')
+
+        if conflictos:
+            flash(f'Los siguientes campos ya están registrados: {", ".join(conflictos)}.', 'error')
+            return redirect(url_for('proveedores.editar_proveedor', id=id))
+
+        try:
+            # Actualizar campos (si se envía vacío se guarda como cadena vacía)
+            proveedor.prov_razon_social = razonsocial
+            proveedor.prov_direccion = direccion
+            proveedor.prov_telefono = telefono
+            proveedor.prov_email = correo
+            proveedor.prov_descripcion = descripcion
+
+            db.session.commit()
+            flash('Proveedor actualizado correctamente.', 'success')
+            return redirect(url_for('proveedores.lista_proveedores'))
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Error al actualizar el proveedor: {e}', 'error')
+            return redirect(url_for('proveedores.editar_proveedor', id=id))
+
+    return render_template('documento_recibo/proveedores/editarproveedores.html', proveedor=proveedor)

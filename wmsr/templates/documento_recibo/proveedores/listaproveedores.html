@@ -12,29 +12,45 @@
 	<a href="{{url_for('proveedores.crear_proveedor')}}" class="bg-transparent text-green-500 font-semibold hover:text-white py-2 px-4 border border-green-500 hover:border-white rounded">Crear proveedor</a>
 </div>
 
-<div class="relative overflow-x-auto max-w-full shadow-md sm:rounded-lg">
-	<table class="table-auto w-full text-sm text-left rtl:text-right text-gray-700 dark:text-gray-400">
-		<thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-			<tr>
-				<th class="px-6 py-3">Razón social</th>
-				<th class="px-6 py-3">Descripción</th>
-				<th class="px-6 py-3 text-center">Acciones</th>
-			</tr>
-		</thead>
-		<tbody>
-			{% for categoria in categorias | reverse %}
-			<tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition">
-				<td class="px-6 py-4 text-slate-600 dark:text-gray-200">{{ categoria.cat_nombre }}</td>
-				<td class="px-6 py-4 text-slate-600 dark:text-gray-200">{{ categoria.cat_descripcion }}</td>
-				<td class="px-6 py-4 text-center">
-					<div class="flex justify-center gap-2">
-						<a href="{{url_for('categorias.editar_categoria', id=categoria.cat_id)}}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Editar</a>
-						<a href="{{url_for('categorias.borrar_categoria', id=categoria.cat_id)}}" class="font-medium text-red-600 dark:text-red-500 hover:underline" onclick="return confirm('¿Está seguro de que desea eliminar esta categoría?');">Borrar</a>
-					</div>
-				</td>
-			</tr>
-			{% endfor %}
-		</tbody>
-	</table>
+<div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+  <table class="min-w-full text-sm text-left text-gray-700 dark:text-gray-300">
+    <thead class="text-xs uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-300">
+      <tr>
+        <th class="px-6 py-3">Razón social</th>
+        <th class="px-6 py-3">Dirección</th>
+        <th class="px-6 py-3">Teléfono</th>
+        <th class="px-6 py-3">Correo</th>
+        <th class="px-6 py-3">Descripción</th>
+        <th class="px-6 py-3 text-center">Acciones</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {% for proveedor in proveedores | reverse %}
+      <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition">
+        <td class="px-6 py-4 whitespace-nowrap text-slate-700 dark:text-gray-200">{{ proveedor.prov_razon_social }}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-slate-700 dark:text-gray-200">{{ proveedor.prov_direccion }}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-slate-700 dark:text-gray-200">{{ proveedor.prov_telefono }}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-slate-700 dark:text-gray-200">{{ proveedor.prov_email }}</td>
+        <td class="px-6 py-4 text-slate-700 dark:text-gray-200">{{ proveedor.prov_descripcion }}</td>
+
+        <td class="px-6 py-4 text-center">
+          <div class="flex justify-center items-center gap-3">
+            <a href="{{ url_for('proveedores.editar_proveedor', id=proveedor.prov_id) }}" 
+               class="font-medium text-blue-600 dark:text-blue-500 hover:underline">
+              <span class="ml-1 hidden sm:inline">Editar</span>
+            </a>
+            <a href="#" 
+               onclick="return confirm('¿Está seguro de que desea eliminar este proveedor?');"
+               class="font-medium text-red-600 dark:text-red-500 hover:underline">
+              <span class="ml-1 hidden sm:inline">Borrar</span>
+            </a>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 </div>
+
 {% endblock%}

@@ -4,31 +4,31 @@
 
 {% block content %}
 <div class="max-w-4xl mx-auto">
-	<div class="bg-white rounded-xl shadow-md p-8 border border-slate-100">
-		<h1 class="text-2xl font-bold text-slate-800 mb-6">Crear nuevo producto</h1>
+	<div class="bg-slate-800 rounded-xl shadow-md p-8 border border-slate-700">
+		<h1 class="text-2xl font-bold text-slate-100 mb-6">Crear nuevo producto</h1>
 
 		<form method="POST" action="{{ request.path }}" enctype="multipart/form-data" class="space-y-6">
 			{# Si usas CSRF: añade aquí csrf_token() según corresponda, por ejemplo: {{ form.csrf_token }} o {{ csrf_token() }} dependiendo de tu setup #}
 
 			<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 				<div>
-					<label for="pro_codigo" class="block text-slate-700 font-medium mb-2">Código (Código de barras EAN-13)</label>
+					<label for="pro_codigo" class="block text-slate-300 font-medium mb-2">Código (Código de barras EAN-13)</label>
 					<input id="pro_codigo" name="pro_codigo" type="number" required
-						class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-400" placeholder="1234567890123">
+						class="w-full px-4 py-2 bg-slate-700 text-slate-100 placeholder-slate-400 border rounded-lg border-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-400" placeholder="1234567890123">
 				</div>
 
 				<div>
-					<label for="pro_nombre" class="block text-slate-700 font-medium mb-2">Nombre del producto</label>
+					<label for="pro_nombre" class="block text-slate-300 font-medium mb-2">Nombre del producto</label>
 					<input id="pro_nombre" name="pro_nombre" type="text" required
-						class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-400" placeholder="Nombre del producto">
+						class="w-full px-4 py-2 bg-slate-700 text-slate-100 placeholder-slate-400 border rounded-lg border-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-400" placeholder="Nombre del producto">
 				</div>
 			</div>
 
 			<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
 				<div>
-					<label for="pro_cat_id" class="block text-slate-700 font-medium mb-2">Categoría</label>
-					<select id="pro_cat_id" name="pro_cat_id" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-400">
-						<option value="">Seleccionar categoría</option>
+					<label for="pro_cat_id" class="block text-slate-300 font-medium mb-2">Categoría</label>
+					<select id="pro_cat_id" name="pro_cat_id" required class="w-full px-4 py-2 bg-slate-700 text-slate-100 border rounded-lg border-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-400">
+						<option value="" class="text-slate-500">Seleccionar categoría</option>
 						{% for c in categorias %}
 							<option value="{{ c.cat_id }}">{{ c.cat_nombre }}</option>
 						{% endfor %}
@@ -36,9 +36,9 @@
 				</div>
 
 				<div>
-					<label for="pro_pres_id" class="block text-slate-700 font-medium mb-2">Presentación</label>
-					<select id="pro_pres_id" name="pro_pres_id" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-400">
-						<option value="">Seleccionar presentación</option>
+					<label for="pro_pres_id" class="block text-slate-300 font-medium mb-2">Presentación</label>
+					<select id="pro_pres_id" name="pro_pres_id" required class="w-full px-4 py-2 bg-slate-700 text-slate-100 border rounded-lg border-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-400">
+						<option value="" class="text-slate-500">Seleccionar presentación</option>
 						{% for p in presentaciones %}
 							<option value="{{ p.pres_id }}">{{ p.pres_nombre }}</option>
 						{% endfor %}
@@ -46,9 +46,9 @@
 				</div>
 
 				<div>
-					<label for="pro_uni_id" class="block text-slate-700 font-medium mb-2">Unidad</label>
-					<select id="pro_uni_id" name="pro_uni_id" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-400">
-						<option value="">Seleccionar unidad</option>
+					<label for="pro_uni_id" class="block text-slate-300 font-medium mb-2">Unidad</label>
+					<select id="pro_uni_id" name="pro_uni_id" required class="w-full px-4 py-2 bg-slate-700 text-slate-100 border rounded-lg border-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-400">
+						<option value="" class="text-slate-500">Seleccionar unidad</option>
 						{% for u in unidades %}
 							<option value="{{ u.uni_id }}">{{ u.uni_nombre }}</option>
 						{% endfor %}
@@ -57,9 +57,9 @@
 			</div>
 
 			<div>
-				<label for="pro_mar_id" class="block text-slate-700 font-medium mb-2">Marca</label>
-				<select id="pro_mar_id" name="pro_mar_id" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-400">
-					<option value="">Seleccionar marca</option>
+				<label for="pro_mar_id" class="block text-slate-300 font-medium mb-2">Marca</label>
+				<select id="pro_mar_id" name="pro_mar_id" required class="w-full px-4 py-2 bg-slate-700 text-slate-100 border rounded-lg border-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-400">
+					<option value="" class="text-slate-500">Seleccionar marca</option>
 					{% for m in marcas %}
 						<option value="{{ m.mar_id }}">{{ m.mar_nombre }}</option>
 					{% endfor %}
@@ -67,23 +67,23 @@
 			</div>
 
 			<div>
-				<label for="pro_descripcion" class="block text-slate-700 font-medium mb-2">Descripción</label>
+				<label for="pro_descripcion" class="block text-slate-300 font-medium mb-2">Descripción</label>
 				<textarea id="pro_descripcion" name="pro_descripcion" rows="4"
-					class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-400" placeholder="Detalles del producto (opcional)"></textarea>
+					class="w-full px-4 py-2 bg-slate-700 text-slate-100 placeholder-slate-400 border rounded-lg border-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-400" placeholder="Detalles del producto (opcional)"></textarea>
 			</div>
 
 			<div>
-				<label for="image" class="block text-slate-700 font-medium mb-2">Imágen del producto</label>
+				<label for="image" class="block text-slate-300 font-medium mb-2">Imágen del producto</label>
 				<input id="image" name="image" type="file" accept="image/*"
-					class="block w-full text-sm text-slate-600 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:bg-emerald-600 file:text-white hover:file:opacity-90" />
+					class="block w-full text-sm text-slate-200 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:bg-emerald-600 file:text-white hover:file:opacity-90 bg-slate-700 border border-slate-600" />
 
 				<div id="preview" class="mt-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3"></div>
-				<p class="text-sm text-slate-500 mt-2">Puedes subir una imagen del producto.</p>
+				<p class="text-sm text-slate-400 mt-2">Puedes subir una imagen del producto.</p>
 			</div>
 
 			<div class="flex items-center gap-3">
-				<button type="submit" class="px-6 py-3 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-700 transition-all shadow">Guardar producto</button>
-				<a href="{{ url_for('productos.catalogo') }}" class="px-4 py-3 border rounded-lg text-slate-700 hover:bg-slate-50">Cancelar</a>
+				<button type="submit" class="px-6 py-3 text-white font-semibold bg-transparent text-green-500 dark:text-green-500 hover:text-white border border-green-500 hover:border-white rounded">Guardar producto</button>
+				<a href="{{ url_for('productos.catalogo') }}" class="px-4 py-3 bg-transparent text-white font-semibold text-green-500 dark:text-red-500 hover:text-white border border-red-500 hover:border-white rounded">Cancelar</a>
 			</div>
 		</form>
 	</div>
