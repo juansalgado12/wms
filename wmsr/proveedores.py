@@ -1,4 +1,5 @@
-from flask import Blueprint, render_template, request, flash, redirect, url_for
+from flask import Blueprint, render_template, request, flash, redirect, url_for, send_file
+from wmsr.utils.export_excel import exportar_a_excel
 
 from .auth import login_required # Importar el decorador de login requerido si es necesario
 from .models import Proveedor, DocumentoRecibo # Importar el modelo de Proveedor
@@ -137,3 +138,22 @@ def borrar_proveedor(id):
     flash(mensaje_exito, 'success')
 
     return redirect(url_for('proveedores.lista_proveedores', mensaje_exito=mensaje_exito))
+
+@bp.route('/exportar_excel')
+@login_required
+def exportar_proveedores_excel():
+    proveedores = Proveedor.query.all()
+
+    data = [
+        {
+            'Razón Social': p.prov_razon_social,
+            'Dirección': p.prov_direccion,
+            'Teléfono': p.prov_telefono,
+            'Correo': p.prov_email,
+            'Descripción': p.prov_descripcion,
+        }
+        for p in proveedores
+    ]
+
+    columnas = ['Razón Social', 'Dirección', 'Teléfono', 'Correo', 'Descripción']
+    return exportar_a_excel('proveedores', columnas, data)
