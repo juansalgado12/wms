@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 
 from .auth import login_required # Importar el decorador de login requerido si es necesario
-from .models import Proveedor # Importar el modelo de Proveedor
+from .models import Proveedor, DocumentoRecibo # Importar el modelo de Proveedor
 from . import db # Importar la base de datos
 
 bp = Blueprint('proveedores', __name__, url_prefix='/proveedores')
@@ -14,6 +14,7 @@ def lista_proveedores():
     return render_template('documento_recibo/proveedores/listaproveedores.html', proveedores=proveedores)
 
 @bp.route('/crear', methods=['GET', 'POST'])
+@login_required
 def crear_proveedor():
     if request.method == 'POST':
         razonsocial = request.form.get('razonsocial')
@@ -53,6 +54,7 @@ def crear_proveedor():
     return render_template('documento_recibo/proveedores/crearproveedores.html')
 
 @bp.route('/editar/<int:id>', methods=('GET', 'POST'))
+@login_required
 def editar_proveedor(id):
     proveedor = Proveedor.query.get_or_404(id)
 
@@ -115,3 +117,23 @@ def editar_proveedor(id):
             return redirect(url_for('proveedores.editar_proveedor', id=id))
 
     return render_template('documento_recibo/proveedores/editarproveedores.html', proveedor=proveedor)
+
+@bp.route('/borrar/<int:id>', methods=('GET', 'POST'))
+@login_required
+def borrar_proveedor(id):
+    proveedor = Proveedor.query.get_or_404(id)
+
+    #Verificar si el proveedor está asociado a algún documento de recibo
+
+    documentos_asociados = DocumentoRecibo.query.filter_by(doc_id_proveedor=id).count()
+    if documentos_asociados > 0:
+        flash(f'No se puede eliminar el proveedor "{proveedor.prov_razon_social}" porque está asociado a {documentos_asociados} documento(s) de recibo.', 'error')
+        return redirect(url_for('proveedores.lista_proveedores'))
+    
+    db.session.delete(proveedor)
+    db.session.commit()
+
+    mensaje_exito = 'Proveedor borrado exitosamente.'
+    flash(mensaje_exito, 'success')
+
+    return redirect(url_for('proveedores.lista_proveedores', mensaje_exito=mensaje_exito))

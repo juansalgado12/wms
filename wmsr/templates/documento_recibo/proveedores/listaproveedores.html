@@ -40,7 +40,7 @@
                class="font-medium text-blue-600 dark:text-blue-500 hover:underline">
               <span class="ml-1 hidden sm:inline">Editar</span>
             </a>
-            <a href="#" 
+            <a href="{{url_for('proveedores.borrar_proveedor', id=proveedor.prov_id)}}" 
                onclick="return confirm('¿Está seguro de que desea eliminar este proveedor?');"
                class="font-medium text-red-600 dark:text-red-500 hover:underline">
               <span class="ml-1 hidden sm:inline">Borrar</span>
