@@ -1,5 +1,7 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 
+from wmsr.utils.export_excel import exportar_a_excel
+
 from .auth import login_required # Importar el decorador de login requerido si es necesario
 from .models import Categorias, Productos # Importar el modelo de Categorías
 from . import db # Importar la base de datos
@@ -98,3 +100,20 @@ def borrar_categoria(id):
     flash(mensaje_exito, 'success')
     
     return redirect(url_for('categorias.lista_categorias', mensaje_exito=mensaje_exito))
+
+@bp.route('/exportar_excel')
+@login_required
+def exportar_categorias_excel():
+    categorias = Categorias.query.all()
+
+    data = [
+        {
+            'ID': c.cat_id,
+            'Nombre': c.cat_nombre,
+            'Descripción': c.cat_descripcion
+        }
+        for c in categorias
+    ]
+
+    columnas = ['ID', 'Nombre', 'Descripción']
+    return exportar_a_excel('categorias', columnas, data)

@@ -1,5 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 
+from wmsr.utils.export_excel import exportar_a_excel
+
 from .auth import login_required # Importar el decorador de login requerido si es necesario
 from .models import Marca, Productos # Importar el modelo de Marca
 from wmsr import db # Importar la base de datos
@@ -89,3 +91,20 @@ def borrar_marca(id):
     flash(mensaje_exito, 'success')
     
     return redirect(url_for('marca.lista_marcas', mensaje_exito=mensaje_exito))
+
+@bp.route('/exportar_excel')
+@login_required
+def exportar_marcas_excel():
+    marcas = Marca.query.all()
+
+    data = [
+        {   
+            'ID': m.mar_id,
+            'Nombre': m.mar_nombre,
+            'Descripción': m.mar_descripcion,
+        }
+        for m in marcas
+    ]
+
+    columnas = ['ID', 'Nombre', 'Descripción']
+    return exportar_a_excel('marcas', columnas, data)

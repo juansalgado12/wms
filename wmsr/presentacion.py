@@ -1,5 +1,7 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 
+from wmsr.utils.export_excel import exportar_a_excel
+
 from .auth import login_required # Importar el decorador de login requerido
 from .models import Presentacion, Productos # Importar el modelo de Presentacion
 from wmsr import db # Importar la base de datos
@@ -90,3 +92,20 @@ def borrar_presentacion(id):
     flash(mensaje_exito, 'success')
     
     return redirect(url_for('presentacion.lista_presentaciones', mensaje_exito=mensaje_exito))
+
+@bp.route('/exportar_excel')
+@login_required
+def exportar_presentaciones_excel():
+    presentaciones = Presentacion.query.all()
+
+    data = [
+        {
+            'ID': p.pres_id,
+            'Nombre': p.pres_nombre,
+            'Descripción': p.pres_descripcion
+        } 
+        for p in presentaciones
+    ]
+
+    columnas = ['ID', 'Nombre', 'Descripción']
+    return exportar_a_excel('presentaciones', columnas, data)

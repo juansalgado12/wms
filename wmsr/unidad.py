@@ -1,6 +1,8 @@
 from sqlite3 import IntegrityError
 from flask import Blueprint, render_template, redirect, flash, request, url_for
 
+from wmsr.utils.export_excel import exportar_a_excel
+
 from .auth import login_required # Importar el decorador de login requerido
 from .models import Productos, Unidad # Importar el modelo de Unidad
 from wmsr import db # Importar la base de datos
@@ -89,3 +91,21 @@ def borrar_unidad(id):
    
 
     return redirect(url_for('unidad.lista_unidades', mensaje_exito=mensaje_exito))
+
+@bp.route('/exportar_excel')
+@login_required
+def exportar_unidades_excel():
+    unidades = Unidad.query.all()
+
+    data = [
+        {
+            'ID': u.uni_id,
+            'Nombre': u.uni_nombre,
+            'Descripción': u.uni_descripcion
+        }
+        for u in unidades
+    ]
+    columnas = ['ID', 'Nombre', 'Descripción']
+    return exportar_a_excel('unidades', columnas, data)
+
+

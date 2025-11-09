@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, flash, redirect, url_for, send_file
+from flask import Blueprint, render_template, request, flash, redirect, url_for
 from wmsr.utils.export_excel import exportar_a_excel
 
 from .auth import login_required # Importar el decorador de login requerido si es necesario
@@ -145,7 +145,8 @@ def exportar_proveedores_excel():
     proveedores = Proveedor.query.all()
 
     data = [
-        {
+        {   
+            'ID': p.prov_id,
             'Razón Social': p.prov_razon_social,
             'Dirección': p.prov_direccion,
             'Teléfono': p.prov_telefono,
