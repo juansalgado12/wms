@@ -8,6 +8,8 @@ import os # Para manejo de rutas de archivos
 from werkzeug.utils import secure_filename # Para asegurar nombres de archivos
 from datetime import datetime # Para manejo de fechas y horas
 
+from wmsr.utils.export_excel import exportar_a_excel
+
 bp = blueprints.Blueprint('productos', __name__, url_prefix='/productos')
 
 # Ruta para el catálogo de productos
@@ -185,3 +187,56 @@ def crear():
 @bp.route('/editar')
 def editar():
     return render_template('productos/editar.html')
+
+@bp.route('/exportar_excel')
+@login_required
+def exportar_productos_excel():
+    # Hacemos los JOINs con las tablas relacionadas
+    productos = (
+        db.session.query(
+            Productos.pro_codigo,
+            Productos.pro_nombre,
+            Productos.pro_descripcion,
+            Productos.pro_cat_id,
+            Categorias.cat_nombre.label("nombre_categoria"),
+            Productos.pro_pres_id,
+            Presentacion.pres_nombre.label("nombre_presentacion"),
+            Productos.pro_uni_id,
+            Unidad.uni_nombre.label("nombre_unidad"),
+            Productos.pro_mar_id,
+            Marca.mar_nombre.label("nombre_marca")
+        )
+        .outerjoin(Categorias, Productos.pro_cat_id == Categorias.cat_id)
+        .outerjoin(Presentacion, Productos.pro_pres_id == Presentacion.pres_id)
+        .outerjoin(Unidad, Productos.pro_uni_id == Unidad.uni_id)
+        .outerjoin(Marca, Productos.pro_mar_id == Marca.mar_id)
+        .all()
+    )
+
+    # Convertimos los resultados a diccionarios para exportar
+    data = [
+        {
+            'Código': p.pro_codigo,
+            'Nombre': p.pro_nombre,
+            'Descripción': p.pro_descripcion,
+            'ID Categoría': p.pro_cat_id,
+            'Nombre Categoría': p.nombre_categoria or '',
+            'ID Presentación': p.pro_pres_id,
+            'Nombre Presentación': p.nombre_presentacion or '',
+            'ID Unidad': p.pro_uni_id,
+            'Nombre Unidad': p.nombre_unidad or '',
+            'ID Marca': p.pro_mar_id,
+            'Nombre Marca': p.nombre_marca or '',
+        }
+        for p in productos
+    ]
+
+    columnas = [
+        'Código', 'Nombre', 'Descripción',
+        'ID Categoría', 'Nombre Categoría',
+        'ID Presentación', 'Nombre Presentación',
+        'ID Unidad', 'Nombre Unidad',
+        'ID Marca', 'Nombre Marca'
+    ]
+
+    return exportar_a_excel('productos', columnas, data)
