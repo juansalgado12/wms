@@ -1,8 +1,6 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
-from wmsr import documento_recibo
-
 # Inicializar la base de datos
 db = SQLAlchemy()
 
