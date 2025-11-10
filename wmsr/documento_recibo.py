@@ -4,6 +4,7 @@ from .auth import login_required
 from .models import DocumentoRecibo, Proveedor
 from . import db
 from wmsr.utils.export_excel import exportar_a_excel
+from datetime import datetime, timezone
 
 bp = Blueprint('documento_recibo', __name__, url_prefix='/documento_recibo')
 
@@ -20,9 +21,81 @@ def lista_documentos():
 
     return render_template('documento_recibo/listadocumentos.html', documentos=documentos, proveedores=proveedores, proveedores_map=proveedores_map)
 
-@bp.route('/crear')
+@bp.route('/crear', methods=('GET', 'POST'))
 def crear_documento():
-    return render_template('documento_recibo/creardocumento.html')
+
+    if request.method == 'POST':
+        id_documento = request.form.get('doc_id')
+        proveedor = request.form.get('proveedor')
+        estado = request.form.get('estado')
+        descripcion = request.form.get('descripcion')
+
+        # Validar campos obligatorios
+        if not id_documento or not proveedor or not estado:
+            flash('Por favor, complete todos los campos obligatorios.', 'error')
+            proveedores = Proveedor.query.all()
+            return render_template('documento_recibo/creardocumentos.html', proveedores=proveedores, estados=['PENDIENTE', 'RECHAZADO', 'ACEPTADO'])
+        
+        # Validar unicidad del ID del documento
+        id_existente = DocumentoRecibo.query.filter_by(doc_id=id_documento).first()
+        if id_existente:
+            flash(f'El ID del documento {id_documento} ya existe. Por favor, digite uno diferente.', 'error')
+            proveedores = Proveedor.query.all()
+            return render_template('documento_recibo/creardocumentos.html', proveedores=proveedores, estados=['PENDIENTE', 'RECHAZADO', 'ACEPTADO'])
+        
+        # validar existencia del proveedor
+        try:
+            prov_id = int(proveedor)
+        except (ValueError, TypeError):
+            flash('Proveedor inválido. Por favor, seleccione un proveedor válido.', 'error')
+            proveedores = Proveedor.query.all()
+            return render_template('documento_recibo/creardocumentos.html', proveedores=proveedores, estados=['PENDIENTE', 'RECHAZADO', 'ACEPTADO'])
+        
+        if not Proveedor.query.get(prov_id):
+            flash('El proveedor seleccionado no existe. Por favor, seleccione un proveedor válido.', 'error')
+            proveedores = Proveedor.query.all()
+            return render_template('documento_recibo/creardocumentos.html', proveedores=proveedores, estados=['PENDIENTE', 'RECHAZADO', 'ACEPTADO'])
+        
+        # Obtener o establecer la fecha de creación (se espera formato YYYY-MM-DD desde el formulario)
+        fecha_str = request.form.get('fecha')
+        if fecha_str:
+            try:
+                fecha = datetime.strptime(fecha_str, '%Y-%m-%d')
+                # convertir a timezone-aware en UTC
+                fecha = fecha.replace(tzinfo=timezone.utc)
+            except ValueError:
+                flash('Fecha inválida. Use el formato AAAA-MM-DD.', 'error')
+                proveedores = Proveedor.query.all()
+                return render_template('documento_recibo/creardocumentos.html', proveedores=proveedores, estados=['PENDIENTE', 'RECHAZADO', 'ACEPTADO'])
+        else:
+            # usar objeto timezone-aware en UTC
+            fecha = datetime.now(timezone.utc)
+
+        # Crear y guardar el nuevo documento pasando los campos requeridos al constructor
+        # El constructor de DocumentoRecibo requiere al menos doc_id y doc_id_proveedor, por eso los proporcionamos aquí.
+        try:
+            documento = DocumentoRecibo(
+                doc_id=id_documento,
+                doc_id_proveedor=prov_id,
+                doc_fecha=fecha,
+                doc_estado=estado,
+                doc_descripcion=descripcion
+            )
+        except TypeError:
+            # Si la clase espera argumentos posicionales, usar la forma posicional como respaldo
+            documento = DocumentoRecibo(id_documento, prov_id)
+            documento.doc_fecha = fecha
+            documento.doc_estado = estado
+            documento.doc_descripcion = descripcion
+
+        db.session.add(documento)
+        db.session.commit()
+        flash(f'Documento {id_documento} creado correctamente.', 'success')
+        return redirect(url_for('documento_recibo.lista_documentos'))
+
+
+    # En el GET incluir proveedores y estados para que aparezcan en el formulario
+    return render_template('documento_recibo/creardocumentos.html', proveedores=Proveedor.query.all(), estados=['PENDIENTE', 'RECHAZADO', 'ACEPTADO'])
 
 @bp.route('/editar')
 def editar_documento():

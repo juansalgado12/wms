@@ -37,7 +37,7 @@
 
   <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
     <table class="min-w-full text-sm text-left text-gray-700 dark:text-gray-300">
-      <thead class="text-xs uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-300">
+      <thead class="text-xs uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400">
         <tr>
           <th class="px-6 py-3">ID de documento</th>
           <th class="px-6 py-3">Proveedor</th>
@@ -55,7 +55,29 @@
           <td class="px-6 py-4 whitespace-nowrap text-slate-700 dark:text-gray-200">{{ documento.doc_id }}</td>
           <td class="px-6 py-4 whitespace-nowrap text-slate-700 dark:text-gray-200">{{ proveedores_map.get(documento.doc_id_proveedor) }}</td>
           <td class="px-6 py-4 whitespace-nowrap text-slate-700 dark:text-gray-200">{{ documento.doc_fecha }}</td>
-          <td class="px-6 py-4 whitespace-nowrap text-slate-700 dark:text-gray-200">{{ documento.doc_estado }}</td>
+          {% if documento.doc_estado == 'RECHAZADO' %}
+          <td class="px-6 py-4 whitespace-nowrap">
+            <span class="inline-block px-2 py-1 rounded-md bg-red-100 text-red-800 dark:bg-red-700 dark:text-red-100 font-medium">
+              {{ documento.doc_estado }}
+            </span>
+          </td>
+          {% elif documento.doc_estado == 'PENDIENTE' %}
+          <td class="px-6 py-4 whitespace-nowrap">
+            <span class="inline-block px-2 py-1 rounded-md bg-yellow-100 text-yellow-800 dark:bg-yellow-600 dark:text-yellow-100 font-medium">
+              {{ documento.doc_estado }}
+            </span>
+          </td>
+          {% elif documento.doc_estado == 'ACEPTADO' %}
+          <td class="px-6 py-4 whitespace-nowrap">
+            <span class="inline-block px-2 py-1 rounded-md bg-green-100 text-green-800 dark:bg-green-700 dark:text-green-100 font-medium">
+              {{ documento.doc_estado }}
+            </span>
+          </td>
+          {% else %}
+          <td class="px-6 py-4 whitespace-nowrap text-slate-700 dark:text-gray-200">
+            {{ documento.doc_estado }}
+          </td>
+          {% endif %}
           <td class="px-6 py-4 text-slate-700 dark:text-gray-200">{{ documento.doc_descripcion }}</td>
 
           <td class="px-6 py-4 text-center">
