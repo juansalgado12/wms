@@ -5,6 +5,7 @@ from .models import DocumentoRecibo, Proveedor
 from . import db
 from wmsr.utils.export_excel import exportar_a_excel
 from datetime import datetime, timezone
+from zoneinfo import ZoneInfo # manejo de zonas horarias
 
 bp = Blueprint('documento_recibo', __name__, url_prefix='/documento_recibo')
 
@@ -57,19 +58,20 @@ def crear_documento():
             return render_template('documento_recibo/creardocumentos.html', proveedores=proveedores, estados=['PENDIENTE', 'RECHAZADO', 'ACEPTADO'])
         
         # Obtener o establecer la fecha de creación (se espera formato YYYY-MM-DD desde el formulario)
+        tz_colombia = ZoneInfo("America/Bogota")
         fecha_str = request.form.get('fecha')
         if fecha_str:
             try:
                 fecha = datetime.strptime(fecha_str, '%Y-%m-%d')
-                # convertir a timezone-aware en UTC
-                fecha = fecha.replace(tzinfo=timezone.utc)
+                # establecer la fecha como timezone-aware en hora colombiana
+                fecha = fecha.replace(tzinfo=tz_colombia)
             except ValueError:
                 flash('Fecha inválida. Use el formato AAAA-MM-DD.', 'error')
                 proveedores = Proveedor.query.all()
                 return render_template('documento_recibo/creardocumentos.html', proveedores=proveedores, estados=['PENDIENTE', 'RECHAZADO', 'ACEPTADO'])
         else:
-            # usar objeto timezone-aware en UTC
-            fecha = datetime.now(timezone.utc)
+            # usar la hora actual en Colombia
+            fecha = datetime.now(tz_colombia)
 
         # Crear y guardar el nuevo documento pasando los campos requeridos al constructor
         # El constructor de DocumentoRecibo requiere al menos doc_id y doc_id_proveedor, por eso los proporcionamos aquí.
