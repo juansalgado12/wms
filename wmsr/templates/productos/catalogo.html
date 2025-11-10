@@ -88,7 +88,7 @@
           <td class="px-6 py-4 whitespace-nowrap">{{ p.pro_codigo or '-' }}</td>
           <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{{ p.pro_nombre or '-' }}
           </td>
-          <td class="px-6 py-4 text-gray-600">
+          <td class="px-6 py-4 text-gray-400">
             <div class="whitespace-normal break-words" title="{{ p.pro_descripcion }}">
               {{ p.pro_descripcion or '-' }}
             </div>
@@ -109,7 +109,7 @@
             {% endif %}
           </td>
           <td class="px-6 py-4 text-center">
-            <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Editar</a>
+            <a href="{{url_for('productos.editar_producto', codigo=p.pro_codigo)}}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Editar</a>
             <a href="#" class="font-medium text-red-600 dark:text-red-500 hover:underline">Borrar</a>
           </td>
         </tr>
