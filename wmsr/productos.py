@@ -346,6 +346,45 @@ def editar_producto(codigo):
 
     return render_template('productos/editarproducto.html', producto=producto, categorias=categorias, presentaciones=presentaciones, unidades=unidades, marcas=marcas, producto_image_url=producto_image_url)
 
+@bp.route('/borrar/<string:codigo>', methods=('GET', 'POST'))
+@login_required
+def borrar_producto(codigo):
+    # Buscar el producto
+    producto = Productos.query.get(codigo)
+    if not producto:
+        flash('Producto no encontrado.', 'error')
+        return redirect(url_for('productos.catalogo'))
+
+    try:
+        # Buscar todas las imágenes asociadas
+        imagenes = ProductoImagenes.query.filter_by(img_pro_codigo=codigo).all()
+
+        for im in imagenes:
+            # Intentar eliminar el fichero físico solo si apunta a la carpeta uploads/products
+            try:
+                if im.img_url and 'uploads/products/' in im.img_url:
+                    # extraer el nombre de fichero
+                    filename = os.path.basename(im.img_url)
+                    file_path = os.path.join(current_app.root_path, 'static', 'uploads', 'products', filename)
+                    if os.path.exists(file_path):
+                        os.remove(file_path)
+                # eliminar registro de imagen
+                db.session.delete(im)
+            except Exception:
+                current_app.logger.exception(f'Error borrando imagen en disco para producto {codigo}')
+
+        # Eliminar el producto
+        db.session.delete(producto)
+        db.session.commit()
+        flash('Producto y sus imágenes fueron eliminados correctamente.', 'success')
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.exception('Error al borrar producto')
+        flash('Ocurrió un error al eliminar el producto. (' + f"{e.__class__.__name__}: {e}" + ')', 'error')
+
+    return redirect(url_for('productos.catalogo'))
+    
+
 @bp.route('/exportar_excel')
 @login_required
 def exportar_productos_excel():

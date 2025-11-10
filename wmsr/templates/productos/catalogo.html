@@ -110,7 +110,7 @@
           </td>
           <td class="px-6 py-4 text-center">
             <a href="{{url_for('productos.editar_producto', codigo=p.pro_codigo)}}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Editar</a>
-            <a href="#" class="font-medium text-red-600 dark:text-red-500 hover:underline">Borrar</a>
+            <a href="{{url_for('productos.borrar_producto', codigo=p.pro_codigo)}}" class="font-medium text-red-600 dark:text-red-500 hover:underline" onclick="return confirm('¿Está seguro de que desea eliminar este producto?');">Borrar</a>
           </td>
         </tr>
         {% endfor %}
