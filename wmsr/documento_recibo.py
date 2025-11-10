@@ -14,7 +14,7 @@ def lista_documentos():
     proveedores = Proveedor.query.all()
 
     # Mapear los IDs de proveedores a sus nombres para un acceso rápido
-    proveedores_map = {p.prov_id: p.prov_nombre for p in proveedores}
+    proveedores_map = {p.prov_id: p.prov_razon_social for p in proveedores}
 
 
     return render_template('documento_recibo/listadocumentos.html', documentos=documentos, proveedores=proveedores, proveedores_map=proveedores_map)
