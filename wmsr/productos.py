@@ -183,10 +183,168 @@ def crear():
     marcas = Marca.query.all()
     return render_template('productos/crearproductos.html', categorias=categorias, presentaciones=presentaciones, unidades=unidades, marcas=marcas)
 
-# Ruta para editar un producto existente
-@bp.route('/editar')
-def editar():
-    return render_template('productos/editar.html')
+# Ruta para editar un producto existente (editar por código)
+@bp.route('/editar/<string:codigo>', methods=('GET', 'POST'))
+@login_required
+def editar_producto(codigo):
+    # Buscar producto por código
+    producto = Productos.query.get(codigo)
+    if not producto:
+        flash('Producto no encontrado.', 'error')
+        return redirect(url_for('productos.catalogo'))
+
+    if request.method == 'POST':
+        # Leer campos del formulario
+        new_codigo = request.form.get('pro_codigo')
+        nombre = request.form.get('pro_nombre')
+        categoria = request.form.get('pro_cat_id')
+        presentacion = request.form.get('pro_pres_id')
+        unidad = request.form.get('pro_uni_id')
+        marca = request.form.get('pro_mar_id')
+        descripcion = request.form.get('pro_descripcion')
+        imagen = request.files.get('image') or request.files.get('images')
+
+        # Validaciones básicas
+        if not new_codigo or not nombre or not categoria or not presentacion or not unidad or not marca:
+            flash('Por favor, complete todos los campos obligatorios.', 'error')
+            # recargar selects abajo
+        else:
+            # unicidad nombre (excluir el producto actual)
+            otro_nombre = Productos.query.filter(Productos.pro_nombre == nombre, Productos.pro_codigo != producto.pro_codigo).first()
+            if otro_nombre:
+                flash('Ya existe otro producto con ese nombre.', 'error')
+            else:
+                # Si cambió el código, validar que no exista ya
+                codigo_cambiado = (new_codigo != producto.pro_codigo)
+                if codigo_cambiado and Productos.query.get(new_codigo):
+                    flash('El nuevo código ya está en uso por otro producto.', 'error')
+                else:
+                    # Validar FK ids
+                    try:
+                        cat_id = int(categoria)
+                        pres_id = int(presentacion)
+                        uni_id = int(unidad)
+                        mar_id = int(marca)
+                    except (ValueError, TypeError):
+                        flash('Selecciona opciones válidas para categoría/presentación/unidad/marca.', 'error')
+                        cat_id = pres_id = uni_id = mar_id = None
+
+                    if not (cat_id and pres_id and uni_id and mar_id):
+                        pass
+                    elif not (Categorias.query.get(cat_id) and Presentacion.query.get(pres_id) and Unidad.query.get(uni_id) and Marca.query.get(mar_id)):
+                        flash('Alguna de las opciones seleccionadas no existe en la base de datos.', 'error')
+                    else:
+                        # Comenzar transacción
+                        try:
+                            if codigo_cambiado:
+                                # Crear nuevo producto con el nuevo código
+                                nuevo = Productos(pro_codigo=new_codigo, pro_nombre=nombre, pro_cat_id=cat_id, pro_pres_id=pres_id, pro_uni_id=uni_id, pro_mar_id=mar_id, pro_descripcion=descripcion)
+                                db.session.add(nuevo)
+                                db.session.flush()
+
+                                # Mover imágenes existentes al nuevo código (si las hay)
+                                imagenes = ProductoImagenes.query.filter_by(img_pro_codigo=producto.pro_codigo).all()
+                                for im in imagenes:
+                                    im.img_pro_codigo = new_codigo
+                                    db.session.add(im)
+
+                                # Manejo de imagen subida (reemplazo)
+                                if imagen and imagen.filename:
+                                    # Guardar fichero nuevo
+                                    filename = secure_filename(imagen.filename)
+                                    timestamp = datetime.utcnow().strftime('%Y%m%d%H%M%S')
+                                    name, ext = os.path.splitext(filename)
+                                    name = name[:40]
+                                    filename = f"{new_codigo}_{timestamp}_{name}{ext}"
+                                    upload_folder = os.path.join(current_app.root_path, 'static', 'uploads', 'products')
+                                    os.makedirs(upload_folder, exist_ok=True)
+                                    save_path = os.path.join(upload_folder, filename)
+                                    imagen.save(save_path)
+                                    img_url = url_for('static', filename=f'uploads/products/{filename}')
+
+                                    # Si había imágenes previamente, reemplazar la primera
+                                    im_first = ProductoImagenes.query.filter_by(img_pro_codigo=new_codigo).first()
+                                    if im_first:
+                                        # eliminar archivo anterior en disco (si existe)
+                                        try:
+                                            old_filename = os.path.basename(im_first.img_url)
+                                            old_path = os.path.join(current_app.root_path, 'static', 'uploads', 'products', old_filename)
+                                            if os.path.exists(old_path):
+                                                os.remove(old_path)
+                                        except Exception:
+                                            current_app.logger.exception('No se pudo eliminar la imagen anterior')
+                                        im_first.img_url = img_url
+                                        db.session.add(im_first)
+                                    else:
+                                        new_im = ProductoImagenes(img_pro_codigo=new_codigo, img_url=img_url, img_descripcion=None)
+                                        db.session.add(new_im)
+
+                                # Borrar el producto antiguo
+                                db.session.delete(producto)
+                                db.session.commit()
+                                flash('Producto actualizado correctamente.', 'success')
+                                return redirect(url_for('productos.catalogo'))
+
+                            else:
+                                # Código no cambia, actualizar campos sobre el mismo objeto
+                                producto.pro_nombre = nombre
+                                producto.pro_cat_id = cat_id
+                                producto.pro_pres_id = pres_id
+                                producto.pro_uni_id = uni_id
+                                producto.pro_mar_id = mar_id
+                                producto.pro_descripcion = descripcion
+                                db.session.add(producto)
+                                db.session.flush()
+
+                                # Manejo de imagen: reemplazar si se sube una nueva
+                                if imagen and imagen.filename:
+                                    filename = secure_filename(imagen.filename)
+                                    timestamp = datetime.utcnow().strftime('%Y%m%d%H%M%S')
+                                    name, ext = os.path.splitext(filename)
+                                    name = name[:40]
+                                    filename = f"{producto.pro_codigo}_{timestamp}_{name}{ext}"
+                                    upload_folder = os.path.join(current_app.root_path, 'static', 'uploads', 'products')
+                                    os.makedirs(upload_folder, exist_ok=True)
+                                    save_path = os.path.join(upload_folder, filename)
+                                    imagen.save(save_path)
+                                    img_url = url_for('static', filename=f'uploads/products/{filename}')
+
+                                    im_first = ProductoImagenes.query.filter_by(img_pro_codigo=producto.pro_codigo).first()
+                                    if im_first:
+                                        # eliminar archivo anterior
+                                        try:
+                                            old_filename = os.path.basename(im_first.img_url)
+                                            old_path = os.path.join(current_app.root_path, 'static', 'uploads', 'products', old_filename)
+                                            if os.path.exists(old_path):
+                                                os.remove(old_path)
+                                        except Exception:
+                                            current_app.logger.exception('No se pudo eliminar la imagen anterior')
+                                        im_first.img_url = img_url
+                                        db.session.add(im_first)
+                                    else:
+                                        new_im = ProductoImagenes(img_pro_codigo=producto.pro_codigo, img_url=img_url, img_descripcion=None)
+                                        db.session.add(new_im)
+
+                                db.session.commit()
+                                flash('Producto actualizado correctamente.', 'success')
+                                return redirect(url_for('productos.catalogo'))
+
+                        except Exception as e:
+                            db.session.rollback()
+                            current_app.logger.exception('Error actualizando producto')
+                            flash('Ocurrió un error al actualizar el producto. (' + f"{e.__class__.__name__}: {e}" + ')', 'error')
+
+    # GET: renderizar formulario con datos para selects (y por si POST falló, recargar selects)
+    categorias = Categorias.query.all()
+    presentaciones = Presentacion.query.all()
+    unidades = Unidad.query.all()
+    marcas = Marca.query.all()
+
+    # obtener primera imagen
+    img_row = ProductoImagenes.query.filter_by(img_pro_codigo=producto.pro_codigo).first()
+    producto_image_url = img_row.img_url if img_row else None
+
+    return render_template('productos/editarproducto.html', producto=producto, categorias=categorias, presentaciones=presentaciones, unidades=unidades, marcas=marcas, producto_image_url=producto_image_url)
 
 @bp.route('/exportar_excel')
 @login_required
