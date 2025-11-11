@@ -9,12 +9,13 @@ bp = Blueprint('proveedores', __name__, url_prefix='/proveedores')
 
 # Ruta para la lista de proveedores
 @bp.route('/')
+@login_required
 def lista_proveedores():
     # Aquí iría la lógica para obtener la lista de proveedores
     proveedores = Proveedor.query.all()
     return render_template('documento_recibo/proveedores/listaproveedores.html', proveedores=proveedores)
 
-@bp.route('/crear', methods=['GET', 'POST'])
+@bp.route('/crear', methods=('GET', 'POST'))
 @login_required
 def crear_proveedor():
     if request.method == 'POST':
