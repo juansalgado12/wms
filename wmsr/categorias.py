@@ -1,7 +1,9 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 
+from wmsr.utils.export_excel import exportar_a_excel
+
 from .auth import login_required # Importar el decorador de login requerido si es necesario
-from .models import Categorias # Importar el modelo de Categorías
+from .models import Categorias, Productos # Importar el modelo de Categorías
 from . import db # Importar la base de datos
 
 bp = Blueprint('categorias', __name__, url_prefix='/categorias')
@@ -85,16 +87,33 @@ def editar_categoria(id):
 def borrar_categoria(id):
     categoria = Categorias.query.get_or_404(id)
     # Verificar si la categoría está asignada a algún producto o ubicación
-    # productos_asociados = getattr(categoria, 'productos', []) 
-    # ubicaciones_asociadas = getattr(categoria, 'ubicaciones', [])
-
-    # if productos_asociados or ubicaciones_asociadas:
-    #     flash('No se puede eliminar la categoría porque está asignada a productos o ubicaciones.', 'error')
-    #     return redirect(url_for('categorias.lista_categorias'))
     
+    productos_asociados = Productos.query.filter_by(pro_cat_id=id).count()
+    if productos_asociados > 0:
+        flash(f'No se puede eliminar la categoría "{categoria.cat_nombre}" porque está asociada a {productos_asociados} producto(s).', 'error')
+        return redirect(url_for('categorias.lista_categorias'))
+
     db.session.delete(categoria)
     db.session.commit()
 
     mensaje_exito = 'Categoría borrada exitosamente.'
     flash(mensaje_exito, 'success')
+    
     return redirect(url_for('categorias.lista_categorias', mensaje_exito=mensaje_exito))
+
+@bp.route('/exportar_excel')
+@login_required
+def exportar_categorias_excel():
+    categorias = Categorias.query.all()
+
+    data = [
+        {
+            'ID': c.cat_id,
+            'Nombre': c.cat_nombre,
+            'Descripción': c.cat_descripcion
+        }
+        for c in categorias
+    ]
+
+    columnas = ['ID', 'Nombre', 'Descripción']
+    return exportar_a_excel('categorias', columnas, data)

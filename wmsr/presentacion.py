@@ -1,7 +1,9 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 
+from wmsr.utils.export_excel import exportar_a_excel
+
 from .auth import login_required # Importar el decorador de login requerido
-from .models import Presentacion # Importar el modelo de Presentacion
+from .models import Presentacion, Productos # Importar el modelo de Presentacion
 from wmsr import db # Importar la base de datos
 
 bp = Blueprint('presentacion', __name__, url_prefix='/presentacion')
@@ -77,15 +79,33 @@ def borrar_presentacion(id):
     presentacion = Presentacion.query.get_or_404(id)
 
     # Verificar si la presentación está asignada a algún producto
-    # productos_asociados = getattr(presentacion, 'productos', [])
-
-    # if productos_asociados:
-    #     flash('No se puede eliminar la presentación porque está asignada a productos existentes.', 'error')
-    #     return redirect(url_for('presentacion.lista_presentaciones'))
+    
+    productos_asociados = Productos.query.filter_by(pro_pres_id=id).count()
+    if productos_asociados > 0:
+        flash(f'No se puede eliminar la presentación "{presentacion.pres_nombre}" porque está asociada a {productos_asociados} producto(s).', 'error')
+        return redirect(url_for('presentacion.lista_presentaciones'))
 
     db.session.delete(presentacion)
     db.session.commit()
 
     mensaje_exito = 'Presentación eliminada exitosamente.'
     flash(mensaje_exito, 'success')
+    
     return redirect(url_for('presentacion.lista_presentaciones', mensaje_exito=mensaje_exito))
+
+@bp.route('/exportar_excel')
+@login_required
+def exportar_presentaciones_excel():
+    presentaciones = Presentacion.query.all()
+
+    data = [
+        {
+            'ID': p.pres_id,
+            'Nombre': p.pres_nombre,
+            'Descripción': p.pres_descripcion
+        } 
+        for p in presentaciones
+    ]
+
+    columnas = ['ID', 'Nombre', 'Descripción']
+    return exportar_a_excel('presentaciones', columnas, data)

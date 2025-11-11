@@ -1,0 +1,53 @@
+{% extends 'layouts/base.html' %}
+{% block title %}Editar proveedor - Warehouse Management System{% endblock %}
+{% block content %}
+<div class="flex flex-col items-center justify-center min-h-[60vh] py-12">
+    <div class="w-full max-w-md rounded-xl shadow-lg p-8 border border-slate-700 bg-slate-800">
+        <h2 class="text-2xl font-bold text-slate-800 mb-6 text-center dark:text-white">Editar proveedor</h2>
+        <form method="POST" action="" class="">
+            <!-- Aquí van los campos del formulario (estilo oscuro) -->
+
+            <div class="mb-4">
+            <label for="razonsocial" class="block text-slate-200 font-medium mb-2">Razón social</label>
+            <input type="text" id="razonsocial" name="razonsocial" value="{{proveedor.prov_razon_social}}" minlength="3" maxlength="100" required
+                class="w-full px-4 py-2 bg-slate-800 text-slate-100 border border-slate-700 rounded-lg placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+            </div>
+
+            <div class="mb-4">
+            <label for="direccion" class="block text-slate-200 font-medium mb-2">Dirección</label>
+            <input type="text" id="direccion" name="direccion" value="{{proveedor.prov_direccion}}" minlength="6" maxlength="100" required
+                class="w-full px-4 py-2 bg-slate-800 text-slate-100 border border-slate-700 rounded-lg placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+            </div>
+
+            <div class="mb-4">
+            <label for="telefono" class="block text-slate-200 font-medium mb-2">Teléfono</label>
+            <input type="text" id="telefono" name="telefono" value="{{proveedor.prov_telefono}}" minlength="10" maxlength="15" required
+                class="w-full px-4 py-2 bg-slate-800 text-slate-100 border border-slate-700 rounded-lg placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+            </div>
+
+            <div class="mb-4">
+            <label for="correo" class="block text-slate-200 font-medium mb-2">Correo electrónico</label>
+            <input type="email" id="correo" name="correo" value="{{proveedor.prov_email}}" minlength="8" maxlength="100" required
+                class="w-full px-4 py-2 bg-slate-800 text-slate-100 border border-slate-700 rounded-lg placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+            </div>
+
+            <div class="mb-4">
+            <label for="descripcion" class="block text-slate-200 font-medium mb-2">Descripción</label>
+            <textarea id="descripcion" name="descripcion" required
+                class="w-full px-4 py-2 bg-slate-800 text-slate-100 border border-slate-700 rounded-lg placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">{{proveedor.prov_descripcion}}</textarea>
+            </div>
+
+            <div class="flex gap-3 justify-center mt-6">
+            <a href="{{url_for('proveedores.lista_proveedores')}}"
+                class="px-8 py-4 bg-transparent text-white font-semibold text-green-500 dark:text-red-500 hover:text-white border border-red-500 hover:border-white rounded">
+                Cancelar
+            </a>
+            <button type="submit"
+                class="w-full py-3 text-white font-semibold bg-transparent text-green-500 dark:text-green-500 hover:text-white border border-green-500 hover:border-white rounded">
+                Editar proveedor
+            </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,7 +1,10 @@
+from sqlite3 import IntegrityError
 from flask import Blueprint, render_template, redirect, flash, request, url_for
 
+from wmsr.utils.export_excel import exportar_a_excel
+
 from .auth import login_required # Importar el decorador de login requerido
-from .models import Presentacion, Unidad # Importar el modelo de Unidad
+from .models import Productos, Unidad # Importar el modelo de Unidad
 from wmsr import db # Importar la base de datos
 
 bp = Blueprint('unidad', __name__, url_prefix='/unidad')
@@ -75,16 +78,34 @@ def editar_unidad(id):
 def borrar_unidad(id):
     unidad = Unidad.query.get_or_404(id)
 
-    # Verificar si la unidad está asignada a algún producto
-    # productos_asociados = getattr(unidad, 'productos', [])
+    productos_asociados = Productos.query.filter_by(pro_uni_id=id).count()
 
-    # if productos_asociados:
-    #     flash('No se puede eliminar la unidad porque está asignada a productos existentes.', 'error')
-    #     return redirect(url_for('unidad.lista_unidades'))
+    if productos_asociados > 0:
+        flash(f'No se puede eliminar la unidad "{unidad.uni_nombre}" porque está asociada a {productos_asociados} producto(s).', 'error')
+        return redirect(url_for('unidad.lista_unidades'))
 
     db.session.delete(unidad)
     db.session.commit()
-
     mensaje_exito = 'Unidad eliminada exitosamente.'
     flash(mensaje_exito, 'success')
+   
+
     return redirect(url_for('unidad.lista_unidades', mensaje_exito=mensaje_exito))
+
+@bp.route('/exportar_excel')
+@login_required
+def exportar_unidades_excel():
+    unidades = Unidad.query.all()
+
+    data = [
+        {
+            'ID': u.uni_id,
+            'Nombre': u.uni_nombre,
+            'Descripción': u.uni_descripcion
+        }
+        for u in unidades
+    ]
+    columnas = ['ID', 'Nombre', 'Descripción']
+    return exportar_a_excel('unidades', columnas, data)
+
+

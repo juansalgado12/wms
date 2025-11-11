@@ -1,0 +1,58 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}Editar documento de recibo - Warehouse Management System{% endblock %}
+{% block content %}
+<div class="flex flex-col items-center justify-center min-h-[60vh] py-12">
+    <div class="w-full max-w-md rounded-xl shadow-lg p-8 border border-slate-700 bg-slate-800">
+        <h2 class="text-2xl font-bold text-slate-800 mb-6 text-center dark:text-white">Editar documento de recibo</h2>
+        <form method="POST" action="" class="">
+            <!-- Aquí van los campos del formulario (estilo oscuro) -->
+
+            <div class="mb-4">
+            <label for="doc_id" class="block text-slate-200 font-medium mb-2">ID del documento</label>
+            <input type="text" id="doc_id" name="doc_id" value="{{documento.doc_id}}" minlength="3" maxlength="100" required
+                class="w-full px-4 py-2 bg-slate-800 text-slate-100 border border-slate-700 rounded-lg placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+            </div>
+
+            <div class="mb-4">
+            <label for="proveedor" class="block text-slate-200 font-medium mb-2">Proveedor</label>
+            <select id="proveedor" name="proveedor" minlength="6" maxlength="100" required
+                class="w-full px-4 py-2 bg-slate-800 text-slate-100 border border-slate-700 rounded-lg placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+                <option value="">Seleccione un proveedor</option>
+                {% for proveedor in proveedores %}
+                    <option value="{{ proveedor.prov_id }}" {% if proveedor.prov_id == documento.doc_id_proveedor %}selected{% endif %}>{{ proveedor.prov_razon_social }}</option>
+                {% endfor %}
+            </select>
+            </div>
+
+            <div class="mb-4">
+                <label for="estado" class="block text-slate-200 font-medium mb-2">Estado</label>
+                <select id="estado" name="estado" required
+                    class="w-full px-4 py-2 bg-slate-800 text-slate-100 border border-slate-700 rounded-lg placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+                    <option value="" selected>Seleccione un estado</option>
+                    {% for estado in estados %}
+                    <option value="{{ estado }}" {% if estado == documento.doc_estado %}selected{% endif %}>{{ estado|capitalize }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="mb-4">
+            <label for="descripcion" class="block text-slate-200 font-medium mb-2">Descripción</label>
+            <textarea id="descripcion" name="descripcion" required
+                class="w-full px-4 py-2 bg-slate-800 text-slate-100 border border-slate-700 rounded-lg placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">{{documento.doc_descripcion}}</textarea>
+            </div>
+
+            <div class="flex gap-3 justify-center mt-6">
+            <a href="{{url_for('documento_recibo.lista_documentos')}}"
+                class="px-8 py-4 bg-transparent text-white font-semibold text-green-500 dark:text-red-500 hover:text-white border border-red-500 hover:border-white rounded">
+                Cancelar
+            </a>
+            <button type="submit"
+                class="w-full py-3 text-white font-semibold bg-transparent text-green-500 dark:text-green-500 hover:text-white border border-green-500 hover:border-white rounded">
+                Crear proveedor
+            </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock%}
