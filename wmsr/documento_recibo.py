@@ -99,9 +99,72 @@ def crear_documento():
     # En el GET incluir proveedores y estados para que aparezcan en el formulario
     return render_template('documento_recibo/creardocumentos.html', proveedores=Proveedor.query.all(), estados=['PENDIENTE', 'RECHAZADO', 'ACEPTADO'])
 
-@bp.route('/editar')
-def editar_documento():
-    return render_template('documento_recibo/editardocumento.html')
+@bp.route('/editar/<string:doc_id>', methods=('GET', 'POST'))
+def editar_documento(doc_id):
+    # Buscar el documento por su ID
+    documento = DocumentoRecibo.query.get_or_404(doc_id)
+    if not documento:
+        flash(f'El documento con ID {doc_id} no existe.', 'error')
+        return redirect(url_for('documento_recibo.lista_documentos'))
+    
+    if request.method == 'POST':
+        # Leer los datos del formulario
+        id_documento = (request.form.get('doc_id') or '').strip()
+        proveedor = request.form.get('proveedor')
+        estado = request.form.get('estado')
+        descripcion = request.form.get('descripcion')
+
+        # Validar campos obligatorios
+        if not id_documento or not proveedor or not estado:
+            flash('Por favor, complete todos los campos obligatorios.', 'error')
+            return render_template('documento_recibo/editardocumento.html', documento=documento, proveedores=Proveedor.query.all(), estados=['PENDIENTE', 'RECHAZADO', 'ACEPTADO'])
+
+        # Validar unicidad del ID del documento si fue modificado
+        if id_documento != documento.doc_id:
+            existente = DocumentoRecibo.query.filter_by(doc_id=id_documento).first()
+            if existente:
+                flash(f'El ID del documento {id_documento} ya existe. Por favor, digite uno diferente.', 'error')
+                return render_template('documento_recibo/editardocumentos.html', documento=documento, proveedores=Proveedor.query.all(), estados=['PENDIENTE', 'RECHAZADO', 'ACEPTADO'])
+
+        # validar existencia del proveedor
+        try:
+            prov_id = int(proveedor)
+        except (ValueError, TypeError):
+            flash('Proveedor inválido. Por favor, seleccione un proveedor válido.', 'error')
+            return render_template('documento_recibo/editardocumento.html', documento=documento, proveedores=Proveedor.query.all(), estados=['PENDIENTE', 'RECHAZADO', 'ACEPTADO'])
+        
+        if not Proveedor.query.get(prov_id):
+            flash('El proveedor seleccionado no existe. Por favor, seleccione un proveedor válido.', 'error')
+            return render_template('documento_recibo/editardocumento.html', documento=documento, proveedores=Proveedor.query.all(), estados=['PENDIENTE', 'RECHAZADO', 'ACEPTADO'])
+        
+        tz_colombia = ZoneInfo("America/Bogota")
+        fecha_str = request.form.get('fecha')
+        if fecha_str:
+            try:
+                fecha = datetime.strptime(fecha_str, '%Y-%m-%d')
+                # establecer la fecha como timezone-aware en hora colombiana
+                fecha = fecha.replace(tzinfo=tz_colombia)
+            except ValueError:
+                flash('Fecha inválida. Use el formato AAAA-MM-DD.', 'error')
+                proveedores = Proveedor.query.all()
+                return render_template('documento_recibo/creardocumentos.html', proveedores=proveedores, estados=['PENDIENTE', 'RECHAZADO', 'ACEPTADO'])
+        else:
+            # usar la hora actual en Colombia
+            fecha = datetime.now(tz_colombia)
+        
+        # Actualizar los campos del documento
+        documento.doc_id = id_documento
+        documento.doc_id_proveedor = prov_id
+        documento.doc_fecha = fecha
+        documento.doc_estado = estado
+        documento.doc_descripcion = descripcion
+
+        db.session.commit()
+        flash(f'Documento {id_documento} actualizado correctamente.', 'success')
+        return redirect(url_for('documento_recibo.lista_documentos'))
+
+
+    return render_template('documento_recibo/editardocumentos.html', documento=documento, proveedores=Proveedor.query.all(), estados=['PENDIENTE', 'RECHAZADO', 'ACEPTADO'])
 
 @bp.route('/exportar_excel')
 @login_required
