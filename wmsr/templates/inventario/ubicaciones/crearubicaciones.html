@@ -1,0 +1,65 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}Crear ubicación - Warehouse Management System{% endblock %}
+{% block content %}
+<div class="flex flex-col items-center justify-center min-h-[60vh] py-12">
+    <div class="w-full max-w-md rounded-xl shadow-lg p-8 border border-slate-700 bg-slate-800">
+        <h2 class="text-2xl font-bold text-slate-800 mb-6 text-center dark:text-white">Crear ubicación</h2>
+        <form method="POST" action="" class="">
+            <!-- Aquí van los campos del formulario (estilo oscuro) -->
+
+            <div class="mb-4">
+            <label for="doc_id" class="block text-slate-200 font-medium mb-2">Codigo de la ubicación</label>
+            <input type="text" id="doc_id" name="doc_id" minlength="3" maxlength="50" required
+                class="w-full px-4 py-2 bg-slate-800 text-slate-100 border border-slate-700 rounded-lg placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+            </div>
+
+            <div class="mb-4">
+            <label for="estanteria" class="block text-slate-200 font-medium mb-2">Estantería</label>
+            <input type="text" id="estanteria" name="estanteria" minlength="3" maxlength="100" required
+                class="w-full px-4 py-2 bg-slate-800 text-slate-100 border border-slate-700 rounded-lg placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+            </div>
+
+            <div class="mb-4">
+            <label for="nivel" class="block text-slate-200 font-medium mb-2">Nivel</label>
+            <input type="text" id="nivel" name="nivel" minlength="3" maxlength="100" required
+                class="w-full px-4 py-2 bg-slate-800 text-slate-100 border border-slate-700 rounded-lg placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+            </div>
+
+            <div class="mb-4">
+            <label for="categoria" class="block text-slate-200 font-medium mb-2">Categoría</label>
+            <select id="categoria" name="categoria" minlength="6" maxlength="100" required
+                class="w-full px-4 py-2 bg-slate-800 text-slate-100 border border-slate-700 rounded-lg placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+                    <option value="" selected>Seleccione una categoria</option>
+                    {% for c in categoria %}
+                        <option value="{{ c.cat_id }}">{{ c.cat_nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="mb-4">
+            <label for="capacidad" class="block text-slate-200 font-medium mb-2">Capacidad</label>
+            <input type="number" id="capacidad" name="capacidad" min="1" max="1000000" required
+                class="w-full px-4 py-2 bg-slate-800 text-slate-100 border border-slate-700 rounded-lg placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+            </div>
+
+            <div class="mb-4">
+            <label for="descripcion" class="block text-slate-200 font-medium mb-2">Descripción</label>
+            <textarea id="descripcion" name="descripcion" required
+                class="w-full px-4 py-2 bg-slate-800 text-slate-100 border border-slate-700 rounded-lg placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"></textarea>
+            </div>
+
+            <div class="flex gap-3 justify-center mt-6">
+            <a href="{{url_for('ubicaciones.lista_ubicaciones')}}"
+                class="px-8 py-4 bg-transparent text-white font-semibold text-green-500 dark:text-red-500 hover:text-white border border-red-500 hover:border-white rounded">
+                Cancelar
+            </a>
+            <button type="submit"
+                class="w-full py-3 text-white font-semibold bg-transparent text-green-500 dark:text-green-500 hover:text-white border border-green-500 hover:border-white rounded">
+                Crear ubicación
+            </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock%}
