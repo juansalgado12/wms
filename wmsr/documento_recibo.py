@@ -10,6 +10,7 @@ from zoneinfo import ZoneInfo # manejo de zonas horarias
 bp = Blueprint('documento_recibo', __name__, url_prefix='/documento_recibo')
 
 @bp.route('/')
+@login_required
 def lista_documentos():
     # obtener todos los documentos de recibo de la base de datos y proveedores relacionados
 
@@ -23,6 +24,7 @@ def lista_documentos():
     return render_template('documento_recibo/listadocumentos.html', documentos=documentos, proveedores=proveedores, proveedores_map=proveedores_map)
 
 @bp.route('/crear', methods=('GET', 'POST'))
+@login_required
 def crear_documento():
 
     if request.method == 'POST':
@@ -100,6 +102,7 @@ def crear_documento():
     return render_template('documento_recibo/creardocumentos.html', proveedores=Proveedor.query.all(), estados=['PENDIENTE', 'RECHAZADO', 'ACEPTADO'])
 
 @bp.route('/editar/<string:doc_id>', methods=('GET', 'POST'))
+@login_required
 def editar_documento(doc_id):
     # Buscar el documento por su ID
     documento = DocumentoRecibo.query.get_or_404(doc_id)
@@ -165,6 +168,19 @@ def editar_documento(doc_id):
 
 
     return render_template('documento_recibo/editardocumentos.html', documento=documento, proveedores=Proveedor.query.all(), estados=['PENDIENTE', 'RECHAZADO', 'ACEPTADO'])
+
+@bp.route('/borrar/<string:doc_id>', methods=('GET', 'POST'))
+@login_required
+def borrar_documento(doc_id):
+    documento = DocumentoRecibo.query.get_or_404(doc_id)
+    if not documento:
+        flash(f'El documento con ID {doc_id} no existe.', 'error')
+    else:
+        db.session.delete(documento)
+        db.session.commit()
+        flash(f'Documento {doc_id} eliminado correctamente.', 'success')
+    return redirect(url_for('documento_recibo.lista_documentos'))
+
 
 @bp.route('/exportar_excel')
 @login_required
