@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, flash, redirect, url_for
+from flask import Blueprint, render_template, request, flash, redirect, url_for, make_response
 
 from .auth import login_required
 from .models import DocumentoRecibo, Proveedor
@@ -6,6 +6,7 @@ from . import db
 from wmsr.utils.export_excel import exportar_a_excel
 from datetime import datetime, timezone
 from zoneinfo import ZoneInfo # manejo de zonas horarias
+import pdfkit
 
 bp = Blueprint('documento_recibo', __name__, url_prefix='/documento_recibo')
 
@@ -214,3 +215,37 @@ def exportar_documentos_excel():
     columnas = ['ID Documento', 'ID Proveedor', 'Razon Social del Proveedor', 'Fecha', 'Estado', 'Descripcion']
 
     return exportar_a_excel('documentos_recibo', columnas, data)
+
+@bp.route('/descargar/<string:doc_id>')
+@login_required
+def descargar_documento_pdf(doc_id):
+    # doc_id es un identificador alfanumérico (ej. 'doc_03'), no un entero
+    documento = DocumentoRecibo.query.get_or_404(doc_id)
+    proveedor = Proveedor.query.get(documento.doc_id_proveedor)
+
+    # Renderizar el HTML con los datos del documento
+    html = render_template('documento_recibo/pdf_documento.html', 
+                           documento=documento, 
+                           proveedor=proveedor,
+                           now=datetime.now(ZoneInfo("America/Bogota")))
+
+    # Configuración de PDFKit (opcional: puedes ajustar tamaño, márgenes, etc.)
+    options = {
+        'encoding': 'UTF-8',
+        'enable-local-file-access': None,
+        'page-size': 'A4',
+        'margin-top': '10mm',
+        'margin-bottom': '10mm',
+        'margin-left': '10mm',
+        'margin-right': '10mm'
+    }
+
+    # Convertir el HTML en PDF (sin guardarlo en disco)
+    pdf = pdfkit.from_string(html, False, options=options)
+
+    # Devolverlo como descarga
+    response = make_response(pdf)
+    response.headers['Content-Type'] = 'application/pdf'
+    response.headers['Content-Disposition'] = f'attachment; filename=documento_{documento.doc_id}.pdf'
+
+    return response

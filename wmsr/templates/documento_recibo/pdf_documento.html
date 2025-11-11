@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Documento de Recibo #{{ documento.doc_id }}</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #fff;
+      color: #333;
+      font-size: 14px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 40px;
+      border-bottom: 2px solid #2d6a4f;
+      position: relative;
+    }
+
+    header::before {
+      content: "";
+      background-image: url("{{ url_for('static', filename='img/logo_uceva.png') }}");
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: left center;
+      position: absolute;
+      top: 15px;
+      left: 40px;
+      width: 100px;
+      height: 80px;
+      opacity: 0.15;
+    }
+
+    .company-info {
+      text-align: right;
+    }
+
+    .company-info h2 {
+      margin: 0;
+      color: #2d6a4f;
+    }
+
+    .company-info p {
+      margin: 2px 0;
+    }
+
+    main {
+      padding: 30px 40px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #1b4332;
+      margin-bottom: 30px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .section {
+      margin-bottom: 25px;
+    }
+
+    .section h3 {
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 4px;
+      color: #2d6a4f;
+      margin-bottom: 10px;
+    }
+
+    .details-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .details-table td {
+      padding: 8px 10px;
+      vertical-align: top;
+    }
+
+    .details-table td.label {
+      width: 30%;
+      font-weight: bold;
+      color: #1b4332;
+    }
+
+    footer {
+      text-align: center;
+      font-size: 12px;
+      padding: 20px;
+      color: #555;
+      border-top: 1px solid #ccc;
+    }
+
+    .sign-section {
+      margin-top: 40px;
+      text-align: center;
+    }
+
+    .sign-line {
+      margin-top: 60px;
+      border-top: 1px solid #000;
+      width: 200px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+  </style>
+</head>
+<body>
+<header>
+    <div class="logo">
+        <img src="{{ request.url_root }}static/img/logo_uceva.png" 
+     alt="Logo UCEVA" style="height:80px; width:80px; object-fit:contain;">
+    </div>
+    <div class="company-info">
+        <h2>Warehouse Management System</h2>
+        <p>UCEVA - Gestión de Almacén</p>
+        <p>Fecha de emisión: {{ now.strftime('%d/%m/%Y %H:%M') }}</p>
+    </div>
+</header>
+
+  <main>
+    <h1>Documento de Recibo</h1>
+
+    <div class="section">
+      <h3>Detalles del Documento</h3>
+      <table class="details-table">
+        <tr>
+          <td class="label">Código:</td>
+          <td>{{ documento.doc_id }}</td>
+        </tr>
+        <tr>
+          <td class="label">Fecha de creación:</td>
+          <td>{{ documento.doc_fecha.strftime('%d/%m/%Y') if documento.doc_fecha else '---' }}</td>
+        </tr>
+        <tr>
+          <td class="label">Estado:</td>
+          <td>{{ documento.doc_estado.capitalize() }}</td>
+        </tr>
+        <tr>
+          <td class="label">Descripción:</td>
+          <td>{{ documento.doc_descripcion or 'Sin descripción disponible' }}</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="section">
+      <h3>Información del Proveedor</h3>
+      <table class="details-table">
+        <tr>
+          <td class="label">Razón social:</td>
+          <td>{{ proveedor.prov_razon_social }}</td>
+        </tr>
+        <tr>
+          <td class="label">Dirección:</td>
+          <td>{{ proveedor.prov_direccion }}</td>
+        </tr>
+        <tr>
+          <td class="label">Teléfono:</td>
+          <td>{{ proveedor.prov_telefono }}</td>
+        </tr>
+        <tr>
+          <td class="label">Correo electrónico:</td>
+          <td>{{ proveedor.prov_email }}</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="sign-section">
+      <div class="sign-line"></div>
+      <p>Firma responsable</p>
+    </div>
+  </main>
+
+  <footer>
+    <p>Generado automáticamente — {{ now.strftime('%d/%m/%Y %H:%M') }}</p>
+  </footer>
+</body>
+</html>
