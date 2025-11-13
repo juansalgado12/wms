@@ -140,3 +140,38 @@ def borrar_ubicacion(ubi_codigo):
         db.session.commit()
         flash('Ubicación borrada exitosamente.', 'success')
     return redirect(url_for('ubicaciones.lista_ubicaciones'))
+
+@bp.route('/exportar')
+@login_required
+def exportar_ubicaciones_excel():
+    # Hacer join con la tabla de categorías para obtener el nombre de la categoría
+    ubicaciones = (
+        db.session.query(
+            Ubicaciones.ubi_codigo,
+            Ubicaciones.ubi_estanteria,
+            Ubicaciones.ubi_nivel,
+            Ubicaciones.ubi_cat_id,
+            Categorias.cat_nombre.label('categoria_nombre'),
+            Ubicaciones.ubi_capacidad,
+            Ubicaciones.ubi_descripcion
+        )
+        .outerjoin(Categorias, Ubicaciones.ubi_cat_id == Categorias.cat_id)
+    )
+
+    # Convertir los resultados a una lista de diccionarios
+    data = [
+        {
+            'Código de Ubicación': u.ubi_codigo,
+            'Estantería': u.ubi_estanteria,
+            'Nivel': u.ubi_nivel,
+            'ID de Categoría': u.ubi_cat_id,
+            'Nombre de Categoría': u.categoria_nombre,
+            'Capacidad': u.ubi_capacidad,
+            'Descripción': u.ubi_descripcion
+        }
+        for u in ubicaciones
+    ]
+
+    columnas = ['Código de Ubicación', 'Estantería', 'Nivel', 'ID de Categoría', 'Nombre de Categoría', 'Capacidad', 'Descripción']
+
+    return exportar_a_excel('ubicaciones', columnas, data)
