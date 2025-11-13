@@ -19,4 +19,44 @@
     </div>
   </div> <!-- Cerrado: contenedor de botones -->
 
+  <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+  <table class="min-w-full text-sm text-left text-gray-700 dark:text-gray-300">
+    <thead class="text-xs uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-300">
+      <tr>
+        <th class="px-6 py-3">Producto</th>
+        <th class="px-6 py-3">Código de ubicación</th>
+        <th class="px-6 py-3">Cantidad</th>
+        <th class="px-6 py-3">Saldo</th>
+        <th class="px-6 py-3">Última fecha de actualización</th>
+        <th class="px-6 py-3 text-center">Acciones</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {% for inventario_item in inventario | reverse %}
+      <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition">
+        <td class="px-6 py-4 whitespace-nowrap text-slate-700 dark:text-gray-200">{{ productos_map[inventario_item.inv_pro_codigo].pro_nombre }}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-slate-700 dark:text-gray-200">{{ inventario_item.inv_cod_ubicacion }}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-slate-700 dark:text-gray-200">{{ inventario_item.inv_cantidad }}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-slate-700 dark:text-gray-200">{{ inventario_item.inv_saldo }}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-slate-700 dark:text-gray-200">{{ inventario_item.inv_fecha_actualizacion }}</td>
+        <td class="px-6 py-4 text-center">
+          <div class="flex justify-center items-center gap-3">
+            <a href="#" 
+               class="font-medium text-blue-600 dark:text-blue-500 hover:underline">
+              <span class="ml-1 hidden sm:inline">Editar</span>
+            </a>
+            <a href="#" 
+               onclick="return confirm('¿Está seguro de que desea eliminar este inventario?');"
+               class="font-medium text-red-600 dark:text-red-500 hover:underline">
+              <span class="ml-1 hidden sm:inline">Borrar</span>
+            </a>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
   {% endblock %}

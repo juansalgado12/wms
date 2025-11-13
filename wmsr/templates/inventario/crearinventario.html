@@ -1,0 +1,46 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}Crear inventario - Warehouse Management System{% endblock %}
+{% block content %}
+<div class="flex flex-col items-center justify-center min-h-[60vh] py-12">
+    <div class="w-full max-w-md rounded-xl shadow-lg p-8 border border-slate-700 bg-slate-800">
+        <h2 class="text-2xl font-bold text-slate-800 mb-6 text-center dark:text-white">Crear inventario</h2>
+        <form method="POST" action="" class="">
+            <!-- Aquí van los campos del formulario (estilo oscuro) -->
+
+            <div class="mb-4">
+            <label for="producto" class="block text-slate-200 font-medium mb-2">Producto</label>
+            <select id="producto" name="producto" minlength="6" maxlength="100" required
+                class="w-full px-4 py-2 bg-slate-800 text-slate-100 border border-slate-700 rounded-lg placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+                    <option value="" selected>Seleccione un producto</option>
+                    {% for p in producto %}
+                        <option value="{{ p.pro_codigo }}">{{ p.pro_nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="mb-4">
+            <label for="ubicacion" class="block text-slate-200 font-medium mb-2">Ubicación</label>
+            <select id="ubicacion" name="ubicacion" minlength="6" maxlength="100" required
+                class="w-full px-4 py-2 bg-slate-800 text-slate-100 border border-slate-700 rounded-lg placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+                    <option value="" selected>Seleccione una ubicación</option>
+                    {% for u in ubicacion %}
+                        <option value="{{ u.ubi_codigo }}">{{ u.ubi_codigo }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="flex gap-3 justify-center mt-6">
+            <a href="{{url_for('inventario.lista_inventario')}}"
+                class="px-8 py-4 bg-transparent text-white font-semibold text-green-500 dark:text-red-500 hover:text-white border border-red-500 hover:border-white rounded">
+                Cancelar
+            </a>
+            <button type="submit"
+                class="w-full py-3 text-white font-semibold bg-transparent text-green-500 dark:text-green-500 hover:text-white border border-green-500 hover:border-white rounded">
+                Crear inventario
+            </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock%}
