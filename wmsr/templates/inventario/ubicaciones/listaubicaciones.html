@@ -42,8 +42,8 @@
                class="font-medium text-blue-600 dark:text-blue-500 hover:underline">
               <span class="ml-1 hidden sm:inline">Editar</span>
             </a>
-            <a href="#" 
-               onclick="return confirm('¿Está seguro de que desea eliminar este proveedor?');"
+            <a href="{{url_for('ubicaciones.borrar_ubicacion', ubi_codigo=ubicacion.ubi_codigo)}}" 
+               onclick="return confirm('¿Está seguro de que desea eliminar esta ubicación?');"
                class="font-medium text-red-600 dark:text-red-500 hover:underline">
               <span class="ml-1 hidden sm:inline">Borrar</span>
             </a>

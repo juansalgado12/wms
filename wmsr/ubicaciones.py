@@ -127,3 +127,16 @@ def editar_ubicacion(ubi_codigo):
         return redirect(url_for('ubicaciones.lista_ubicaciones'))
 
     return render_template('inventario/ubicaciones/editarubicaciones.html', ubicacion=ubicacion, categoria=Categorias.query.all())
+
+@bp.route('/borrar/<string:ubi_codigo>', methods=('GET', 'POST'))
+@login_required
+def borrar_ubicacion(ubi_codigo):
+    # Buscar la ubicación por su código
+    ubicacion = Ubicaciones.query.get_or_404(ubi_codigo)
+    if not ubicacion:
+        flash(f'La ubicación con código {ubi_codigo} no existe.', 'error')
+    else:
+        db.session.delete(ubicacion)
+        db.session.commit()
+        flash('Ubicación borrada exitosamente.', 'success')
+    return redirect(url_for('ubicaciones.lista_ubicaciones'))
