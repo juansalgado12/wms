@@ -1,3 +1,4 @@
+from operator import inv
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from wmsr.utils.export_excel import exportar_a_excel
 
@@ -209,3 +210,38 @@ def borrar_inventario(id):
         db.session.commit()
         flash('Inventario borrado exitosamente.', 'success')
     return redirect(url_for('inventario.lista_inventario'))
+
+@bp.route('/exportar')
+@login_required
+def exportar_inventario_excel():
+    # Hacer join con las tablas de productos y ubicaciones para obtener los nombres
+    inventarios = (
+        db.session.query(
+            Inventario.inv_id,
+            Inventario.inv_pro_codigo,
+            Productos.pro_nombre.label('producto_nombre'),
+            Inventario.inv_cod_ubicacion,
+            Inventario.inv_cantidad,
+            Inventario.inv_saldo,
+            Inventario.inv_fecha_actualizacion
+        )
+        .outerjoin(Productos, Inventario.inv_pro_codigo == Productos.pro_codigo)
+    )
+
+    # Convertir resultados a una lista de diccionarios
+    data = [
+        {
+            'ID de Inventario': inv.inv_id,
+            'Código de producto': inv.inv_pro_codigo,
+            'Nombre de producto': inv.producto_nombre,
+            'Código de ubicación': inv.inv_cod_ubicacion,
+            'Cantidad': inv.inv_cantidad,
+            'Saldo': inv.inv_saldo,
+            'Fecha de actualización': inv.inv_fecha_actualizacion
+        }
+        for inv in inventarios
+    ]
+
+    columnas = ['ID de Inventario', 'Código de producto', 'Nombre de producto', 'Código de ubicación', 'Cantidad', 'Saldo', 'Fecha de actualización']
+
+    return exportar_a_excel('inventario', columnas, data)
