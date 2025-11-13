@@ -197,3 +197,15 @@ def editar_inventario(id):
         return redirect(url_for('inventario.lista_inventario'))
     
     return render_template('inventario/editarinventario.html', inventario=inventario, producto=Productos.query.all(), ubicacion=Ubicaciones.query.all())
+
+@bp.route('/borrar/<int:id>', methods=('GET', 'POST'))
+@login_required
+def borrar_inventario(id):
+    inventario = Inventario.query.get_or_404(id)
+    if not inventario:
+        flash(f'El inventario con ID {id} no existe.', 'error')
+    else:
+        db.session.delete(inventario)
+        db.session.commit()
+        flash('Inventario borrado exitosamente.', 'success')
+    return redirect(url_for('inventario.lista_inventario'))
