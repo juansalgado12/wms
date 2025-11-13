@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, request, flash, redirect, url_for
 from wmsr.utils.export_excel import exportar_a_excel
 
 from .auth import login_required # Importar el decorador de login requerido si es necesario
-from .models import Ubicaciones, Categorias # Importar el modelo de Inventario y Ubicaciones
+from .models import Ubicaciones, Categorias, Inventario # Importar el modelo de Inventario y Ubicaciones
 from . import db # Importar la base de datos
 
 bp = Blueprint('ubicaciones', __name__, url_prefix='/ubicaciones')
@@ -133,6 +133,13 @@ def editar_ubicacion(ubi_codigo):
 def borrar_ubicacion(ubi_codigo):
     # Buscar la ubicación por su código
     ubicacion = Ubicaciones.query.get_or_404(ubi_codigo)
+    # Verificar si la ubicación está asociada a algún inventario
+    inventarios_asociadas = Inventario.query.filter_by(inv_cod_ubicacion=ubi_codigo).count()
+    if inventarios_asociadas > 0:
+        flash(f'No se puede eliminar la ubicación "{ubicacion.ubi_codigo}" porque está asociada a {inventarios_asociadas} inventario(s).', 'error')
+        return redirect(url_for('ubicaciones.lista_ubicaciones'))
+
+
     if not ubicacion:
         flash(f'La ubicación con código {ubi_codigo} no existe.', 'error')
     else:
