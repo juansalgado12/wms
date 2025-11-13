@@ -27,13 +27,14 @@
     </thead>
 
     <tbody>
+      {% for ubicacion in ubicaciones | reverse %}
       <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition">
-        <td class="px-6 py-4 whitespace-nowrap text-slate-700 dark:text-gray-200">-</td>
-        <td class="px-6 py-4 whitespace-nowrap text-slate-700 dark:text-gray-200">-</td>
-        <td class="px-6 py-4 whitespace-nowrap text-slate-700 dark:text-gray-200">-</td>
-        <td class="px-6 py-4 whitespace-nowrap text-slate-700 dark:text-gray-200">-</td>
-        <td class="px-6 py-4 whitespace-nowrap text-slate-700 dark:text-gray-200">-</td>
-        <td class="px-6 py-4 text-slate-700 dark:text-gray-200">-</td>
+        <td class="px-6 py-4 whitespace-nowrap text-slate-700 dark:text-gray-200">{{ ubicacion.ubi_codigo }}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-slate-700 dark:text-gray-200">{{ ubicacion.ubi_estanteria }}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-slate-700 dark:text-gray-200">{{ ubicacion.ubi_nivel }}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-slate-700 dark:text-gray-200">{{ categorias_map[ubicacion.ubi_cat_id] }}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-slate-700 dark:text-gray-200">{{ ubicacion.ubi_capacidad }}</td>
+        <td class="px-6 py-4 text-slate-700 dark:text-gray-200">{{ ubicacion.ubi_descripcion }}</td>
 
         <td class="px-6 py-4 text-center">
           <div class="flex justify-center items-center gap-3">
@@ -49,7 +50,7 @@
           </div>
         </td>
       </tr>
-      <!-- Aqui terminaria el ciclo for para las ubicaciones -->
+      {% endfor %}
     </tbody>
   </table>
 </div>
