@@ -33,16 +33,16 @@
     </thead>
 
     <tbody>
-      {% for inventario_item in inventario | reverse %}
+      {% for i in inventario | reverse %}
       <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition">
-        <td class="px-6 py-4 whitespace-nowrap text-slate-700 dark:text-gray-200">{{ productos_map[inventario_item.inv_pro_codigo].pro_nombre }}</td>
-        <td class="px-6 py-4 whitespace-nowrap text-slate-700 dark:text-gray-200">{{ inventario_item.inv_cod_ubicacion }}</td>
-        <td class="px-6 py-4 whitespace-nowrap text-slate-700 dark:text-gray-200">{{ inventario_item.inv_cantidad }}</td>
-        <td class="px-6 py-4 whitespace-nowrap text-slate-700 dark:text-gray-200">{{ inventario_item.inv_saldo }}</td>
-        <td class="px-6 py-4 whitespace-nowrap text-slate-700 dark:text-gray-200">{{ inventario_item.inv_fecha_actualizacion }}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-slate-700 dark:text-gray-200">{{ productos_map[i.inv_pro_codigo].pro_nombre }}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-slate-700 dark:text-gray-200">{{ i.inv_cod_ubicacion }}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-slate-700 dark:text-gray-200">{{ i.inv_cantidad }}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-slate-700 dark:text-gray-200">{{ i.inv_saldo }}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-slate-700 dark:text-gray-200">{{ i.inv_fecha_actualizacion }}</td>
         <td class="px-6 py-4 text-center">
           <div class="flex justify-center items-center gap-3">
-            <a href="#" 
+            <a href="{{ url_for('inventario.editar_inventario', id=i.inv_id) }}" 
                class="font-medium text-blue-600 dark:text-blue-500 hover:underline">
               <span class="ml-1 hidden sm:inline">Editar</span>
             </a>
