@@ -8,6 +8,7 @@ from . import db # Importar la base de datos
 bp = Blueprint('ubicaciones', __name__, url_prefix='/ubicaciones')
 
 @bp.route('/')
+@login_required
 def lista_ubicaciones():
     # Obtenemos todas las ubicaciones y categorias de la base de datos
     ubicaciones = Ubicaciones.query.all()
@@ -19,6 +20,7 @@ def lista_ubicaciones():
     return render_template('inventario/ubicaciones/listaubicaciones.html', ubicaciones=ubicaciones, categorias_map=categorias_map)
 
 @bp.route('/crear', methods=('GET', 'POST'))
+@login_required
 def crear_ubicacion():
     if request.method == 'POST':
         codigo_ubicacion = request.form.get('codigo_ubicacion')
@@ -70,6 +72,58 @@ def crear_ubicacion():
 
     return render_template('inventario/ubicaciones/crearubicaciones.html', categoria=Categorias.query.all())
 
-@bp.route('/editar')
-def editar_ubicacion():
-    return render_template('inventario/ubicaciones/editarubicaciones.html')
+@bp.route('/editar/<string:ubi_codigo>', methods=('GET', 'POST'))
+@login_required
+def editar_ubicacion(ubi_codigo):
+    # Buscar la ubicación por su código
+    ubicacion = Ubicaciones.query.get_or_404(ubi_codigo)
+
+    if not ubicacion:
+        flash(f'La ubicación con código {ubi_codigo} no existe.', 'error')
+        return redirect(url_for('ubicaciones.lista_ubicaciones'))
+    
+    if request.method == 'POST':
+        # Leer los datos del formulario
+        codigo_ubicacion = request.form.get('codigo_ubicacion')
+        estanteria = request.form.get('estanteria')
+        nivel = request.form.get('nivel')
+        categoria = request.form.get('categoria')
+        capacidad = request.form.get('capacidad')
+        descripcion = request.form.get('descripcion')
+
+        # Validar campos obligatorios
+        if not codigo_ubicacion or not estanteria or not nivel or not categoria or not capacidad:
+            flash('Por favor, complete todos los campos obligatorios.', 'error')
+            return render_template('inventario/ubicaciones/editarubicaciones.html', ubicacion=ubicacion, categoria=Categorias.query.all())
+        
+        # Validar unicidad del código de ubicación si ha sido modificado
+        if codigo_ubicacion != ubicacion.ubi_codigo:
+            codigo_existente = Ubicaciones.query.filter_by(ubi_codigo=codigo_ubicacion).first()
+            if codigo_existente:
+                flash(f'La ubicación con código {codigo_ubicacion} ya existe.', 'error')
+                return render_template('inventario/ubicaciones/editarubicaciones.html', ubicacion=ubicacion, categoria=Categorias.query.all())
+            
+        # Validar existencia de la categoría
+        try:
+            cat_id = int(categoria)
+        except (ValueError, TypeError):
+            flash('Categoría inválida. Por favor, seleccione una categoría válida.', 'error')
+            return render_template('inventario/ubicaciones/editarubicaciones.html', ubicacion=ubicacion, categoria=Categorias.query.all())
+        
+        if not Categorias.query.get(cat_id):
+            flash('La categoría seleccionada no existe.', 'error')
+            return render_template('inventario/ubicaciones/editarubicaciones.html', ubicacion=ubicacion, categoria=Categorias.query.all())
+        
+        # Actualizar los datos de la ubicación
+        ubicacion.ubi_codigo = codigo_ubicacion
+        ubicacion.ubi_estanteria = estanteria
+        ubicacion.ubi_nivel = nivel
+        ubicacion.ubi_cat_id = cat_id
+        ubicacion.ubi_capacidad = capacidad
+        ubicacion.ubi_descripcion = descripcion
+
+        db.session.commit()
+        flash('Ubicación actualizada exitosamente.', 'success')
+        return redirect(url_for('ubicaciones.lista_ubicaciones'))
+
+    return render_template('inventario/ubicaciones/editarubicaciones.html', ubicacion=ubicacion, categoria=Categorias.query.all())
