@@ -3,6 +3,29 @@
 {% block title %}Inventario - Warehouse Management System{% endblock %}
 {% block content %}
 <div class="container w-full h-screen bg-cover size-full px-4 py-6">
+  <div class="w-full flex justify-center mb-4">
+
+    <div class="w-full max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl min-w-[200px] mb-8">
+      <form method="get" action="{{ url_for('inventario.lista_inventario') }}">
+        <div class="relative">
+          <input name="q" value="{{ q or '' }}"
+            class="w-full bg-transparent placeholder:text-slate-400 text-slate-300 text-sm border border-slate-400 rounded-md pl-3 pr-28 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
+            placeholder="Realiza una búsqueda..." type="text"
+          />
+          <button
+            class="absolute top-1 right-1 flex items-center rounded bg-slate-800 py-1 px-2.5 border border-transparent text-center text-sm text-white transition-all shadow-sm hover:shadow focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+            type="submit"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 mr-2"></svg>
+              <path fill-rule="evenodd" d="M10.5 3.75a6.75 6.75 0 1 0 0 13.5 6.75 6.75 0 0 0 0-13.5ZM2.25 10.5a8.25 8.25 0 1 1 14.59 5.28l4.69 4.69a.75.75 0 1 1-1.06 1.06l-4.69-4.69A8.25 8.25 0 0 1 2.25 10.5Z" clip-rule="evenodd" />
+            </svg>
+            Buscar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <div class="mb-4">
     <h1 class="text-3xl font-bold text-slate-800 mb-4 dark:text-white">Listado de inventario</h1>
     <p class="text-slate-600 dark:text-gray-300">Administra tu inventario desde aquí. Al igual que las ubicaciones.</p>
@@ -18,6 +41,7 @@
         id="dropdownButton">Gestionar ubicaciones</a>
     </div>
   </div> <!-- Cerrado: contenedor de botones -->
+
 
   <div class="flex justify-end mb-4">
   <a href="{{ url_for('inventario.exportar_inventario_excel') }}"

@@ -3,6 +3,7 @@ from flask import Blueprint, render_template, request, flash, redirect, url_for
 from wmsr.utils.export_excel import exportar_a_excel
 
 from .auth import login_required # Importar el decorador de login requerido si es necesario
+from sqlalchemy import or_
 from .models import Inventario, Ubicaciones, Productos, Categorias # Importar el modelo de Inventario, Ubicaciones, Productos y Categorias
 from . import db # Importar la base de datos
 from datetime import datetime # Importar datetime para manejar fechas
@@ -16,15 +17,37 @@ bp = Blueprint('inventario', __name__, url_prefix='/inventario')
 def lista_inventario():
     # Obtenemos todos los registros de inventario, productos y ubicaciones de la base de datos
 
-    inventario = Inventario.query.all()
+    # Soportar búsqueda por query string ?q=texto
+    q = (request.args.get('q') or '').strip()
+
     productos = Productos.query.all()
     ubicaciones = Ubicaciones.query.all()
+
+    if q:
+        # Buscar por nombre de producto, código de producto, código de ubicación o nombre de categoría
+        inventario = (
+            db.session.query(Inventario)
+            .join(Productos, Inventario.inv_pro_codigo == Productos.pro_codigo)
+            .join(Ubicaciones, Inventario.inv_cod_ubicacion == Ubicaciones.ubi_codigo)
+            .outerjoin(Categorias, Productos.pro_cat_id == Categorias.cat_id)
+            .filter(
+                or_(
+                    Productos.pro_nombre.ilike(f"%{q}%"),
+                    Productos.pro_codigo.ilike(f"%{q}%"),
+                    Ubicaciones.ubi_codigo.ilike(f"%{q}%"),
+                    Categorias.cat_nombre.ilike(f"%{q}%")
+                )
+            )
+            .all()
+        )
+    else:
+        inventario = Inventario.query.all()
 
     # Mapeamos los productos y ubicaciones por su código para un acceso rápido
     productos_map = {p.pro_codigo: p for p in productos}
     ubicaciones_map = {u.ubi_codigo: u for u in ubicaciones}
 
-    return render_template('inventario/listainventario.html', inventario=inventario, productos_map=productos_map, ubicaciones_map=ubicaciones_map)
+    return render_template('inventario/listainventario.html', inventario=inventario, productos_map=productos_map, ubicaciones_map=ubicaciones_map, q=q)
 
 @bp.route('/crear', methods=('GET', 'POST'))
 @login_required
