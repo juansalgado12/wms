@@ -3,7 +3,7 @@ from flask import Blueprint, render_template, request, flash, redirect, url_for
 from wmsr.utils.export_excel import exportar_a_excel
 
 from .auth import login_required # Importar el decorador de login requerido si es necesario
-from .models import Inventario, Ubicaciones, Productos # Importar el modelo de Inventario, Ubicaciones y Productos
+from .models import Inventario, Ubicaciones, Productos, Categorias # Importar el modelo de Inventario, Ubicaciones, Productos y Categorias
 from . import db # Importar la base de datos
 from datetime import datetime # Importar datetime para manejar fechas
 from zoneinfo import ZoneInfo # Importar ZoneInfo para zonas horarias
@@ -29,6 +29,11 @@ def lista_inventario():
 @bp.route('/crear', methods=('GET', 'POST'))
 @login_required
 def crear_inventario():
+    # Preparar datos que se usan en GET y en posibles re-renders tras errores POST
+    productos = Productos.query.all()
+    ubicaciones = Ubicaciones.query.all()
+    categorias = Categorias.query.all()
+    categorias_map = {c.cat_id: c.cat_nombre for c in categorias}
 
     if request.method == 'POST':
         # Obtener datos del formulario
@@ -50,23 +55,27 @@ def crear_inventario():
         except (ValueError, TypeError):
             flash('Producto inválido. Por favor, seleccione un producto válido.', 'error')
             productos = Productos.query.all()
-            return render_template('inventario/crearinventario.html', producto=productos)
+            ubicaciones = Ubicaciones.query.all()
+            return render_template('inventario/crearinventario.html', producto=productos, ubicacion=ubicaciones, categorias_map=categorias_map)
         if not Productos.query.get(pro_codigo):
             flash('El producto seleccionado no existe. Por favor, seleccione un producto válido.', 'error')
             productos = Productos.query.all()
-            return render_template('inventario/crearinventario.html', producto=productos)
+            ubicaciones = Ubicaciones.query.all()
+            return render_template('inventario/crearinventario.html', producto=productos, ubicacion=ubicaciones, categorias_map=categorias_map)
         
         # Validar existencia de las ubicaciones
         try:
             ubi_codigo = str(ubicacion_codigo)
         except (ValueError, TypeError):
             flash('Ubicación inválida. Por favor, seleccione una ubicación válida.', 'error')
+            productos = Productos.query.all()
             ubicaciones = Ubicaciones.query.all()
-            return render_template('inventario/crearinventario.html', ubicacion=ubicaciones)
+            return render_template('inventario/crearinventario.html', producto=productos, ubicacion=ubicaciones, categorias_map=categorias_map)
         if not Ubicaciones.query.get(ubi_codigo):
             flash('La ubicación seleccionada no existe. Por favor, seleccione una ubicación válida.', 'error')
+            productos = Productos.query.all()
             ubicaciones = Ubicaciones.query.all()
-            return render_template('inventario/crearinventario.html', ubicacion=ubicaciones)
+            return render_template('inventario/crearinventario.html', producto=productos, ubicacion=ubicaciones, categorias_map=categorias_map)
         
         # Validar si la ubicación ya tiene un inventario asignado
         inventario_existente = Inventario.query.filter_by(inv_cod_ubicacion=ubi_codigo).first()
@@ -74,14 +83,14 @@ def crear_inventario():
             flash(f'La ubicación con código {ubi_codigo} ya tiene un inventario asignado.', 'error')
             productos = Productos.query.all()
             ubicaciones = Ubicaciones.query.all()
-            return render_template('inventario/crearinventario.html', producto=productos, ubicacion=ubicaciones)
+            return render_template('inventario/crearinventario.html', producto=productos, ubicacion=ubicaciones, categorias_map=categorias_map)
 
         # Validar que la categoría del producto coincida con la categoría de la ubicación
         if producto.pro_cat_id != ubicacion.ubi_cat_id:
             flash('La categoría del producto no coincide con la categoría de la ubicación.', 'error')
             productos = Productos.query.all()
             ubicaciones = Ubicaciones.query.all()
-            return render_template('inventario/crearinventario.html', producto=productos, ubicacion=ubicaciones)
+            return render_template('inventario/crearinventario.html', producto=productos, ubicacion=ubicaciones, categorias_map=categorias_map)
         
         # Establecer la fecha de creación
         tz_colombia = 'America/Bogota'
@@ -95,7 +104,7 @@ def crear_inventario():
                 flash('Formato de fecha inválido. Use AAAA-MM-DD.', 'error')
                 productos = Productos.query.all()
                 ubicaciones = Ubicaciones.query.all()
-                return render_template('inventario/crearinventario.html', producto=productos, ubicacion=ubicaciones)
+                return render_template('inventario/crearinventario.html', producto=productos, ubicacion=ubicaciones, categorias_map=categorias_map)
         else:
             # Usar la fecha y hora actual si no se proporciona
             fecha = datetime.now(ZoneInfo(tz_colombia))
@@ -117,7 +126,7 @@ def crear_inventario():
         flash('Inventario creado exitosamente.', 'success')
         return redirect(url_for('inventario.lista_inventario'))
         
-    return render_template('inventario/crearinventario.html', producto=Productos.query.all(), ubicacion=Ubicaciones.query.all())
+    return render_template('inventario/crearinventario.html', producto=productos, ubicacion=ubicaciones, categorias_map=categorias_map)
 
 @bp.route('/editar/<int:id>', methods=('GET', 'POST'))
 @login_required
