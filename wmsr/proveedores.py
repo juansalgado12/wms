@@ -12,8 +12,24 @@ bp = Blueprint('proveedores', __name__, url_prefix='/proveedores')
 @login_required
 def lista_proveedores():
     # Aquí iría la lógica para obtener la lista de proveedores
+
+    q = (request.args.get('q') or '').strip()
     proveedores = Proveedor.query.all()
-    return render_template('documento_recibo/proveedores/listaproveedores.html', proveedores=proveedores)
+
+    if q:
+        proveedores = (
+            db.session.query(Proveedor)
+            .filter(
+                (Proveedor.prov_razon_social.ilike(f'%{q}%')) |
+                (Proveedor.prov_direccion.ilike(f'%{q}%')) |       
+                (Proveedor.prov_telefono.ilike(f'%{q}%')) |
+                (Proveedor.prov_email.ilike(f'%{q}%'))
+            ).all()
+        )
+    else:
+        proveedores = Proveedor.query.all()
+
+    return render_template('documento_recibo/proveedores/listaproveedores.html', proveedores=proveedores, q=q)
 
 @bp.route('/crear', methods=('GET', 'POST'))
 @login_required
