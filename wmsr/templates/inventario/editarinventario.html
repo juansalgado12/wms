@@ -14,7 +14,7 @@
                 class="w-full px-4 py-2 bg-slate-800 text-slate-100 border border-slate-700 rounded-lg placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
                     <option value="" selected>Seleccione un producto</option>
                     {% for p in producto %}
-                        <option value="{{ p.pro_codigo }}" {% if p.pro_codigo == inventario.inv_pro_codigo %}selected{% endif %}>{{ p.pro_nombre }}</option>
+                        <option value="{{ p.pro_codigo }}" {% if p.pro_codigo == inventario.inv_pro_codigo %}selected{% endif %}>{{ p.pro_nombre }} - {{ categorias_map.get(p.pro_cat_id, p.pro_cat_id) }}</option>
                     {% endfor %}
                 </select>
             </div>
@@ -25,7 +25,9 @@
                 class="w-full px-4 py-2 bg-slate-800 text-slate-100 border border-slate-700 rounded-lg placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
                     <option value="" selected>Seleccione una ubicación</option>
                     {% for u in ubicacion %}
-                        <option value="{{ u.ubi_codigo }}" {% if u.ubi_codigo == inventario.inv_cod_ubicacion %}selected{% endif %}>{{ u.ubi_codigo }}</option>
+                        <option value="{{ u.ubi_codigo }}" {% if u.ubi_codigo == inventario.inv_cod_ubicacion %}selected{% endif %}>
+                            {{ u.ubi_codigo }} - {{ categorias_map.get(u.ubi_cat_id, u.ubi_cat_id) }}{% if u.ubi_estanteria %} - {{ u.ubi_estanteria }}{% endif %}{% if u.ubi_nivel %} / {{ u.ubi_nivel }}{% endif %}
+                        </option>
                     {% endfor %}
                 </select>
             </div>

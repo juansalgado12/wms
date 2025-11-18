@@ -136,6 +136,12 @@ def editar_inventario(id):
         flash(f'El inventario con ID {id} no existe.', 'error')
         return redirect(url_for('inventario.lista_inventario'))
 
+    # Preparar listas y mapa de categorias para re-renders y la plantilla
+    productos = Productos.query.all()
+    ubicaciones = Ubicaciones.query.all()
+    categorias = Categorias.query.all()
+    categorias_map = {c.cat_id: c.cat_nombre for c in categorias}
+
     if request.method == 'POST':
         # Leer datos del formulario
         producto_codigo = request.form.get('producto')
@@ -146,7 +152,7 @@ def editar_inventario(id):
         # Validar campos obligatorios
         if not producto_codigo or not ubicacion_codigo or cantidad is None or saldo is None:
             flash('Por favor, complete todos los campos obligatorios.', 'error')
-            return render_template('inventario/editarinventario.html', inventario=inventario, producto=Productos.query.all(), ubicacion=Ubicaciones.query.all())
+            return render_template('inventario/editarinventario.html', inventario=inventario, producto=productos, ubicacion=ubicaciones, categorias_map=categorias_map)
         
         # Validar existencia de los productos
         try:
@@ -154,25 +160,29 @@ def editar_inventario(id):
         except (ValueError, TypeError):
             flash('Producto inválido. Por favor, seleccione un producto válido.', 'error')
             productos = Productos.query.all()
-            return render_template('inventario/editarinventario.html', inventario=inventario, producto=productos, ubicacion=Ubicaciones.query.all())
+            ubicaciones = Ubicaciones.query.all()
+            return render_template('inventario/editarinventario.html', inventario=inventario, producto=productos, ubicacion=ubicaciones, categorias_map=categorias_map)
         
         if not Productos.query.get(pro_codigo):
             flash('El producto seleccionado no existe.', 'error')
             productos = Productos.query.all()
-            return render_template('inventario/editarinventario.html', inventario=inventario, producto=productos, ubicacion=Ubicaciones.query.all())
+            ubicaciones = Ubicaciones.query.all()
+            return render_template('inventario/editarinventario.html', inventario=inventario, producto=productos, ubicacion=ubicaciones, categorias_map=categorias_map)
 
         # Validar existencia de las ubicaciones
         try:
             ubi_codigo = str(ubicacion_codigo)
         except (ValueError, TypeError):
             flash('Ubicación inválida. Por favor, seleccione una ubicación válida.', 'error')
+            productos = Productos.query.all()
             ubicaciones = Ubicaciones.query.all()
-            return render_template('inventario/editarinventario.html', inventario=inventario, producto=Productos.query.all(), ubicacion=ubicaciones)
+            return render_template('inventario/editarinventario.html', inventario=inventario, producto=productos, ubicacion=ubicaciones, categorias_map=categorias_map)
         
         if not Ubicaciones.query.get(ubi_codigo):
             flash('La ubicación seleccionada no existe.', 'error')
+            productos = Productos.query.all()
             ubicaciones = Ubicaciones.query.all()
-            return render_template('inventario/editarinventario.html', inventario=inventario, producto=Productos.query.all(), ubicacion=ubicaciones)
+            return render_template('inventario/editarinventario.html', inventario=inventario, producto=productos, ubicacion=ubicaciones, categorias_map=categorias_map)
         
         # Validar si la ubicación ya tiene un inventario asignado (y no es el actual)
         inventario_existente = Inventario.query.filter_by(inv_cod_ubicacion=ubi_codigo).first()
@@ -180,7 +190,18 @@ def editar_inventario(id):
             flash(f'La ubicación con código {ubi_codigo} ya tiene un inventario asignado.', 'error')
             productos = Productos.query.all()
             ubicaciones = Ubicaciones.query.all()
-            return render_template('inventario/editarinventario.html', inventario=inventario, producto=productos, ubicacion=ubicaciones)
+            return render_template('inventario/editarinventario.html', inventario=inventario, producto=productos, ubicacion=ubicaciones, categorias_map=categorias_map)
+        
+        # Validar que la cantidad y saldo sean enteros no negativos
+        
+        
+        # Validar que la cantidad de inventario no supere la capacidad de la ubicación
+        # u_cantidad = Ubicaciones.query.get(ubi_codigo)
+        # if cantidad > u_cantidad.ubi_capacidad:
+        #     flash(f'La cantidad de inventario {cantidad} supera la capacidad de la ubicación {u_cantidad.ubi_capacidad}.', 'error')
+        #     productos = Productos.query.all()
+        #     ubicaciones = Ubicaciones.query.all()
+        #     return render_template('inventario/editarinventario.html', inventario=inventario, producto=productos, ubicacion=ubicaciones, categorias_map=categorias_map)
         
         # Validar que la categoría del producto coincida con la categoría de la ubicación
         producto = Productos.query.get(pro_codigo)
@@ -189,7 +210,7 @@ def editar_inventario(id):
             flash('La categoría del producto no coincide con la categoría de la ubicación.', 'error')
             productos = Productos.query.all()
             ubicaciones = Ubicaciones.query.all()
-            return render_template('inventario/editarinventario.html', inventario=inventario, producto=productos, ubicacion=ubicaciones)
+            return render_template('inventario/editarinventario.html', inventario=inventario, producto=productos, ubicacion=ubicaciones, categorias_map=categorias_map)
         
         # Fecha de actualización
         tz_colombia = 'America/Bogota'
@@ -206,7 +227,7 @@ def editar_inventario(id):
         flash('Inventario actualizado exitosamente.', 'success')
         return redirect(url_for('inventario.lista_inventario'))
     
-    return render_template('inventario/editarinventario.html', inventario=inventario, producto=Productos.query.all(), ubicacion=Ubicaciones.query.all())
+    return render_template('inventario/editarinventario.html', inventario=inventario, producto=productos, ubicacion=ubicaciones, categorias_map=categorias_map)
 
 @bp.route('/borrar/<int:id>', methods=('GET', 'POST'))
 @login_required
