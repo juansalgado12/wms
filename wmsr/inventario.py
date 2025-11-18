@@ -192,16 +192,25 @@ def editar_inventario(id):
             ubicaciones = Ubicaciones.query.all()
             return render_template('inventario/editarinventario.html', inventario=inventario, producto=productos, ubicacion=ubicaciones, categorias_map=categorias_map)
         
-        # Validar que la cantidad y saldo sean enteros no negativos
-        
+        # Validar que la cantidad o saldo sean enteros no negativos
+        try:
+            cantidad = int(cantidad)
+            saldo = float(saldo)
+            if cantidad < 0 or saldo < 0:
+                raise ValueError
+        except ValueError:
+            flash('La cantidad y el saldo deben ser números enteros no negativos.', 'error')
+            productos = Productos.query.all()
+            ubicaciones = Ubicaciones.query.all()
+            return render_template('inventario/editarinventario.html', inventario=inventario, producto=productos, ubicacion=ubicaciones, categorias_map=categorias_map)
         
         # Validar que la cantidad de inventario no supere la capacidad de la ubicación
-        # u_cantidad = Ubicaciones.query.get(ubi_codigo)
-        # if cantidad > u_cantidad.ubi_capacidad:
-        #     flash(f'La cantidad de inventario {cantidad} supera la capacidad de la ubicación {u_cantidad.ubi_capacidad}.', 'error')
-        #     productos = Productos.query.all()
-        #     ubicaciones = Ubicaciones.query.all()
-        #     return render_template('inventario/editarinventario.html', inventario=inventario, producto=productos, ubicacion=ubicaciones, categorias_map=categorias_map)
+        u_cantidad = Ubicaciones.query.get(ubi_codigo)
+        if cantidad > u_cantidad.ubi_capacidad:
+            flash(f'La cantidad de inventario ({cantidad}) supera la capacidad de la ubicación {ubi_codigo} ({u_cantidad.ubi_capacidad}).', 'error')
+            productos = Productos.query.all()
+            ubicaciones = Ubicaciones.query.all()
+            return render_template('inventario/editarinventario.html', inventario=inventario, producto=productos, ubicacion=ubicaciones, categorias_map=categorias_map)
         
         # Validar que la categoría del producto coincida con la categoría de la ubicación
         producto = Productos.query.get(pro_codigo)
