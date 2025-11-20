@@ -17,12 +17,12 @@ def lista_movimientos():
 @bp.route('/realizar_movimiento', methods=('GET', 'POST'))
 @login_required
 def realizar_movimiento():
-    return render_template('movimientos/realizarmovimiento.html')
+    return render_template('movimientos/realizarmovimientos.html')
 
 @bp.route('/editar/<int:id>', methods=('GET', 'POST'))
 @login_required
 def editar_movimiento(id):
-    return render_template('movimientos/editarmovimiento.html')
+    return render_template('movimientos/editarmovimientos.html')
 
 @bp.route('/borrar/<int:id>', methods=('GET', 'POST'))
 @login_required
