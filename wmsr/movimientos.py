@@ -12,17 +12,17 @@ bp = Blueprint('movimientos', __name__, url_prefix='/movimientos')
 @bp.route('/')
 @login_required
 def lista_movimientos():
-    return 'Lista de movimientos - En construcción'
+    return render_template('movimientos/listamovimientos.html')
 
 @bp.route('/realizar_movimiento', methods=('GET', 'POST'))
 @login_required
 def realizar_movimiento():
-    return 'Realizar movimiento - En construcción'
+    return render_template('movimientos/realizarmovimiento.html')
 
 @bp.route('/editar/<int:id>', methods=('GET', 'POST'))
 @login_required
 def editar_movimiento(id):
-    return 'Editar movimiento - En construcción'
+    return render_template('movimientos/editarmovimiento.html')
 
 @bp.route('/borrar/<int:id>', methods=('GET', 'POST'))
 @login_required
