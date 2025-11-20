@@ -15,14 +15,31 @@ bp = Blueprint('documento_recibo', __name__, url_prefix='/documento_recibo')
 def lista_documentos():
     # obtener todos los documentos de recibo de la base de datos y proveedores relacionados
 
+    q = (request.args.get('q') or '').strip()
+
     documentos = DocumentoRecibo.query.all()
     proveedores = Proveedor.query.all()
+
+    if q:
+        # Buscar por id_documento, razon social del proveedor y estado del documento
+        documentos = (
+            db.session.query(DocumentoRecibo)
+            .join(Proveedor, DocumentoRecibo.doc_id_proveedor == Proveedor.prov_id)
+            .filter(
+                (DocumentoRecibo.doc_id.ilike(f'%{q}%')) |
+                (Proveedor.prov_razon_social.ilike(f'%{q}%')) |
+                (DocumentoRecibo.doc_estado.ilike(f'%{q}%'))
+            ).all()
+        )
+    else:
+        documentos = DocumentoRecibo.query.all()
+        proveedores = Proveedor.query.all()
 
     # Mapear los IDs de proveedores a sus nombres para un acceso rápido
     proveedores_map = {p.prov_id: p.prov_razon_social for p in proveedores}
 
 
-    return render_template('documento_recibo/listadocumentos.html', documentos=documentos, proveedores=proveedores, proveedores_map=proveedores_map)
+    return render_template('documento_recibo/listadocumentos.html', documentos=documentos, proveedores=proveedores, proveedores_map=proveedores_map, q=q)
 
 @bp.route('/crear', methods=('GET', 'POST'))
 @login_required

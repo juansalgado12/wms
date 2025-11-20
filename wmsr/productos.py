@@ -16,12 +16,34 @@ bp = blueprints.Blueprint('productos', __name__, url_prefix='/productos')
 @bp.route('/')
 def catalogo():
     # Obtener productos y construir mapas id->nombre para usar en la plantilla
+
+    q = (request.args.get('q') or '').strip()
     productos = Productos.query.all()
 
     categorias = Categorias.query.all()
     presentaciones = Presentacion.query.all()
     unidades = Unidad.query.all()
     marcas = Marca.query.all()
+
+    if q:
+        # Buscar productos por codigo, nombre, categoría, presentación, unidad o marca
+        productos = (
+            db.session.query(Productos)
+            .outerjoin(Categorias, Productos.pro_cat_id == Categorias.cat_id)
+            .outerjoin(Presentacion, Productos.pro_pres_id == Presentacion.pres_id)
+            .outerjoin(Unidad, Productos.pro_uni_id == Unidad.uni_id)
+            .outerjoin(Marca, Productos.pro_mar_id == Marca.mar_id)
+            .filter(
+                (Productos.pro_codigo.ilike(f'%{q}%')) |
+                (Productos.pro_nombre.ilike(f'%{q}%')) |
+                (Categorias.cat_nombre.ilike(f'%{q}%')) |
+                (Presentacion.pres_nombre.ilike(f'%{q}%')) |
+                (Unidad.uni_nombre.ilike(f'%{q}%')) |
+                (Marca.mar_nombre.ilike(f'%{q}%'))
+            ).all()
+        )
+    else:
+        productos = Productos.query.all()
 
     # Mapear id a nombre para cada entidad relacionada
     categorias_map = {c.cat_id: c.cat_nombre for c in categorias}
@@ -43,7 +65,8 @@ def catalogo():
         presentaciones_map=presentaciones_map,
         unidades_map=unidades_map,
         marcas_map=marcas_map,
-        image_map=image_map
+        image_map=image_map,
+        q=q
     )
 
 

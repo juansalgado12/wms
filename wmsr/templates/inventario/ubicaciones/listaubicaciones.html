@@ -1,0 +1,74 @@
+{% extends 'layouts/base.html' %}
+{% block title %}Lista de Ubicaciones{% endblock %}
+
+{% block content %}
+<div class="mb-8">
+	<h1 class="text-3xl font-bold text-slate-800 mb-2 dark:text-white">Lista de Ubicaciones</h1>
+	<p class="text-slate-600 dark:text-gray-300">Administra las ubicaciones que serán asignadas en los inventarios.</p>
+</div>
+
+<div class="flex flex-wrap gap-4 mb-8">
+    <a href="{{url_for('inventario.lista_inventario')}}" class="bg-transparent text-white font-semibold hover:text-gray-400 py-2 px-4 border border-white hover:border-gray-400 rounded">Volver</a>
+	<a href="{{url_for('ubicaciones.crear_ubicacion')}}" class="bg-transparent text-green-500 font-semibold hover:text-white py-2 px-4 border border-green-500 hover:border-white rounded">Crear ubicación</a>
+</div>
+
+<div class="flex justify-end mb-4">
+  <a href="{{ url_for('ubicaciones.exportar_ubicaciones_excel') }}"
+     class="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
+     
+    <svg xmlns="http://www.w3.org/2000/svg" 
+         fill="none" viewBox="0 0 24 24" 
+         stroke-width="1.5" stroke="currentColor" 
+         class="w-5 h-5 mr-2" aria-hidden="true">
+      <path stroke-linecap="round" stroke-linejoin="round"
+            d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+    </svg>
+
+    <span>Exportar a Excel</span>
+  </a>
+</div>
+
+<div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+  <table class="min-w-full text-sm text-left text-gray-700 dark:text-gray-300">
+    <thead class="text-xs uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-300">
+      <tr>
+        <th class="px-6 py-3">Código de Ubicación</th>
+        <th class="px-6 py-3">Estantería</th>
+        <th class="px-6 py-3">Nivel</th>
+        <th class="px-6 py-3">Categoría</th>
+        <th class="px-6 py-3">Capacidad</th>
+        <th class="px-6 py-3">Descripción</th>
+        <th class="px-6 py-3 text-center">Acciones</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {% for ubicacion in ubicaciones | reverse %}
+      <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition">
+        <td class="px-6 py-4 whitespace-nowrap text-slate-700 dark:text-gray-200">{{ ubicacion.ubi_codigo }}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-slate-700 dark:text-gray-200">{{ ubicacion.ubi_estanteria }}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-slate-700 dark:text-gray-200">{{ ubicacion.ubi_nivel }}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-slate-700 dark:text-gray-200">{{ categorias_map[ubicacion.ubi_cat_id] }}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-slate-700 dark:text-gray-200">{{ ubicacion.ubi_capacidad }}</td>
+        <td class="px-6 py-4 text-slate-700 dark:text-gray-200">{{ ubicacion.ubi_descripcion }}</td>
+
+        <td class="px-6 py-4 text-center">
+          <div class="flex justify-center items-center gap-3">
+            <a href="{{url_for('ubicaciones.editar_ubicacion', ubi_codigo=ubicacion.ubi_codigo)}}" 
+               class="font-medium text-blue-600 dark:text-blue-500 hover:underline">
+              <span class="ml-1 hidden sm:inline">Editar</span>
+            </a>
+            <a href="{{url_for('ubicaciones.borrar_ubicacion', ubi_codigo=ubicacion.ubi_codigo)}}" 
+               onclick="return confirm('¿Está seguro de que desea eliminar esta ubicación?');"
+               class="font-medium text-red-600 dark:text-red-500 hover:underline">
+              <span class="ml-1 hidden sm:inline">Borrar</span>
+            </a>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% endblock %}

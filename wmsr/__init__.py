@@ -13,7 +13,7 @@ def create_app():
     db.init_app(app)
 
     #Registrar vistas (blueprints)
-    from wmsr import home, auth, productos, ubicaciones, categorias, unidad, marca, presentacion, documento_recibo, proveedores
+    from wmsr import home, auth, productos, ubicaciones, categorias, unidad, marca, presentacion, documento_recibo, proveedores, inventario, movimientos
     app.register_blueprint(home.bp) #vista de home
     app.register_blueprint(auth.bp) #vista de auth
     app.register_blueprint(productos.bp) #vista de productos
@@ -24,6 +24,8 @@ def create_app():
     app.register_blueprint(marca.bp) #vista de marca
     app.register_blueprint(presentacion.bp) #vista de presentacion
     app.register_blueprint(proveedores.bp) #vista de proveedores
+    app.register_blueprint(inventario.bp) #vista de inventario
+    app.register_blueprint(movimientos.bp) #vista de movimientos
 
     #Crear las tablas en la base de datos
     from .models import Categorias, Presentacion, Unidad, Marca, Usuarios, Proveedor, Productos, ProductoImagenes, Ubicaciones, DocumentoRecibo, Inventario, Movimientos
