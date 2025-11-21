@@ -191,9 +191,147 @@ def realizar_movimiento():
 @bp.route('/editar/<int:mov_id>', methods=('GET', 'POST'))
 @login_required
 def editar_movimiento(mov_id):
-    # Buscar el movimiento por ID
-    movimiento = Movimientos.query.get_or_404(mov_id)
-    return render_template('movimientos/editarmovimientos.html', movimiento=movimiento)
+    movimiento = Movimientos.query.get(mov_id)
+    if not movimiento:
+        flash('Movimiento no encontrado.', 'error')
+        return redirect(url_for('movimientos.lista_movimientos'))
+
+    if request.method == 'POST':
+        producto = request.form.get('producto')
+        cantidad = request.form.get('cantidad')
+        documento = request.form.get('documento')
+        tipo = request.form.get('tipo')
+        destino = request.form.get('destino')
+        inventario = request.form.get('inventario')
+        observaciones = request.form.get('observaciones')
+
+        # Validar campos obligatorios
+        if not producto or not cantidad or not tipo or not inventario:
+            flash('Por favor, complete todos los campos obligatorios.', 'error')
+            return render_template('movimientos/editarmovimientos.html', movimiento=movimiento, productos=Productos.query.all(), documentos=DocumentoRecibo.query.all(), inventarios=Inventario.query.all())
+
+        # Validar cantidad
+        try:
+            new_cantidad = int(cantidad)
+            if new_cantidad <= 0:
+                raise ValueError
+        except ValueError:
+            flash('La cantidad debe ser un número entero positivo.', 'error')
+            return render_template('movimientos/editarmovimientos.html', movimiento=movimiento, productos=Productos.query.all(), documentos=DocumentoRecibo.query.all(), inventarios=Inventario.query.all())
+
+        # Validar existencia
+        try:
+            new_inv_id = int(inventario)
+        except (TypeError, ValueError):
+            flash('Inventario inválido.', 'error')
+            return render_template('movimientos/editarmovimientos.html', movimiento=movimiento, productos=Productos.query.all(), documentos=DocumentoRecibo.query.all(), inventarios=Inventario.query.all())
+
+        if not Productos.query.get(str(producto)) or not DocumentoRecibo.query.get(str(documento)) or not Inventario.query.get(new_inv_id):
+            flash('Seleccione opciones válidas para producto, documento e inventario.', 'error')
+            return render_template('movimientos/editarmovimientos.html', movimiento=movimiento, productos=Productos.query.all(), documentos=DocumentoRecibo.query.all(), inventarios=Inventario.query.all())
+
+        # Cargar inventarios involucrados
+        old_inv = Inventario.query.get(movimiento.mov_inv_id) if movimiento.mov_inv_id else None
+        new_inv = Inventario.query.get(new_inv_id)
+
+        # Verificar que el producto seleccionado corresponde al inventario destino
+        if new_inv.inv_pro_codigo and str(new_inv.inv_pro_codigo) != str(producto):
+            flash('El producto seleccionado no coincide con el del inventario destino.', 'error')
+            return render_template('movimientos/editarmovimientos.html', movimiento=movimiento, productos=Productos.query.all(), documentos=DocumentoRecibo.query.all(), inventarios=Inventario.query.all())
+
+        # Función para calcular efecto (positivo para ingreso, negativo para salida)
+        def efecto(tipo_mov, qty):
+            return qty if tipo_mov == 'INGRESO' else -qty
+
+        old_effect = efecto(movimiento.mov_tipo, movimiento.mov_cantidad)
+        new_effect = efecto(tipo, new_cantidad)
+
+        # Si no cambia el inventario y el efecto es igual, evitar modificar cantidades
+        if movimiento.mov_inv_id == new_inv_id and old_effect == new_effect:
+            # Actualizar solo campos informativos
+            movimiento.mov_pro_codigo = str(producto)
+            movimiento.mov_doc_id = str(documento)
+            movimiento.mov_destino = destino
+            movimiento.mov_observacion = observaciones
+            movimiento.mov_tipo = tipo
+            movimiento.mov_cantidad = new_cantidad
+            movimiento.mov_fecha = datetime.now(ZoneInfo('America/Bogota'))
+            db.session.add(movimiento)
+            db.session.commit()
+            flash('Movimiento actualizado (sin cambios en inventario).', 'success')
+            return redirect(url_for('movimientos.lista_movimientos'))
+
+        # Si el inventario es el mismo pero el efecto cambia, aplicar delta
+        if old_inv and old_inv.inv_id == new_inv_id:
+            delta = new_effect - old_effect
+            resultado = old_inv.inv_cantidad + delta
+            # Validaciones
+            if resultado < 0:
+                flash(f'Operación inválida: inventario resultaría negativo ({resultado}).', 'error')
+                return render_template('movimientos/editarmovimientos.html', movimiento=movimiento, productos=Productos.query.all(), documentos=DocumentoRecibo.query.all(), inventarios=Inventario.query.all())
+            ubic = Ubicaciones.query.get(old_inv.inv_cod_ubicacion)
+            if ubic and ubic.ubi_capacidad is not None and resultado > ubic.ubi_capacidad:
+                flash(f'Capacidad excedida en la ubicación ({ubic.ubi_capacidad}).', 'error')
+                return render_template('movimientos/editarmovimientos.html', movimiento=movimiento, productos=Productos.query.all(), documentos=DocumentoRecibo.query.all(), inventarios=Inventario.query.all())
+
+            old_inv.inv_cantidad = resultado
+            old_inv.inv_saldo = (old_inv.inv_saldo or 0) + (new_effect - old_effect)
+            # Actualizar movimiento
+            movimiento.mov_pro_codigo = str(producto)
+            movimiento.mov_doc_id = str(documento)
+            movimiento.mov_destino = destino
+            movimiento.mov_observacion = observaciones
+            movimiento.mov_tipo = tipo
+            movimiento.mov_cantidad = new_cantidad
+            movimiento.mov_fecha = datetime.now(ZoneInfo('America/Bogota'))
+            db.session.add(old_inv)
+            db.session.add(movimiento)
+            db.session.commit()
+            flash('Movimiento actualizado correctamente.', 'success')
+            return redirect(url_for('movimientos.lista_movimientos'))
+
+        # Si cambia de inventario: revertir efecto antiguo en old_inv (si existe) y aplicar new_effect en new_inv
+        if old_inv:
+            reverted = old_inv.inv_cantidad - old_effect
+            if reverted < 0:
+                flash('No es posible revertir el movimiento en el inventario original (quedaría negativo).', 'error')
+                return render_template('movimientos/editarmovimientos.html', movimiento=movimiento, productos=Productos.query.all(), documentos=DocumentoRecibo.query.all(), inventarios=Inventario.query.all())
+            old_inv.inv_cantidad = reverted
+            old_inv.inv_saldo = (old_inv.inv_saldo or 0) - old_effect
+
+        # Aplicar en new_inv
+        applied = new_inv.inv_cantidad + new_effect
+        new_ubi = Ubicaciones.query.get(new_inv.inv_cod_ubicacion)
+        if applied < 0:
+            flash('No es posible aplicar el nuevo movimiento en el inventario destino (quedaría negativo).', 'error')
+            return render_template('movimientos/editarmovimientos.html', movimiento=movimiento, productos=Productos.query.all(), documentos=DocumentoRecibo.query.all(), inventarios=Inventario.query.all())
+        if new_ubi and new_ubi.ubi_capacidad is not None and applied > new_ubi.ubi_capacidad:
+            flash('Capacidad excedida en la ubicación destino.', 'error')
+            return render_template('movimientos/editarmovimientos.html', movimiento=movimiento, productos=Productos.query.all(), documentos=DocumentoRecibo.query.all(), inventarios=Inventario.query.all())
+
+        new_inv.inv_cantidad = applied
+        new_inv.inv_saldo = (new_inv.inv_saldo or 0) + new_effect
+
+        # Actualizar movimiento
+        movimiento.mov_pro_codigo = str(producto)
+        movimiento.mov_doc_id = str(documento)
+        movimiento.mov_destino = destino
+        movimiento.mov_observacion = observaciones
+        movimiento.mov_tipo = tipo
+        movimiento.mov_cantidad = new_cantidad
+        movimiento.mov_inv_id = new_inv_id
+        movimiento.mov_fecha = datetime.now(ZoneInfo('America/Bogota'))
+
+        if old_inv:
+            db.session.add(old_inv)
+        db.session.add(new_inv)
+        db.session.add(movimiento)
+        db.session.commit()
+        flash('Movimiento actualizado correctamente (inventarios ajustados).', 'success')
+        return redirect(url_for('movimientos.lista_movimientos'))
+
+    # GET
+    return render_template('movimientos/editarmovimientos.html', movimiento=movimiento, productos=Productos.query.all(), documentos=DocumentoRecibo.query.all(), inventarios=Inventario.query.all())
 
 @bp.route('/borrar/<int:id>', methods=('GET', 'POST'))
 @login_required
