@@ -12,13 +12,35 @@ bp = Blueprint('movimientos', __name__, url_prefix='/movimientos')
 @bp.route('/')
 @login_required
 def lista_movimientos():
-    # Obtener movimientos y datos relacionados para mostrar nombre de producto y código de ubicación
-    # Listar todos los movimientos registrados
+    # Obtener todos los movimientos de la base de datos
+    q = (request.args.get('q') or '').strip()
+    # Obtener movimientos y datos relacionados
     movimientos = Movimientos.query.all()
     productos = Productos.query.all()
     usuarios = Usuarios.query.all()
     ubicaciones = Ubicaciones.query.all()
     inventarios = Inventario.query.all()
+
+    if q:
+        # Filtrar movimientos por producto, codigo de ubicación, usuario o tipo de movimiento
+        movimientos = (
+            db.session.query(Movimientos)
+            .join(Productos, Movimientos.mov_pro_codigo == Productos.pro_codigo)
+            .join(Usuarios, Movimientos.mov_usu_id == Usuarios.usu_id)
+            .join(Inventario, Movimientos.mov_inv_id == Inventario.inv_id)
+            .join(Ubicaciones, Inventario.inv_cod_ubicacion == Ubicaciones.ubi_codigo)
+            .filter(
+                (Productos.pro_nombre.ilike(f'%{q}%')) |
+                (Usuarios.usu_nombre.ilike(f'%{q}%')) |
+                (DocumentoRecibo.doc_id.ilike(f'%{q}%')) |
+                (Movimientos.mov_tipo.ilike(f'%{q}%')) |
+                (Inventario.inv_cod_ubicacion.ilike(f'%{q}%')) |
+                (Ubicaciones.ubi_codigo.ilike(f'%{q}%'))
+            )
+            .all()
+        )
+    else:
+        movimientos = Movimientos.query.all()
 
     # Mapear nombre de producto, usuario responsable
     productos_map = {p.pro_codigo: p.pro_nombre for p in productos}
@@ -29,7 +51,7 @@ def lista_movimientos():
 
     ubicaciones_map = {u.ubi_codigo: u.ubi_codigo for u in ubicaciones}
 
-    return render_template('movimientos/listamovimientos.html', movimientos=movimientos, productos_map=productos_map, inv_to_ubi=inv_to_ubi, ubicaciones_map=ubicaciones_map, usuarios_map=usuarios_map)
+    return render_template('movimientos/listamovimientos.html', movimientos=movimientos, productos_map=productos_map, inv_to_ubi=inv_to_ubi, ubicaciones_map=ubicaciones_map, usuarios_map=usuarios_map, q=q)
 
 @bp.route('/realizar_movimiento', methods=('GET', 'POST'))
 @login_required
@@ -62,14 +84,14 @@ def realizar_movimiento():
             productos = Productos.query.all()
             documentos = DocumentoRecibo.query.all()
             inventarios = Inventario.query.all()
-            return redirect(url_for('movimientos.realizar_movimiento', productos=productos, documentos=documentos, inventarios=inventarios))
+            return redirect(url_for('movimientos.realizar_movimientos', productos=productos, documentos=documentos, inventarios=inventarios))
         
         if not Productos.query.get(pro_codigo) or not DocumentoRecibo.query.get(doc_codigo) or not Inventario.query.get(inv_id):
             flash('Algunas de las opciones seleccionadas no existen.', 'error')
             productos = Productos.query.all()
             documentos = DocumentoRecibo.query.all()
             inventarios = Inventario.query.all()
-            return render_template('movimientos/realizarmovimiento.html', productos=productos, documentos=documentos, inventarios=inventarios)
+            return render_template('movimientos/realizarmovimientos.html', productos=productos, documentos=documentos, inventarios=inventarios)
         
         #Validar que la cantidad exista, sea positiva, sea entero y no decimal.
         try:
@@ -81,7 +103,7 @@ def realizar_movimiento():
             productos = Productos.query.all()
             documentos = DocumentoRecibo.query.all()
             inventarios = Inventario.query.all()
-            return render_template('movimientos/realizarmovimiento.html', productos=productos, documentos=documentos, inventarios=inventarios)
+            return render_template('movimientos/realizarmovimientos.html', productos=productos, documentos=documentos, inventarios=inventarios)
         
         
         # Validar tipo de movimiento
@@ -90,7 +112,7 @@ def realizar_movimiento():
             productos = Productos.query.all()
             documentos = DocumentoRecibo.query.all()
             inventarios = Inventario.query.all()
-            return render_template('movimientos/realizarmovimiento.html', productos=productos, documentos=documentos, inventarios=inventarios)
+            return render_template('movimientos/realizarmovimientos.html', productos=productos, documentos=documentos, inventarios=inventarios)
         
         # Validar que la cantidad no exceda el limite 
         
@@ -115,14 +137,14 @@ def realizar_movimiento():
                     productos = Productos.query.all()
                     documentos = DocumentoRecibo.query.all()
                     inventarios = Inventario.query.all()
-                    return render_template('movimientos/realizarmovimiento.html', productos=productos, documentos=documentos, inventarios=inventarios)
+                    return render_template('movimientos/realizarmovimientos.html', productos=productos, documentos=documentos, inventarios=inventarios)
         else:  # SALIDA
             if inventario_obj.inv_cantidad - cantidad < 0:
                 flash(f'Cantidad insuficiente en inventario. Saldo actual: {inventario_obj.inv_cantidad}.', 'error')
                 productos = Productos.query.all()
                 documentos = DocumentoRecibo.query.all()
                 inventarios = Inventario.query.all()
-                return render_template('movimientos/realizarmovimiento.html', productos=productos, documentos=documentos, inventarios=inventarios)
+                return render_template('movimientos/realizarmovimientos.html', productos=productos, documentos=documentos, inventarios=inventarios)
             
         # Crear el nuevo movimiento y actualizar inventario
         movimiento = Movimientos(
