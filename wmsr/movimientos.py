@@ -170,4 +170,47 @@ def borrar_movimiento(id):
 @bp.route('/exportar', methods=('GET', 'POST'))
 @login_required
 def exportar_movimientos_excel():
-    return 'Exportar movimientos a Excel - En construcción'
+    # Hacer join con tablas relacionadas para obtener nombres y códigos
+    movimientos = (
+        db.session.query(
+            Movimientos.mov_id,
+            Movimientos.mov_inv_id,
+            Movimientos.mov_pro_codigo,
+            Productos.pro_nombre.label('Nombre_producto'),
+            Inventario.inv_cod_ubicacion.label('Codigo_ubicacion'),
+            Movimientos.mov_cantidad,
+            Movimientos.mov_doc_id,
+            Movimientos.mov_tipo,
+            Movimientos.mov_destino,
+            Usuarios.usu_nombre.label('Usuario_responsable'),
+            Movimientos.mov_fecha,
+            Movimientos.mov_observacion
+        )
+        .join(Productos, Movimientos.mov_pro_codigo == Productos.pro_codigo)
+        .join(Inventario, Movimientos.mov_inv_id == Inventario.inv_id)
+        .join(DocumentoRecibo, Movimientos.mov_doc_id == DocumentoRecibo.doc_id)
+        .join(Usuarios, Movimientos.mov_usu_id == Usuarios.usu_id)
+    )
+
+    # Convertir resultados a lista de diccionarios
+    data = [
+        {
+            'ID Movimiento': m.mov_id,
+            'Código Producto': m.mov_pro_codigo,
+            'Nombre Producto': m.Nombre_producto or '',
+            'ID Inventario': m.mov_inv_id,
+            'Código Ubicación': m.Codigo_ubicacion or '',
+            'Cantidad': m.mov_cantidad,
+            'Documento ID': m.mov_doc_id,
+            'Tipo Movimiento': m.mov_tipo,
+            'Destino': m.mov_destino,
+            'Usuario Responsable': m.Usuario_responsable or '',
+            'Fecha': m.mov_fecha,
+            'Observación': m.mov_observacion
+        }
+        for m in movimientos
+    ]
+
+    columnas = ['ID Movimiento', 'Código Producto', 'Nombre Producto', 'ID Inventario', 'Código Ubicación', 'Cantidad', 'Documento ID', 'Tipo Movimiento', 'Destino', 'Usuario Responsable', 'Fecha', 'Observación']
+
+    return exportar_a_excel('movimientos', columnas, data)
