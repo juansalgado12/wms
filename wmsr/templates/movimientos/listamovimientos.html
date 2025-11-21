@@ -50,15 +50,15 @@
     <tbody>
       {% for m in movimientos | reverse %}
       <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition">
-        <td class="px-6 py-4 whitespace-nowrap text-slate-700 dark:text-gray-200"></td>
-        <td class="px-6 py-4 whitespace-nowrap text-slate-700 dark:text-gray-200"></td>
-        <td class="px-6 py-4 whitespace-nowrap text-slate-700 dark:text-gray-200"></td>
-        <td class="px-6 py-4 whitespace-nowrap text-slate-700 dark:text-gray-200"></td>
-        <td class="px-6 py-4 whitespace-nowrap text-slate-700 dark:text-gray-200"></td>
-        <td class="px-6 py-4 whitespace-nowrap text-slate-700 dark:texto-gray-200"></td>
-        <td class="px-6 py-4 whitespace-nowrap text-slate-700 dark:text-gray-200"></td>
-        <td class="px-6 py-4 whitespace-nowrap text-slate-700 dark:text-gray-200"></td>
-        <td class="px-6 py-4 whitespace-nowrap text-slate-700 dark:text-gray-200"></td>
+        <td class="px-6 py-4 whitespace-nowrap text-slate-700 dark:text-gray-200">{{ productos_map[m.mov_pro_codigo]}}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-slate-700 dark:text-gray-200">{{ inv_to_ubi.get(m.mov_inv_id) or '' }}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-slate-700 dark:text-gray-200">{{ m.mov_cantidad }}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-slate-700 dark:text-gray-200">{{ m.mov_doc_id }}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-slate-700 dark:text-gray-200">{{ m.mov_tipo }}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-slate-700 dark:text-gray-200">{{ m.mov_destino }}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-slate-700 dark:text-gray-200">{{ usuarios_map[m.mov_usu_id] }}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-slate-700 dark:text-gray-200">{{ m.mov_fecha }}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-slate-700 dark:text-gray-200">{{ m.mov_observacion }}</td>
         <td class="px-6 py-4 text-center">
           <div class="flex justify-center items-center gap-3">
             <a href="E" 

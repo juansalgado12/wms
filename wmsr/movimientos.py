@@ -12,16 +12,24 @@ bp = Blueprint('movimientos', __name__, url_prefix='/movimientos')
 @bp.route('/')
 @login_required
 def lista_movimientos():
-    # # Listar todos los movimientos registrados
-    # movimientos = Movimientos.query.all()
-    # productos = Productos.query.all()
-    # usuarios = Usuarios.query.all()
+    # Obtener movimientos y datos relacionados para mostrar nombre de producto y código de ubicación
+    # Listar todos los movimientos registrados
+    movimientos = Movimientos.query.all()
+    productos = Productos.query.all()
+    usuarios = Usuarios.query.all()
+    ubicaciones = Ubicaciones.query.all()
+    inventarios = Inventario.query.all()
 
-    # # Mapear nombre de producto y usuario responsable
-    # productos_map = {p.pro_codigo: p.pro_nombre for p in productos}
-    # usuarios_map = {u.usu_id: u.usu_nombre for u in usuarios}
+    # Mapear nombre de producto, usuario responsable
+    productos_map = {p.pro_codigo: p.pro_nombre for p in productos}
 
-    return render_template('movimientos/listamovimientos.html')
+    usuarios_map = {u.usu_id: u.usu_nombre for u in usuarios}
+
+    inv_to_ubi = {inv.inv_id: inv.inv_cod_ubicacion for inv in inventarios}
+
+    ubicaciones_map = {u.ubi_codigo: u.ubi_codigo for u in ubicaciones}
+
+    return render_template('movimientos/listamovimientos.html', movimientos=movimientos, productos_map=productos_map, inv_to_ubi=inv_to_ubi, ubicaciones_map=ubicaciones_map, usuarios_map=usuarios_map)
 
 @bp.route('/realizar_movimiento', methods=('GET', 'POST'))
 @login_required
