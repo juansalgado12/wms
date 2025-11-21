@@ -129,6 +129,16 @@ def realizar_movimiento():
         if inventario_obj:
             ubicacion_obj = Ubicaciones.query.get(inventario_obj.inv_cod_ubicacion)
 
+        # Validar que el producto del movimiento coincida con el del inventario
+        # Normalizar tipos a str() para evitar discrepancias entre int/str en la comparación.
+        if not inventario_obj or str(inventario_obj.inv_pro_codigo) != str(pro_codigo):
+            flash('El producto seleccionado no coincide con el del inventario.', 'error')
+            productos = Productos.query.all()
+            documentos = DocumentoRecibo.query.all()
+            inventarios = Inventario.query.all()
+            return render_template('movimientos/realizarmovimientos.html', productos=productos, documentos=documentos, inventarios=inventarios)
+        
+
         # Validaciones de capacidad y saldo
         if tipo_movimiento == 'INGRESO':
             if ubicacion_obj and ubicacion_obj.ubi_capacidad is not None:
