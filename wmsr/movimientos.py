@@ -183,16 +183,17 @@ def realizar_movimiento():
         db.session.add(inventario_obj)
         db.session.commit()
 
-        # 
         flash('Movimiento realizado exitosamente.', 'success')
         return redirect(url_for('movimientos.realizar_movimiento'))
 
     return render_template('movimientos/realizarmovimientos.html', productos = Productos.query.all(), documentos=DocumentoRecibo.query.all(), inventarios=Inventario.query.all())
 
-@bp.route('/editar/<int:id>', methods=('GET', 'POST'))
+@bp.route('/editar/<int:mov_id>', methods=('GET', 'POST'))
 @login_required
-def editar_movimiento(id):
-    return render_template('movimientos/editarmovimientos.html')
+def editar_movimiento(mov_id):
+    # Buscar el movimiento por ID
+    movimiento = Movimientos.query.get_or_404(mov_id)
+    return render_template('movimientos/editarmovimientos.html', movimiento=movimiento)
 
 @bp.route('/borrar/<int:id>', methods=('GET', 'POST'))
 @login_required
