@@ -336,7 +336,14 @@ def editar_movimiento(mov_id):
 @bp.route('/borrar/<int:id>', methods=('GET', 'POST'))
 @login_required
 def borrar_movimiento(id):
-    return 'Borrar movimiento - En construcción'
+    movimiento = Movimientos.query.get_or_404(id)
+    if not movimiento:
+        flash(f'El movimiento con ID {id} no existe.', 'error')
+    else:
+        db.session.delete(movimiento)
+        db.session.commit()
+        flash(f'Movimiento {id} eliminado correctamente.', 'success')
+    return redirect(url_for('movimientos.lista_movimientos'))
 
 @bp.route('/exportar', methods=('GET', 'POST'))
 @login_required

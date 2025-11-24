@@ -93,7 +93,7 @@
                             <a href="{{ url_for('movimientos.editar_movimiento', mov_id=m.mov_id) }}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">
                                 <span class="ml-1 hidden sm:inline">Editar</span>
                             </a>
-                            <a href="#" onclick="return confirm('¿Está seguro de que desea eliminar este movimiento?');"
+                            <a href="{{ url_for('movimientos.borrar_movimiento', id=m.mov_id) }}" onclick="return confirm('¿Está seguro de que desea eliminar este movimiento? No se restará o sumará la cantidad al inventario.');"
                                 class="font-medium text-red-600 dark:text-red-500 hover:underline">
                                 <span class="ml-1 hidden sm:inline">Borrar</span>
                             </a>
