@@ -2,6 +2,57 @@
 {% block title %}Reportes - Warehouse Management System{% endblock %}
 {% block content %}
 <div class="max-w-6xl mx-auto p-6">
+    <!--TITULO CON SVG-->
+    <div class="flex items-center justify-center gap-3 my-4">
+        <svg class="w-8 h-8 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7h4l3 9 4-16 3 9h4" />
+        </svg>
+        <h2 class="text-2xl md:text-3xl font-sans font-bold text-center dark:text-gray-200">
+            Movimientos
+        </h2>
+    </div>
+    
+    <!-- TOTAL DE MOVIMIENTOS -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6 mt-8">
+        <div class="bg-slate-800 p-4 rounded text-slate-100">
+            <div class="text-sm text-slate-400">Total Movimientos</div>
+            <div class="text-2xl font-bold">{{ total_movimientos or 0 }}</div>
+        </div>
+        <div class="bg-emerald-800 p-4 rounded">
+            <div class="text-sm text-emerald-100">Ingresos (INGRESO)</div>
+            <div class="text-2xl font-bold text-slate-100">{{ ingresos or 0 }}</div>
+        </div>
+        <div class="bg-rose-800 p-4 rounded">
+            <div class="text-sm text-rose-100">Salidas (SALIDA)</div>
+            <div class="text-2xl font-bold text-slate-100">{{ salidas or 0 }}</div>
+        </div>
+    </div>
+
+    <!-- TOP 5 USUARIOS CON MÁS MOVIMIENTOS -->
+
+    <h3 class="text-2xl font-bold text-gray-800 mb-4 dark:text-gray-200 mt-20">Top 5 usuarios con más movimientos</h3>
+    <div class="overflow-x-auto rounded-lg bg-slate-900 shadow mb-6 mt-8">
+        <table class="w-full text-sm text-left text-gray-700 dark:text-gray-400">
+            <thead class="text-xs uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-300">
+                <tr>
+                    <th class="p-3 py-3">Nombre</th>
+                    <th class="p-3 py-3">Usuario</th>
+                    <th class="p-3 py-3">Total movimientos</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for u in usuarios_top %}
+                <tr
+                    class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition">
+                    <td class="p-3">{{ u.usu_nombre }}</td>
+                    <td class="p-3 text-slate-300">{{ u.usu_email }}</td>
+                    <td class="p-3 font-semibold">{{ u.total_movimientos }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
   <table class="w-full text-sm">
     <thead class="text-xs uppercase text-slate-300">
       <tr><th>Código</th><th>Nombre</th><th>Cantidad total</th><th>Localizaciones</th></tr>
@@ -12,7 +63,7 @@
         <td class="p-3">{{ r.pro_codigo }}</td>
         <td class="p-3">{{ r.pro_nombre }}</td>
         <td class="p-3">{{ r.total_cantidad }}</td>
-        <td class="p-3">{{ r.locations_count }}</td>
+        <td class="p-3">{{ r.cantidad_ubicaciones }}</td>
       </tr>
       {% endfor %}
     </tbody>

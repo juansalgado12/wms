@@ -1,20 +1,45 @@
-from flask import Blueprint, render_template, request, send_file, flash
-from .models import Productos, Inventario, Ubicaciones
+from flask import Blueprint, render_template, request
+from .models import Productos, Inventario, Ubicaciones, Movimientos, Usuarios
 from .auth import login_required
 from . import db
 from wmsr.utils.export_excel import exportar_a_excel
-from io import BytesIO
 
 bp = Blueprint('reportes', __name__, url_prefix='/reportes')
 
-@bp.route('/inventario')
+@bp.route('/')
 @login_required
-def reporte_inventario():
-    # filtros opcionales
+def reportes():
+
+    # =======================
+    # 🔹 Reporte de movimientos
+    # =======================
+
+    #Total de movimientos, total ingresos y total salidas
+    total_movimientos = Movimientos.query.count()
+    ingresos = Movimientos.query.filter(Movimientos.mov_tipo == 'INGRESO').count()
+    salidas = Movimientos.query.filter(Movimientos.mov_tipo == 'SALIDA').count()
+
+    #5 usuarios con más movimientos
+    usuarios_top = (
+        db.session.query(
+            Usuarios.usu_nombre,
+            Usuarios.usu_email,
+            db.func.count(Movimientos.mov_id).label('total_movimientos')
+        )
+        .join(Usuarios, Usuarios.usu_id == Movimientos.mov_usu_id)
+        .group_by(Usuarios.usu_id, Usuarios.usu_nombre, Usuarios.usu_email)
+        .order_by(db.func.count(Movimientos.mov_id).desc())
+        .limit(5)
+        .all()
+    )
+
+    # =======================
+    # 🔹 Reporte de inventario
+    # =======================
+
     q = (request.args.get('q') or '').strip()
     ubi = request.args.get('ubicacion')
 
-    # Consulta: total por producto
     query = (
         db.session.query(
             Productos.pro_codigo,
@@ -24,17 +49,17 @@ def reporte_inventario():
         )
         .join(Inventario, Inventario.inv_pro_codigo == Productos.pro_codigo)
         .group_by(Productos.pro_codigo, Productos.pro_nombre)
-
     )
 
     if q:
         query = query.filter(Productos.pro_nombre.ilike(f'%{q}%'))
     if ubi:
-        query = query.join(Ubicaciones, Inventario.inv_cod_ubicacion == Ubicaciones.ubi_codigo).filter(Ubicaciones.ubi_codigo == ubi)
-    
+        query = query.join(Ubicaciones, Inventario.inv_cod_ubicacion == Ubicaciones.ubi_codigo)\
+                     .filter(Ubicaciones.ubi_codigo == ubi)
+
     rows = query.all()
 
-    # Generar reporte en formato excel
+    # Exportar a Excel
     if request.args.get('exportar') == 'excel':
         data = [
             {
@@ -45,6 +70,19 @@ def reporte_inventario():
             }
             for r in rows
         ]
-        columnas = ['Código Producto', 'Nombre Producto', 'Cantidad Total', 'Cantidad de ubicaciones']
-        return exportar_a_excel('reporte_inventario', columnas, data)
-    return render_template('reports/reportes.html', rows=rows, q=q, ubi=ubi)
+        columns = ['Código Producto', 'Nombre Producto', 'Cantidad Total', 'Cantidad de ubicaciones']
+        return exportar_a_excel('reporte_inventario', columns, data)
+
+    # =======================
+    # Render final con TODO
+    # =======================
+    return render_template(
+        'reports/reportes.html',
+        total_movimientos=total_movimientos,
+        usuarios_top=usuarios_top,
+        ingresos=ingresos,
+        salidas=salidas,
+        rows=rows,
+        q=q,
+        ubi=ubi
+    )
