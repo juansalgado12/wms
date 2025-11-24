@@ -1,0 +1,22 @@
+{% extends 'layouts/base.html' %}
+{% block title %}Reportes - Warehouse Management System{% endblock %}
+{% block content %}
+<div class="max-w-6xl mx-auto p-6">
+  <table class="w-full text-sm">
+    <thead class="text-xs uppercase text-slate-300">
+      <tr><th>Código</th><th>Nombre</th><th>Cantidad total</th><th>Localizaciones</th></tr>
+    </thead>
+    <tbody>
+      {% for r in rows %}
+      <tr class="odd:bg-slate-800 even:bg-slate-700 text-slate-100">
+        <td class="p-3">{{ r.pro_codigo }}</td>
+        <td class="p-3">{{ r.pro_nombre }}</td>
+        <td class="p-3">{{ r.total_cantidad }}</td>
+        <td class="p-3">{{ r.locations_count }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% endblock %}

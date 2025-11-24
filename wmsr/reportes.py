@@ -46,3 +46,5 @@ def reporte_inventario():
             for r in rows
         ]
         columnas = ['Código Producto', 'Nombre Producto', 'Cantidad Total', 'Cantidad de ubicaciones']
+        return exportar_a_excel('reporte_inventario', columnas, data)
+    return render_template('reports/reportes.html', rows=rows, q=q, ubi=ubi)
