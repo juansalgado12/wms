@@ -84,6 +84,11 @@ def reportes():
 
         salidas_30d_prod = Movimientos.query.filter(Movimientos.mov_pro_codigo == producto_seleccionado, Movimientos.mov_tipo == 'SALIDA', Movimientos.mov_fecha >= pro_cutoff_30).count()
 
+        # stock actual del producto seleccionado
+        stock_actual = db.session.query(
+            db.func.sum(Inventario.inv_cantidad)
+        ).filter(Inventario.inv_pro_codigo == producto_seleccionado).scalar() or 0
+
         stats_productos = {
             'total': total_prod,
             'ingresos': ingresos_prod,
@@ -93,7 +98,8 @@ def reportes():
             'salidas_7d': salidas_7d_prod,
             'total_30d': total_30d_prod,
             'ingresos_30d': ingresos_30d_prod,
-            'salidas_30d': salidas_30d_prod
+            'salidas_30d': salidas_30d_prod,
+            'stock_actual': stock_actual
         }
 
     # =======================
