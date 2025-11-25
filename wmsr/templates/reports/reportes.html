@@ -26,8 +26,9 @@
             <div class="text-sm text-rose-100">Total de salidas (SALIDA)</div>
             <div class="text-2xl font-bold text-slate-100">{{ salidas or 0 }}</div>
         </div>
-    </div>
+    </div> <!-- CIERRE DEL GRID DE TOTAL MOVIMIENTOS -->
 
+    <!-- LINEA SEPARADORA -->
     <hr class="border-t border-gray-300 my-4 dark:border-gray-600">
 
     <!-- MOVIMIENTOS ÚLTIMOS 7 DÍAS -->
@@ -44,7 +45,26 @@
             <div class="text-sm text-rose-100">Salidas (7d)</div>
             <div class="text-2xl font-bold">{{ salidas_7d }}</div>
         </div>
-    </div>
+    </div> <!-- CIERRE DEL GRID DE MOVIMIENTOS 7 DÍAS -->
+
+    <!-- LINEA SEPARADORA -->
+    <hr class="border-t border-gray-300 my-4 dark:border-gray-600">
+
+    <!-- MOVIMIENTOS ÚLTIMOS 30 DÍAS -->
+    <div class="grid grid-cols-3 gap-4 mb-6">
+        <div class="p-4 bg-slate-800 rounded text-white">
+            <div class="text-sm text-slate-400">Movimientos últimos 30 días</div>
+            <div class="text-2xl font-bold">{{ total_30d }}</div>
+        </div>
+        <div class="p-4 bg-emerald-800 rounded text-white">
+            <div class="text-sm text-emerald-100">Ingresos (30d)</div>
+            <div class="text-2xl font-bold">{{ ingresos_30d }}</div>
+        </div>
+        <div class="p-4 bg-rose-800 rounded text-white">
+            <div class="text-sm text-rose-100">Salidas (30d)</div>
+            <div class="text-2xl font-bold">{{ salidas_30d }}</div>
+        </div>
+    </div> <!-- CIERRE DEL GRID DE MOVIMIENTOS 30 DÍAS -->
 
     <!-- TOP 5 USUARIOS CON MÁS MOVIMIENTOS -->
 

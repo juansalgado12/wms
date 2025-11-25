@@ -40,10 +40,19 @@ def reportes():
     # Movimientos ultimos 7 dias
     # =======================
 
-    cutoff = datetime.now() - timedelta(days=7)
-    total_7d = Movimientos.query.filter(Movimientos.mov_fecha >= cutoff).count()
-    ingresos_7d = Movimientos.query.filter(Movimientos.mov_tipo == 'INGRESO', Movimientos.mov_fecha >= cutoff).count()
-    salidas_7d = Movimientos.query.filter(Movimientos.mov_tipo == 'SALIDA', Movimientos.mov_fecha >= cutoff).count()
+    cutoff_7 = datetime.now() - timedelta(days=7)
+    total_7d = Movimientos.query.filter(Movimientos.mov_fecha >= cutoff_7).count()
+    ingresos_7d = Movimientos.query.filter(Movimientos.mov_tipo == 'INGRESO', Movimientos.mov_fecha >= cutoff_7).count()
+    salidas_7d = Movimientos.query.filter(Movimientos.mov_tipo == 'SALIDA', Movimientos.mov_fecha >= cutoff_7).count()
+
+    #========================
+    # Movimientos ultimos 30 dias
+    #========================
+
+    cutoff_30 = datetime.now() - timedelta (days=30)
+    total_30d = Movimientos.query.filter(Movimientos.mov_fecha >= cutoff_30).count()
+    ingresos_30d = Movimientos.query.filter(Movimientos.mov_tipo == 'INGRESO', Movimientos.mov_fecha >= cutoff_30).count()
+    salidas_30d = Movimientos.query.filter(Movimientos.mov_tipo == 'SALIDA', Movimientos.mov_fecha >= cutoff_30).count()
 
     # =======================
     # Reporte de inventario
@@ -97,6 +106,9 @@ def reportes():
         total_7d=total_7d,
         ingresos_7d=ingresos_7d,
         salidas_7d=salidas_7d,
+        total_30d=total_30d,
+        ingresos_30d=ingresos_30d,
+        salidas_30d=salidas_30d,
         rows=rows,
         q=q,
         ubi=ubi
