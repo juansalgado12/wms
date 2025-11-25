@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request
-from .models import Productos, Inventario, Ubicaciones, Movimientos, Usuarios
+from .models import Productos, Inventario, Ubicaciones, Movimientos, Usuarios, ProductoImagenes
 from .auth import login_required
 from . import db
 from wmsr.utils.export_excel import exportar_a_excel
@@ -89,6 +89,14 @@ def reportes():
             db.func.sum(Inventario.inv_cantidad)
         ).filter(Inventario.inv_pro_codigo == producto_seleccionado).scalar() or 0
 
+        # Imagen del producto seleccionado
+        img = ProductoImagenes.query.filter(ProductoImagenes.img_pro_codigo == producto_seleccionado).order_by(getattr(ProductoImagenes, 'img_id').desc()).first()
+        if img and getattr(img, 'img_url', None):
+            producto_imagen_url = img.img_url
+        else:
+            producto_imagen_url = None
+        
+
         stats_productos = {
             'total': total_prod,
             'ingresos': ingresos_prod,
@@ -99,7 +107,8 @@ def reportes():
             'total_30d': total_30d_prod,
             'ingresos_30d': ingresos_30d_prod,
             'salidas_30d': salidas_30d_prod,
-            'stock_actual': stock_actual
+            'stock_actual': stock_actual,
+            'imagen_url': producto_imagen_url
         }
 
     # =======================
