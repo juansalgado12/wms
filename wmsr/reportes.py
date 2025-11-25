@@ -54,6 +54,26 @@ def reportes():
     ingresos_30d = Movimientos.query.filter(Movimientos.mov_tipo == 'INGRESO', Movimientos.mov_fecha >= cutoff_30).count()
     salidas_30d = Movimientos.query.filter(Movimientos.mov_tipo == 'SALIDA', Movimientos.mov_fecha >= cutoff_30).count()
 
+     #========================
+    # Productos en relacion a movimientos
+    #========================
+
+    productos = Productos.query.order_by(Productos.pro_nombre).all()
+    producto_seleccionado = (request.args.get('producto') or '').strip() or None
+
+    stats_productos = None
+    if producto_seleccionado:
+        # totales de movimientos por tipo para el producto seleccionado
+        total_prod = Movimientos.query.filter(Movimientos.mov_pro_codigo == producto_seleccionado).count()
+        ingresos_prod = Movimientos.query.filter(Movimientos.mov_pro_codigo == producto_seleccionado, Movimientos.mov_tipo == 'INGRESO').count()
+        salidas_prod = Movimientos.query.filter(Movimientos.mov_pro_codigo == producto_seleccionado, Movimientos.mov_tipo == 'SALIDA').count()
+
+        stats_productos = {
+            'total': total_prod,
+            'ingresos': ingresos_prod,
+            'salidas': salidas_prod
+        }
+
     # =======================
     # Reporte de inventario
     # =======================
@@ -109,6 +129,9 @@ def reportes():
         total_30d=total_30d,
         ingresos_30d=ingresos_30d,
         salidas_30d=salidas_30d,
+        productos=productos,
+        producto_seleccionado=producto_seleccionado,
+        stats_productos=stats_productos,
         rows=rows,
         q=q,
         ubi=ubi
