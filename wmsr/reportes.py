@@ -68,10 +68,32 @@ def reportes():
         ingresos_prod = Movimientos.query.filter(Movimientos.mov_pro_codigo == producto_seleccionado, Movimientos.mov_tipo == 'INGRESO').count()
         salidas_prod = Movimientos.query.filter(Movimientos.mov_pro_codigo == producto_seleccionado, Movimientos.mov_tipo == 'SALIDA').count()
 
+        # movimientos en productos ultimos 7 dias
+        pro_cutoff_7 = datetime.now() - timedelta(days=7)
+        total_7d_prod = Movimientos.query.filter(Movimientos.mov_pro_codigo == producto_seleccionado, Movimientos.mov_fecha >= pro_cutoff_7).count()
+
+        ingresos_7d_prod = Movimientos.query.filter(Movimientos.mov_pro_codigo == producto_seleccionado, Movimientos.mov_tipo == 'INGRESO', Movimientos.mov_fecha >= pro_cutoff_7).count()
+
+        salidas_7d_prod = Movimientos.query.filter(Movimientos.mov_pro_codigo == producto_seleccionado, Movimientos.mov_tipo == 'SALIDA', Movimientos.mov_fecha >= pro_cutoff_7).count()
+
+        # Movimientos en productos ultimos 30 dias
+        pro_cutoff_30 = datetime.now() - timedelta(days=30)
+        total_30d_prod = Movimientos.query.filter(Movimientos.mov_pro_codigo == producto_seleccionado, Movimientos.mov_fecha >= pro_cutoff_30).count()
+
+        ingresos_30d_prod = Movimientos.query.filter(Movimientos.mov_pro_codigo == producto_seleccionado, Movimientos.mov_tipo == 'INGRESO', Movimientos.mov_fecha >= pro_cutoff_30).count()
+
+        salidas_30d_prod = Movimientos.query.filter(Movimientos.mov_pro_codigo == producto_seleccionado, Movimientos.mov_tipo == 'SALIDA', Movimientos.mov_fecha >= pro_cutoff_30).count()
+
         stats_productos = {
             'total': total_prod,
             'ingresos': ingresos_prod,
-            'salidas': salidas_prod
+            'salidas': salidas_prod,
+            'total_7d': total_7d_prod,
+            'ingresos_7d': ingresos_7d_prod,
+            'salidas_7d': salidas_7d_prod,
+            'total_30d': total_30d_prod,
+            'ingresos_30d': ingresos_30d_prod,
+            'salidas_30d': salidas_30d_prod
         }
 
     # =======================

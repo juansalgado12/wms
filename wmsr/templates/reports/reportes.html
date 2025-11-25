@@ -107,6 +107,43 @@
     {% endif %}
     <!-- CIERRE DEL GRID DE ESTADÍSTICAS DEL PRODUCTO SELECCIONADO -->
 
+
+    <!-- ESTADÍSTICAS DEL PRODUCTO SELECCIONADO ÚLTIMOS 7 DÍAS -->
+    {% if stats_productos %}
+    <div class="grid grid-cols-3 gap-4 mb-6">
+        <div class="p-4 bg-slate-800 rounded text-white">
+            <div class="text-sm text-slate-400">Movimientos ultimos 7 días</div>
+            <div class="text-2xl font-bold">{{ stats_productos.total_7d }}</div>
+        </div>
+        <div class="p-4 bg-emerald-800 rounded text-white">
+            <div class="text-sm text-emerald-100">Ingresos (7d)</div>
+            <div class="text-2xl font-bold">{{ stats_productos.ingresos_7d }}</div>
+        </div>
+        <div class="p-4 bg-rose-800 rounded text-white">
+            <div class="text-sm text-rose-100">Salidas (7d)</div>
+            <div class="text-2xl font-bold">{{ stats_productos.salidas_7d }}</div>
+        </div>
+    </div>
+    {% endif %} <!-- CIERRE DEL GRID DE ESTADÍSTICAS DEL PRODUCTO SELECCIONADO 7 DÍAS -->
+
+    <!-- ESTADÍSTICAS DEL PRODUCTO SELECCIONADO ÚLTIMOS 30 DÍAS -->
+    {% if stats_productos %}
+    <div class="grid grid-cols-3 gap-4 mb-6">
+        <div class="p-4 bg-slate-800 rounded text-white">
+            <div class="text-sm text-slate-400">Movimientos ultimos 30 días</div>
+            <div class="text-2xl font-bold">{{ stats_productos.total_30d }}</div>
+        </div>
+        <div class="p-4 bg-emerald-800 rounded text-white">
+            <div class="text-sm text-emerald-100">Ingresos (30d)</div>
+            <div class="text-2xl font-bold">{{ stats_productos.ingresos_30d }}</div>
+        </div>
+        <div class="p-4 bg-rose-800 rounded text-white">
+            <div class="text-sm text-rose-100">Salidas (30d)</div>
+            <div class="text-2xl font-bold">{{ stats_productos.salidas_30d }}</div>
+        </div>
+    </div>
+    {% endif %} <!-- CIERRE DEL GRID DE ESTADÍSTICAS DEL PRODUCTO SELECCIONADO 30 DÍAS -->
+
     <!-- TOP 5 USUARIOS CON MÁS MOVIMIENTOS -->
 
     <h3 class="text-2xl font-bold text-gray-800 mb-4 dark:text-gray-200 mt-20">Top 5 usuarios con más movimientos</h3>
