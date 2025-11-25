@@ -3,6 +3,7 @@ from .models import Productos, Inventario, Ubicaciones, Movimientos, Usuarios
 from .auth import login_required
 from . import db
 from wmsr.utils.export_excel import exportar_a_excel
+from datetime import datetime, timedelta
 
 bp = Blueprint('reportes', __name__, url_prefix='/reportes')
 
@@ -11,7 +12,7 @@ bp = Blueprint('reportes', __name__, url_prefix='/reportes')
 def reportes():
 
     # =======================
-    # 🔹 Reporte de movimientos
+    # Reporte de movimientos
     # =======================
 
     #Total de movimientos, total ingresos y total salidas
@@ -19,7 +20,9 @@ def reportes():
     ingresos = Movimientos.query.filter(Movimientos.mov_tipo == 'INGRESO').count()
     salidas = Movimientos.query.filter(Movimientos.mov_tipo == 'SALIDA').count()
 
-    #5 usuarios con más movimientos
+    # =======================
+    # 5 usuarios con más movimientos
+    # =======================
     usuarios_top = (
         db.session.query(
             Usuarios.usu_nombre,
@@ -34,7 +37,16 @@ def reportes():
     )
 
     # =======================
-    # 🔹 Reporte de inventario
+    # Movimientos ultimos 7 dias
+    # =======================
+
+    cutoff = datetime.now() - timedelta(days=7)
+    total_7d = Movimientos.query.filter(Movimientos.mov_fecha >= cutoff).count()
+    ingresos_7d = Movimientos.query.filter(Movimientos.mov_tipo == 'INGRESO', Movimientos.mov_fecha >= cutoff).count()
+    salidas_7d = Movimientos.query.filter(Movimientos.mov_tipo == 'SALIDA', Movimientos.mov_fecha >= cutoff).count()
+
+    # =======================
+    # Reporte de inventario
     # =======================
 
     q = (request.args.get('q') or '').strip()
@@ -74,7 +86,7 @@ def reportes():
         return exportar_a_excel('reporte_inventario', columns, data)
 
     # =======================
-    # Render final con TODO
+    # Render final con Todo
     # =======================
     return render_template(
         'reports/reportes.html',
@@ -82,6 +94,9 @@ def reportes():
         usuarios_top=usuarios_top,
         ingresos=ingresos,
         salidas=salidas,
+        total_7d=total_7d,
+        ingresos_7d=ingresos_7d,
+        salidas_7d=salidas_7d,
         rows=rows,
         q=q,
         ubi=ubi

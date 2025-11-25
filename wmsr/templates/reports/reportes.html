@@ -1,7 +1,7 @@
 {% extends 'layouts/base.html' %}
 {% block title %}Reportes - Warehouse Management System{% endblock %}
 {% block content %}
-<div class="max-w-6xl mx-auto p-6">
+<div class="max-w-6xl mx-auto p-6"> <!-- DIV DE MOVIMIENTOS -->
     <!--TITULO CON SVG-->
     <div class="flex items-center justify-center gap-3 my-4">
         <svg class="w-8 h-8 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -19,12 +19,30 @@
             <div class="text-2xl font-bold">{{ total_movimientos or 0 }}</div>
         </div>
         <div class="bg-emerald-800 p-4 rounded">
-            <div class="text-sm text-emerald-100">Ingresos (INGRESO)</div>
+            <div class="text-sm text-emerald-100">Total de ingresos (INGRESO)</div>
             <div class="text-2xl font-bold text-slate-100">{{ ingresos or 0 }}</div>
         </div>
         <div class="bg-rose-800 p-4 rounded">
-            <div class="text-sm text-rose-100">Salidas (SALIDA)</div>
+            <div class="text-sm text-rose-100">Total de salidas (SALIDA)</div>
             <div class="text-2xl font-bold text-slate-100">{{ salidas or 0 }}</div>
+        </div>
+    </div>
+
+    <hr class="border-t border-gray-300 my-4 dark:border-gray-600">
+
+    <!-- MOVIMIENTOS ÚLTIMOS 7 DÍAS -->
+    <div class="grid grid-cols-3 gap-4 mb-6">
+        <div class="p-4 bg-slate-800 rounded text-white">
+            <div class="text-sm text-slate-400">Movimientos últimos 7 días</div>
+            <div class="text-2xl font-bold">{{ total_7d }}</div>
+        </div>
+        <div class="p-4 bg-emerald-800 rounded text-white">
+            <div class="text-sm text-emerald-100">Ingresos (7d)</div>
+            <div class="text-2xl font-bold">{{ ingresos_7d }}</div>
+        </div>
+        <div class="p-4 bg-rose-800 rounded text-white">
+            <div class="text-sm text-rose-100">Salidas (7d)</div>
+            <div class="text-2xl font-bold">{{ salidas_7d }}</div>
         </div>
     </div>
 
@@ -52,7 +70,9 @@
             </tbody>
         </table>
     </div>
+</div> <!-- CIERRE DEL DIV DE MOVIMIENTOS -->
 
+<div class="max-w-6xl mx-auto p-6"> <!-- DIV DE INVENTARIO/PRODUCTOS -->
   <table class="w-full text-sm">
     <thead class="text-xs uppercase text-slate-300">
       <tr><th>Código</th><th>Nombre</th><th>Cantidad total</th><th>Localizaciones</th></tr>
