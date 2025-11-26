@@ -150,6 +150,23 @@ def reportes():
         }
 
     # =======================
+    # 5 productos con menor stock
+    # =======================
+
+    productos_menor_stock = (
+        db.session.query(
+            Productos.pro_codigo,
+            Productos.pro_nombre,
+            db.func.sum(Inventario.inv_cantidad).label('total_cantidad')
+        )
+        .join(Inventario, Inventario.inv_pro_codigo == Productos.pro_codigo)
+        .group_by(Productos.pro_codigo, Productos.pro_nombre)
+        .order_by(db.func.sum(Inventario.inv_cantidad).asc())
+        .limit(5)
+        .all()
+    )
+
+    # =======================
     # Reporte de inventario
     # =======================
 
@@ -210,6 +227,7 @@ def reportes():
         proveedores=proveedores,
         proveedor_seleccionado=proveedor_seleccionado,
         prov_stats=prov_stats,
+        productos_menor_stock=productos_menor_stock,
         rows=rows,
         q=q,
         ubi=ubi
