@@ -43,7 +43,7 @@
         </svg>
       </button>
       <div id="dropdownMenu"
-        class="hidden absolute left-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
+        class="hidden absolute left-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10 cursor-default">
         <div class="py-1">
           <a href="{{url_for('categorias.lista_categorias')}}"
             class="block px-4 py-2 text-slate-700 hover:bg-blue-100">Gestionar categorías</a>
@@ -111,7 +111,7 @@
           <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{{ p.pro_nombre or '-' }}
           </td>
           <td class="px-6 py-4 text-gray-400">
-            <div class="whitespace-normal break-words" title="{{ p.pro_descripcion }}">
+            <div class="whitespace-normal wrap-break-word" title="{{ p.pro_descripcion }}">
               {{ p.pro_descripcion or '-' }}
             </div>
           </td>
