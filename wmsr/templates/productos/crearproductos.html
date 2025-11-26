@@ -75,15 +75,15 @@
 			<div>
 				<label for="image" class="block text-slate-300 font-medium mb-2">Imágen del producto</label>
 				<input id="image" name="image" type="file" accept="image/*"
-					class="block w-full text-sm text-slate-200 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:bg-emerald-600 file:text-white hover:file:opacity-90 bg-slate-700 border border-slate-600" />
+					class="block w-full text-sm text-slate-200 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:bg-emerald-600 file:text-white hover:file:opacity-90 bg-slate-700 border border-slate-600 file:cursor-pointer" />
 
 				<div id="preview" class="mt-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3"></div>
 				<p class="text-sm text-slate-400 mt-2">Puedes subir una imagen del producto.</p>
 			</div>
 
 			<div class="flex items-center gap-3">
-				<button type="submit" class="px-6 py-3 text-white font-semibold bg-transparent text-green-500 dark:text-green-500 hover:text-white border border-green-500 hover:border-white rounded">Guardar producto</button>
-				<a href="{{ url_for('productos.catalogo') }}" class="px-4 py-3 bg-transparent text-white font-semibold text-green-500 dark:text-red-500 hover:text-white border border-red-500 hover:border-white rounded">Cancelar</a>
+				<button type="submit" class="px-6 py-3 font-semibold bg-transparent text-green-500 dark:text-green-500 hover:text-white border border-green-500 hover:border-white rounded cursor-pointer">Guardar producto</button>
+				<a href="{{ url_for('productos.catalogo') }}" class="px-4 py-3 bg-transparent font-semibold text-green-500 dark:text-red-500 hover:text-white border border-red-500 hover:border-white rounded">Cancelar</a>
 			</div>
 		</form>
 	</div>
