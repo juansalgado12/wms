@@ -87,7 +87,6 @@
         <button type="submit" class="px-4 py-2 bg-emerald-600 text-white rounded">Mostrar</button>
     </form> <!-- CIERRE DEL FORM DE SELECTOR DE PRODUCTO -->
     
-    <!-- ...existing code... -->
 
     <!-- STOCK ACTUAL DEL PRODUCTO SELECCIONADO -->
     {% if stats_productos %}
@@ -112,7 +111,6 @@
     </div>
     {% endif %}
 
-<!-- ...existing code... -->
 
     <!-- ESTADÍSTICAS DEL PRODUCTO SELECCIONADO -->
     {% if stats_productos %}
@@ -169,6 +167,45 @@
         </div>
     </div>
     {% endif %} <!-- CIERRE DEL GRID DE ESTADÍSTICAS DEL PRODUCTO SELECCIONADO 30 DÍAS -->
+
+
+    <!-- ESPACIADO -->
+    <div class="mt-28"></div>
+
+
+    <!-- SELECTOR DE PROVEEDOR -->
+     <h3 class="text-2xl font-bold text-gray-800 mb-8 dark:text-gray-200">Estadísticas por proveedor</h3>
+    <form method="get" class="mb-6 flex items-center gap-3">
+        <label for="proveedor" class="text-slate-300">Proveedor:</label>
+        <select id="proveedor" name="proveedor" class="bg-slate-700 text-white px-3 py-2 rounded">
+            <option value="">-- Seleccionar proveedor --</option>
+            {% for p in proveedores %}
+            <option value="{{ p.prov_id }}" {% if proveedor_seleccionado|string==p.prov_id|string %}selected{% endif %}>
+                {{ p.prov_razon_social }}
+            </option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="px-4 py-2 bg-emerald-600 text-white rounded">Mostrar</button>
+    </form> <!-- CIERRE DEL FORM DE SELECTOR DE PROVEEDOR -->
+
+    <!-- ESTADÍSTICAS DEL PROVEEDOR SELECCIONADO -->
+    {% if prov_stats %}
+  <div class="grid grid-cols-3 gap-4 mb-6">
+    <div class="p-4 bg-slate-800 rounded text-white">
+      <div class="text-sm">Ingresos totales del proveedor</div>
+      <div class="text-2xl font-bold">{{ prov_stats.ingresos }}</div>
+    </div>
+    <div class="p-4 bg-slate-800 rounded text-white">
+      <div class="text-sm">Ingresos (7d)</div>
+      <div class="text-2xl font-bold">{{ prov_stats.ingresos_7d }}</div>
+    </div>
+    <div class="p-4 bg-slate-800 rounded text-white">
+      <div class="text-sm">Ingresos (30d)</div>
+      <div class="text-2xl font-bold">{{ prov_stats.ingresos_30d }}</div>
+    </div>
+  </div>
+  {% endif %}
+
 
     <!-- TOP 5 USUARIOS CON MÁS MOVIMIENTOS -->
 

@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request
-from .models import Productos, Inventario, Ubicaciones, Movimientos, Usuarios, ProductoImagenes
+from .models import Productos, Inventario, Ubicaciones, Movimientos, Usuarios, ProductoImagenes, DocumentoRecibo, Proveedor
 from .auth import login_required
 from . import db
 from wmsr.utils.export_excel import exportar_a_excel
@@ -110,6 +110,44 @@ def reportes():
             'stock_actual': stock_actual,
             'imagen_url': producto_imagen_url
         }
+    
+    # =======================
+    # Proveedores (selector)
+    # =======================
+
+    proveedores = Proveedor.query.order_by(Proveedor.prov_razon_social).all()
+    proveedor_seleccionado = (request.args.get('proveedor') or '').strip() or None
+    prov_stats = None
+    if proveedor_seleccionado:
+        # normalizar id si es numerico
+        try:
+            prov_id = int(proveedor_seleccionado)
+        except Exception:
+            prov_id = proveedor_seleccionado
+        
+        # total movimientos tipos ingresos asociados al proveedor
+        
+        ingresos_prov = db.session.query(db.func.count(Movimientos.mov_id))\
+            .join(DocumentoRecibo, DocumentoRecibo.doc_id == Movimientos.mov_doc_id)\
+            .filter(DocumentoRecibo.doc_id_proveedor == prov_id, Movimientos.mov_tipo == 'INGRESO').scalar() or 0
+    
+        # ingresos ultimos 7 dias
+        prov_cutoff_7 = datetime.now() - timedelta(days=7)
+        ingresos_7d_prov = db.session.query(db.func.count(Movimientos.mov_id))\
+            .join(DocumentoRecibo, DocumentoRecibo.doc_id == Movimientos.mov_doc_id)\
+            .filter(DocumentoRecibo.doc_id_proveedor == prov_id, Movimientos.mov_tipo == 'INGRESO', Movimientos.mov_fecha >= prov_cutoff_7).scalar() or 0
+        
+        # ingresos ultimos 30 dias
+        prov_cutoff_30 = datetime.now() - timedelta(days=30)
+        ingresos_30d_prov = db.session.query(db.func.count(Movimientos.mov_id))\
+            .join(DocumentoRecibo, DocumentoRecibo.doc_id == Movimientos.mov_doc_id)\
+            .filter(DocumentoRecibo.doc_id_proveedor == prov_id, Movimientos.mov_tipo == 'INGRESO', Movimientos.mov_fecha >= prov_cutoff_30).scalar() or 0
+        
+        prov_stats = {
+            'ingresos': ingresos_prov,
+            'ingresos_7d': ingresos_7d_prov,
+            'ingresos_30d': ingresos_30d_prov
+        }
 
     # =======================
     # Reporte de inventario
@@ -169,6 +207,9 @@ def reportes():
         productos=productos,
         producto_seleccionado=producto_seleccionado,
         stats_productos=stats_productos,
+        proveedores=proveedores,
+        proveedor_seleccionado=proveedor_seleccionado,
+        prov_stats=prov_stats,
         rows=rows,
         q=q,
         ubi=ubi
