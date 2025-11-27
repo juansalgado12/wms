@@ -8,7 +8,8 @@ module.exports = {
     'cursor-not-allowed',
     'file:cursor-pointer',
     'file:bg-transparent',
-    'file:border-none'
+    'file:border-none',
+    'option:cursor-pointer'
     // agrega aquí otras clases que uses dinámicamente
   ],
   theme: { extend: {} },

@@ -76,7 +76,7 @@
     <h3 class="text-2xl font-bold text-gray-800 mb-8 dark:text-gray-200">Estadísticas por producto</h3>
     <form method="get" class="mb-6 flex items-center gap-3">
         <label for="producto" class="text-slate-300">Producto:</label>
-        <select id="producto" name="producto" class="bg-slate-700 text-white px-3 py-2 rounded">
+        <select id="producto" name="producto" class="bg-slate-700 text-white px-3 py-2 rounded cursor-pointer">
             <option value="">-- Seleccionar producto --</option>
             {% for p in productos %}
             <option value="{{ p.pro_codigo }}" {% if producto_seleccionado==p.pro_codigo %}selected{% endif %}>
@@ -84,7 +84,7 @@
             </option>
             {% endfor %}
         </select>
-        <button type="submit" class="px-4 py-2 bg-emerald-600 text-white rounded">Mostrar</button>
+        <button type="submit" class="px-4 py-2 bg-emerald-600 text-white rounded cursor-pointer hover:bg-emerald-700">Mostrar</button>
     </form> <!-- CIERRE DEL FORM DE SELECTOR DE PRODUCTO -->
     
 
@@ -185,7 +185,7 @@
             </option>
             {% endfor %}
         </select>
-        <button type="submit" class="px-4 py-2 bg-emerald-600 text-white rounded cursor-pointer">Mostrar</button>
+        <button type="submit" class="px-4 py-2 bg-emerald-600 text-white rounded cursor-pointer hover:bg-emerald-700">Mostrar</button>
     </form> <!-- CIERRE DEL FORM DE SELECTOR DE PROVEEDOR -->
 
     <!-- ESTADÍSTICAS DEL PROVEEDOR SELECCIONADO -->
