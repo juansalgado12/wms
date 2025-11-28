@@ -170,7 +170,6 @@ def reportes():
     # Reporte de inventario
     # =======================
 
-    q = (request.args.get('q') or '').strip()
     ubi = request.args.get('ubicacion')
 
     query = (
@@ -184,27 +183,7 @@ def reportes():
         .group_by(Productos.pro_codigo, Productos.pro_nombre)
     )
 
-    if q:
-        query = query.filter(Productos.pro_nombre.ilike(f'%{q}%'))
-    if ubi:
-        query = query.join(Ubicaciones, Inventario.inv_cod_ubicacion == Ubicaciones.ubi_codigo)\
-                     .filter(Ubicaciones.ubi_codigo == ubi)
-
     rows = query.all()
-
-    # Exportar a Excel
-    if request.args.get('exportar') == 'excel':
-        data = [
-            {
-                'Código Producto': r.pro_codigo,
-                'Nombre Producto': r.pro_nombre,
-                'Cantidad Total': r.total_cantidad,
-                'Cantidad de ubicaciones': r.cantidad_ubicaciones
-            }
-            for r in rows
-        ]
-        columns = ['Código Producto', 'Nombre Producto', 'Cantidad Total', 'Cantidad de ubicaciones']
-        return exportar_a_excel('reporte_inventario', columns, data)
 
     # =======================
     # Render final con Todo
@@ -229,6 +208,5 @@ def reportes():
         prov_stats=prov_stats,
         productos_menor_stock=productos_menor_stock,
         rows=rows,
-        q=q,
         ubi=ubi
     )

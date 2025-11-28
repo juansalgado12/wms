@@ -241,9 +241,9 @@
         <table class="w-full text-sm text-left text-gray-700 dark:text-gray-400">
             <thead class="text-xs uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-300">
                 <tr>
-                    <th class="px-4 py-2">Código</th>
-                    <th class="px-4 py-2">Producto</th>
-                    <th class="px-4 py-2">Stock total</th>
+                    <th class="p-3 py-3">Código</th>
+                    <th class="p-3 py-3">Producto</th>
+                    <th class="p-3 py-3">Stock total</th>
                 </tr>
             </thead>
             <tbody>
@@ -265,22 +265,31 @@
 </div> <!-- CIERRE DEL DIV DE 5 PRODUCTOS CON MENOR STOCK -->
 
 
-<div class="max-w-6xl mx-auto p-6"> <!-- DIV DE INVENTARIO/PRODUCTOS -->
-  <table class="w-full text-sm">
-    <thead class="text-xs uppercase text-slate-300">
-      <tr><th>Código</th><th>Nombre</th><th>Cantidad total</th><th>Localizaciones</th></tr>
-    </thead>
-    <tbody>
-      {% for r in rows %}
-      <tr class="odd:bg-slate-800 even:bg-slate-700 text-slate-100">
-        <td class="p-3">{{ r.pro_codigo }}</td>
-        <td class="p-3">{{ r.pro_nombre }}</td>
-        <td class="p-3">{{ r.total_cantidad }}</td>
-        <td class="p-3">{{ r.cantidad_ubicaciones }}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+<!-- STOCK DE PRODUCTOS -->
+<div class="max-w-6xl mx-auto p-6">
+    <h3 class="text-2xl font-bold text-gray-800 mb-4 dark:text-gray-200 mt-20">Stock de productos</h3>
+    <div class="overflow-x-auto rounded-lg bg-slate-900 shadow mb-6 mt-8">
+        <table class="w-full text-sm text-left text-gray-700 dark:text-gray-400">
+            <thead class="text-xs uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-300">
+                <tr>
+                    <th class="p-3 py-3">Código</th>
+                    <th class="p-3 py-3">Nombre</th>
+                    <th class="p-3 py-3">Cantidad total</th>
+                    <th class="p-3 py-3">Localizaciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in rows %}
+                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition">
+                    <td class="px-4 py-2 font-mono text-slate-200"">{{ r.pro_codigo }}</td>
+                    <td class="px-4 py-2">{{ r.pro_nombre }}</td>
+                    <td class="px-4 py-2">{{ r.total_cantidad }}</td>
+                    <td class="px-4 py-2">{{ r.cantidad_ubicaciones }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
 
 {% endblock %}
