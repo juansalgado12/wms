@@ -22,7 +22,9 @@ def almacen():
     cutoff_30 = today - timedelta(days=29)
     cutoff_7 = today - timedelta(days=6)
 
-    # usamos db.func.date(...) en el filtro para comparar por fecha (sin hora)
+    #==================================
+    # Consulta para los últimos 30 días
+    #==================================
     q30 = (
         db.session.query(
             db.func.date(Movimientos.mov_fecha).label('fecha'),
@@ -50,7 +52,9 @@ def almacen():
         labels_30.append(d.strftime('%d/%m'))     # formato legible en la gráfica
         data_30.append(map30.get(key, 0))
 
+    #==================================
     # Consultas y map para ultimos 7 dias
+    #==================================
     q7 = (
         db.session.query(
             db.func.date(Movimientos.mov_fecha).label('fecha'),
@@ -76,6 +80,39 @@ def almacen():
         key = d.isoformat()
         labels_7.append(d.strftime('%d/%m'))
         data_7.append(map7.get(key, 0))
+    
+    #==================================
+    # Movimientos en los ultimos 6 meses
+    #==================================
+    year = today.year
+    month = today.month
+    months = []
+    for i in range(5, -1, -1):
+        m = month - i
+        y = year
+        while m <= 0:
+            m += 12
+            y -= 1
+        months.append((y, m))
+    
+    labels_6m =[]
+    data_6m = []
+    for (y, m) in months:
+        start = datetime(y, m, 1).date()
+        # calcular el primer día del mes siguiente
+        if m == 12:
+            end = datetime(y + 1, 1, 1).date()
+        else:
+            end = datetime(y, m + 1, 1).date()
+        cnt = db.session.query(db.func.count(Movimientos.mov_id))\
+            .filter(Movimientos.mov_fecha >= start, Movimientos.mov_fecha < end)\
+            .scalar() or 0
+        
+        # Etiqueta legible para la gráfica
+        labels_6m.append(start.strftime('%b %Y'))  # Ejemplo: 'Jan 2024'
+        data_6m.append(int(cnt))
+    
+    total_6m = sum(data_6m)
 
     stats = {
         'labels_30': labels_30,
@@ -83,7 +120,10 @@ def almacen():
         'total_30': total_30,
         'labels_7': labels_7,
         'data_7': data_7,
-        'total_7': total_7
+        'total_7': total_7,
+        'labels_6m': labels_6m,
+        'data_6m': data_6m,
+        'total_6m': total_6m
     }
     return render_template('dashboard.html', stats=stats)
 # ...existing code...
