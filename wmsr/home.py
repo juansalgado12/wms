@@ -114,6 +114,34 @@ def almacen():
     
     total_6m = sum(data_6m)
 
+    #==================================
+    # Movimientos ultimos 12 meses
+    #==================================
+    labels_12m = []
+    data_12m =[]
+    # generar los ultimos 12 meses (desde 11 meses atrás hasta el mes actual)
+    year = today.year
+    month = today.month
+    for i in range(11, -1, -1):
+        m = month - i
+        y = year
+        while m <= 0:
+            m += 12
+            y -= 1
+        start = datetime(y, m, 1).date()
+        # primer dia del mes siguiente
+        if m == 12:
+            end = datetime(y + 1, 1, 1).date()
+        else:
+            end = datetime(y, m + 1, 1).date()
+        cnt = db.session.query(db.func.count(Movimientos.mov_id))\
+            .filter(Movimientos.mov_fecha >= start, Movimientos.mov_fecha < end)\
+            .scalar() or 0
+        labels_12m.append(start.strftime('%b %Y'))
+        data_12m.append(int(cnt))
+    
+    total_12m = sum(data_12m)
+
     stats = {
         'labels_30': labels_30,
         'data_30': data_30,
@@ -123,7 +151,10 @@ def almacen():
         'total_7': total_7,
         'labels_6m': labels_6m,
         'data_6m': data_6m,
-        'total_6m': total_6m
+        'total_6m': total_6m,
+        'labels_12m': labels_12m,
+        'data_12m': data_12m,
+        'total_12m': total_12m
     }
     return render_template('dashboard.html', stats=stats)
 # ...existing code...

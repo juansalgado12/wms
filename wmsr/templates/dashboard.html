@@ -30,6 +30,14 @@
             </div>
             <p class="text-sm text-white mt-2">Total: {{ stats.total_6m }}</p>
         </div>
+
+        <div class="bg-gray-800 p-6 rounded-lg shadow">
+            <h3 class="font-medium mb-2 text-white">Movimientos - últimos 12 meses</h3>
+            <div class="h-64">
+                <canvas id="mov12mChart"></canvas>
+            </div>
+            <p class="text-sm text-white mt-2">Total: {{ stats.total_12m }}</p>
+        </div>
     </div>
 
 <!-- Chart.js desde CDN -->
@@ -104,6 +112,7 @@
       }
   });
 
+  // 6 meses chart
   new Chart(document.getElementById('mov6mChart'), {
     type: 'bar',
     data: {
@@ -112,6 +121,35 @@
         label: 'Movimientos - últimos 6 meses',
         data: stats.data_6m,
         backgroundColor: '#16a34a'
+      }]
+    },
+    options: {
+          responsive: true, maintainAspectRatio: false,
+          scales: {
+              x: { ticks: { color: 'white' } },
+              y: { ticks: { color: 'white', ...intYAxisOptions.ticks } }
+          },
+          plugins: {
+              legend: {
+                  display: true,   // obligatorio
+                  labels: { color: 'white' }
+              }
+          }
+      }
+  });
+
+  // 12 meses chart
+  new Chart(document.getElementById('mov12mChart'), {
+    type: 'line',
+    data: {
+      labels: stats.labels_12m,
+      datasets: [{
+        label: 'Movimientos - últimos 12 meses',
+        data: stats.data_12m,
+        borderColor: '#16a34a',
+        backgroundColor: 'rgba(16,163,74,0.08)',
+        fill: true,
+        tension: 0.3
       }]
     },
     options: {
