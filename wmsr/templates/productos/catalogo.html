@@ -12,7 +12,7 @@
             placeholder="Realiza una búsqueda..." type="text"
           />
           <button
-            class="absolute top-1 right-1 flex items-center rounded bg-slate-800 py-1 px-2.5 border border-transparent text-center text-sm text-white transition-all shadow-sm hover:shadow focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+            class="absolute top-1 right-1 flex items-center rounded bg-slate-800 py-1 px-2.5 border border-transparent text-center text-sm text-white transition-all shadow-sm hover:shadow focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none cursor-pointer"
             type="submit"
           >
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 mr-2"></svg>
@@ -24,7 +24,7 @@
       </form>
     </div>
   </div>
-<div class="container w-full h-screen bg-cover size-full px-4 py-6">
+<div class="w-full h-screen bg-cover size-full px-4 py-6">
   <div class="mb-4">
     <h1 class="text-3xl font-bold text-slate-800 mb-4 dark:text-white">Catálogo de productos</h1>
     <p class="text-slate-600 dark:text-gray-300">Administra tus productos, categorias, marcas, presentaciones y unidades
@@ -36,14 +36,14 @@
       producto</a>
     <div class="relative inline-block text-left">
       <button type="button"
-        class="bg-transparent text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-white rounded flex items-center"
+        class="bg-transparent text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-white rounded flex items-center cursor-pointer"
         id="dropdownButton">
         Gestionar <svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
         </svg>
       </button>
       <div id="dropdownMenu"
-        class="hidden absolute left-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
+        class="hidden absolute left-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10 cursor-default">
         <div class="py-1">
           <a href="{{url_for('categorias.lista_categorias')}}"
             class="block px-4 py-2 text-slate-700 hover:bg-blue-100">Gestionar categorías</a>
@@ -111,7 +111,7 @@
           <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{{ p.pro_nombre or '-' }}
           </td>
           <td class="px-6 py-4 text-gray-400">
-            <div class="whitespace-normal break-words" title="{{ p.pro_descripcion }}">
+            <div class="whitespace-normal wrap-break-word" title="{{ p.pro_descripcion }}">
               {{ p.pro_descripcion or '-' }}
             </div>
           </td>

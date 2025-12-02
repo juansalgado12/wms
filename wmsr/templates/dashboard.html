@@ -1,0 +1,170 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}Dashboard - WMS Pro{% endblock %}
+
+{% block content %}
+<div class="py-8" id="dashboard" data-stats='{{ stats | tojson | safe }}'>
+    <h2 class="text-2xl font-bold mb-4 text-white">Dashboard</h2>
+
+    <div class="grid md:grid-cols-2 gap-6">
+        <div class="bg-gray-800 p-6 rounded-lg shadow">
+            <h3 class="font-medium mb-2 text-white">Movimientos - últimos 30 días</h3>
+            <div class="h-64">
+                <canvas id="mov30Chart"></canvas>
+            </div>
+            <p class="text-sm text-white mt-2">Total: {{ stats.total_30 }}</p>
+        </div>
+
+        <div class="bg-gray-800 p-6 rounded-lg shadow">
+            <h3 class="font-medium mb-2 text-white">Movimientos - últimos 7 días</h3>
+            <div class="h-64">
+                <canvas id="mov7Chart"></canvas>
+            </div>
+            <p class="text-sm mt-2 text-white">Total: {{ stats.total_7 }}</p>
+        </div>
+
+        <div class="bg-gray-800 p-6 rounded-lg shadow">
+            <h3 class="font-medium mb-2 text-white">Movimientos - últimos 6 meses</h3>
+            <div class="h-64">
+                <canvas id="mov6mChart"></canvas>
+            </div>
+            <p class="text-sm text-white mt-2">Total: {{ stats.total_6m }}</p>
+        </div>
+
+        <div class="bg-gray-800 p-6 rounded-lg shadow">
+            <h3 class="font-medium mb-2 text-white">Movimientos - últimos 12 meses</h3>
+            <div class="h-64">
+                <canvas id="mov12mChart"></canvas>
+            </div>
+            <p class="text-sm text-white mt-2">Total: {{ stats.total_12m }}</p>
+        </div>
+    </div>
+
+<!-- Chart.js desde CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const stats = JSON.parse(document.getElementById('dashboard').dataset.stats);
+
+  // Opciones para eje Y con solo enteros
+  const intYAxisOptions = {
+    beginAtZero: true,
+    ticks: {
+        stepSize: 5, // Incrementos de 5
+        precision: 0, // Sin decimales
+        callback: function(value) {
+            return Number.isInteger(value) ? value : '';
+        }
+    }
+  }
+
+  // 30 días - linea
+  new Chart(document.getElementById('mov30Chart'), {
+    type: 'line',
+    data: {
+      labels: stats.labels_30,
+      datasets: [{
+        label: 'Movimientos - últimos 30 días',
+        data: stats.data_30,
+        borderColor: '#16a34a',
+        backgroundColor: 'rgba(16,163,74,0.08)',
+        fill: true,
+        tension: 0.3
+      }]
+    },
+    options: {
+          responsive: true, maintainAspectRatio: false,
+          scales: {
+              x: { ticks: { color: 'white' } },
+              y: { ticks: { color: 'white', ...intYAxisOptions.ticks } }
+          },
+          plugins: {
+              legend: {
+                  display: true,   // obligatorio
+                  labels: { color: 'white' }
+              }
+          }
+      }
+  });
+
+  // Entradas chart
+  new Chart(document.getElementById('mov7Chart'), {
+    type: 'bar',
+    data: {
+      labels: stats.labels_7,
+      datasets: [{
+        label: 'Movimientos - últimos 7 días',
+        data: stats.data_7,
+        backgroundColor: '#16a34a'
+      }]
+    },
+    options: {
+          responsive: true, maintainAspectRatio: false,
+          scales: {
+              x: { ticks: { color: 'white' } },
+              y: { ticks: { color: 'white', ...intYAxisOptions.ticks } }
+          },
+          plugins: {
+              legend: {
+                  display: true,   // obligatorio
+                  labels: { color: 'white' }
+              }
+          }
+      }
+  });
+
+  // 6 meses chart
+  new Chart(document.getElementById('mov6mChart'), {
+    type: 'bar',
+    data: {
+      labels: stats.labels_6m,
+      datasets: [{
+        label: 'Movimientos - últimos 6 meses',
+        data: stats.data_6m,
+        backgroundColor: '#16a34a'
+      }]
+    },
+    options: {
+          responsive: true, maintainAspectRatio: false,
+          scales: {
+              x: { ticks: { color: 'white' } },
+              y: { ticks: { color: 'white', ...intYAxisOptions.ticks } }
+          },
+          plugins: {
+              legend: {
+                  display: true,   // obligatorio
+                  labels: { color: 'white' }
+              }
+          }
+      }
+  });
+
+  // 12 meses chart
+  new Chart(document.getElementById('mov12mChart'), {
+    type: 'line',
+    data: {
+      labels: stats.labels_12m,
+      datasets: [{
+        label: 'Movimientos - últimos 12 meses',
+        data: stats.data_12m,
+        borderColor: '#16a34a',
+        backgroundColor: 'rgba(16,163,74,0.08)',
+        fill: true,
+        tension: 0.3
+      }]
+    },
+    options: {
+          responsive: true, maintainAspectRatio: false,
+          scales: {
+              x: { ticks: { color: 'white' } },
+              y: { ticks: { color: 'white', ...intYAxisOptions.ticks } }
+          },
+          plugins: {
+              legend: {
+                  display: true,   // obligatorio
+                  labels: { color: 'white' }
+              }
+          }
+      }
+  });
+</script>
+{% endblock %}

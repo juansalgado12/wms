@@ -27,7 +27,7 @@
 			<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
 				<div>
 					<label for="pro_cat_id" class="block text-slate-300 font-medium mb-2">Categoría</label>
-					<select id="pro_cat_id" name="pro_cat_id" required class="w-full px-4 py-2 bg-slate-700 text-slate-100 border rounded-lg border-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-400">
+					<select id="pro_cat_id" name="pro_cat_id" required class="w-full px-4 py-2 bg-slate-700 text-slate-100 border rounded-lg border-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-400 cursor-pointer">
 						<option value="" class="text-slate-500">Seleccionar categoría</option>
 						{% for c in categorias %}
 							<option value="{{ c.cat_id }}" {% if producto.pro_cat_id == c.cat_id %}selected{% endif %}>{{ c.cat_nombre }}</option>
@@ -37,7 +37,7 @@
 
 				<div>
 					<label for="pro_pres_id" class="block text-slate-300 font-medium mb-2">Presentación</label>
-					<select id="pro_pres_id" name="pro_pres_id" required class="w-full px-4 py-2 bg-slate-700 text-slate-100 border rounded-lg border-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-400">
+					<select id="pro_pres_id" name="pro_pres_id" required class="w-full px-4 py-2 bg-slate-700 text-slate-100 border rounded-lg border-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-400 cursor-pointer">
 						<option value="" class="text-slate-500">Seleccionar presentación</option>
 						{% for p in presentaciones %}
 							<option value="{{ p.pres_id }}" {% if producto.pro_pres_id == p.pres_id %}selected{% endif %}>{{ p.pres_nombre }}</option>
@@ -47,7 +47,7 @@
 
 				<div>
 					<label for="pro_uni_id" class="block text-slate-300 font-medium mb-2">Unidad</label>
-					<select id="pro_uni_id" name="pro_uni_id" required class="w-full px-4 py-2 bg-slate-700 text-slate-100 border rounded-lg border-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-400">
+					<select id="pro_uni_id" name="pro_uni_id" required class="w-full px-4 py-2 bg-slate-700 text-slate-100 border rounded-lg border-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-400 cursor-pointer">
 						<option value="" class="text-slate-500">Seleccionar unidad</option>
 						{% for u in unidades %}
 							<option value="{{ u.uni_id }}" {% if producto.pro_uni_id == u.uni_id %}selected{% endif %}>{{ u.uni_nombre }}</option>
@@ -58,7 +58,7 @@
 
 			<div>
 				<label for="pro_mar_id" class="block text-slate-300 font-medium mb-2">Marca</label>
-				<select id="pro_mar_id" name="pro_mar_id" required class="w-full px-4 py-2 bg-slate-700 text-slate-100 border rounded-lg border-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-400">
+				<select id="pro_mar_id" name="pro_mar_id" required class="w-full px-4 py-2 bg-slate-700 text-slate-100 border rounded-lg border-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-400 cursor-pointer">
 					<option value="" class="text-slate-500">Seleccionar marca</option>
 					{% for m in marcas %}
 						<option value="{{ m.mar_id }}" {% if producto.pro_mar_id == m.mar_id %}selected{% endif %}>{{ m.mar_nombre }}</option>
@@ -92,14 +92,14 @@
 				{% endif %}
 
 				<input id="image_edit" name="image" type="file" accept="image/*"
-					class="block w-full text-sm text-slate-200 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:bg-emerald-600 file:text-white hover:file:opacity-90 bg-slate-700 border border-slate-600" />
+					class="block w-full text-sm text-slate-200 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:bg-emerald-600 file:text-white hover:file:opacity-90 bg-slate-700 border border-slate-600 file:cursor-pointer" />
 
 				<div id="preview_edit" class="mt-4"></div>
 				<p class="text-sm text-slate-400 mt-2">Sube una imagen para reemplazar la imagen actual (opcional).</p>
 			</div>
 
 			<div class="flex items-center gap-3">
-				<button type="submit" class="px-6 py-3 text-green-500 font-semibold bg-transparent hover:text-white border border-green-500 hover:border-white rounded">Guardar cambios</button>
+				<button type="submit" class="px-6 py-3 text-green-500 font-semibold bg-transparent hover:text-white border border-green-500 hover:border-white rounded cursor-pointer">Guardar cambios</button>
 				<a href="{{ url_for('productos.catalogo') }}" class="px-4 py-3 bg-transparent text-red-500 font-semibold hover:text-white border border-red-500 hover:border-white rounded">Cancelar</a>
 			</div>
 		</form>

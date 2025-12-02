@@ -267,6 +267,10 @@ def borrar_inventario(id):
     inventario = Inventario.query.get_or_404(id)
     if not inventario:
         flash(f'El inventario con ID {id} no existe.', 'error')
+    # comprobar si un inventario está asociado a movimientos antes de borrarlo
+    movimientos_asociados = db.session.query(db.exists().where(Inventario.inv_id == id)).scalar()
+    if movimientos_asociados:
+        flash('No se puede borrar el inventario porque está asociado a movimientos.', 'error')
     else:
         db.session.delete(inventario)
         db.session.commit()
